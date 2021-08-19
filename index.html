@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      body {
+        font-family: HelveticaNeue, Helvetica, sans-serif;
+      }
+
+      .plot .tick text {
+        font-size: 8pt;
+      }
+    </style>
+  </head>
+  <body>
+
+<form>
+  <div>
+    <label>
+      Start
+      <input type="date" name="start" />
+    </label>
+  </div>
+  <div>
+    <label>
+      Finish
+      <input type="date" name="finish" />
+    </label>
+  </div>
+  <div>
+    <label>
+      IAA
+      <select name="iaa">
+        <option value="">(all)</option>
+      </select>
+    </label>
+  </div>
+  <input type="submit" value="Update" />
+</form>
+
+<script type="module">
+
+import * as Plot from "https://cdn.skypack.dev/@observablehq/plot@0.1";
+import { utcDay, utcWeek } from "https://cdn.skypack.dev/d3-time@3";
+import { timeFormat, timeParse } from "https://cdn.skypack.dev/d3-time-format@4";
+import { format } from "https://cdn.skypack.dev/d3-format@3";
+
+const d3 = {
+  format,
+  timeFormat,
+  timeParse,
+  utcDay,
+  utcWeek,
+}
+
+function syncInput({ elem, urlParamValue, defaultValue }) {
+  if (urlParamValue) {
+    elem.value = urlParamValue;
+  } else {
+    elem.value = defaultValue;
+  }
+}
+
+function syncOptions({ elem, urlParamValue, options = [] }) {
+  function buildOption(name) {
+    const optionElem = document.createElement('OPTION');
+    optionElem.text = name;
+    optionElem.value = name;
+    return optionElem;
+  }
+
+  options.forEach((opt) => {
+    elem.appendChild(buildOption(opt));
+  });
+
+  if (urlParamValue) {
+    const existingOptionElem = elem.querySelector(`option[value=${urlParamValue}]`);
+    if (!existingOptionElem) {
+      elem.appendChild(buildOption(urlParamValue));
+    }
+
+    elem.querySelector(`option[value=${urlParamValue}]`).selected = true;
+  }
+}
+
+const yearMonthDayFormat = d3.timeFormat('%Y-%m-%d');
+const yearFormat = d3.timeFormat('%Y');
+const yearMonthDayParse = d3.timeParse('%Y-%m-%d');
+const urlParams = new URL(document.location).searchParams;
+
+const endOfPreviousWeek = utcWeek.floor(new Date())
+
+syncInput({
+  elem: document.querySelector('input[name=start]'),
+  urlParamValue: urlParams.get('start'),
+  defaultValue: yearMonthDayFormat(d3.utcWeek.floor(endOfPreviousWeek - 1)),
+});
+
+syncInput({
+  elem: document.querySelector('input[name=finish]'),
+  urlParamValue: urlParams.get('finish'),
+  defaultValue: yearMonthDayFormat(endOfPreviousWeek),
+});
+
+syncOptions({
+  elem: document.querySelector('select[name=iaa]'),
+  urlParamValue: urlParams.get('iaa'),
+});
+
+const days = d3.utcDay.every(1).range(
+  yearMonthDayParse(document.querySelector('input[name=start]').value),
+  yearMonthDayParse(document.querySelector('input[name=finish]').value),
+);
+
+function path({ reportName, date, env = 'prod' }) {
+  const year = yearFormat(date);
+  const day = yearMonthDayFormat(date);
+
+  // ex: /prod/daily-auths-report/2021/2021-07-27.daily-auths-report.json
+  return `/${env}/${reportName}/${year}/${day}.${reportName}.json`
+}
+
+/**
+ * @param {Date} date
+ */
+function loadDay(date) {
+  // TODO: don't hardcode /data
+  return window.fetch("/data" + path({ reportName: 'daily-auths-report', date }))
+    .then((response) => response.json())
+    .then(({ results }) =>
+      results.map((result) =>
+        Object.assign({}, result, { date })))
+}
+
+Promise.all(
+  days.map((date) => loadDay(date))
+).then((responses) => {
+  const data = responses.flatMap((response) => response);
+  // console.log(data);
+
+  const iaas = new Set(data.map((d) => d.iaa));
+  syncOptions({ elem: document.querySelector('select[name=iaa]'), options: iaas });
+
+  const currentIaa = document.querySelector('select[name=iaa]').value;
+
+  document.body.appendChild(
+    Plot.plot({
+      y: {
+        tickFormat: d3.format(".2s"),
+      },
+      style: {
+        marginTop: 20,
+        marginLeft: 20,
+      },
+      marks: [
+        Plot.ruleY([0]),
+        Plot.barY(
+          data,
+          {
+            x: "date",
+            y: "count",
+            fill: 'iaa',
+            filter: (d) => !currentIaa || d.iaa == currentIaa,
+          }
+        )
+      ]
+    })
+  );
+
+  document.body.appendChild(
+    buildTable(
+      tabulate({ data, iaa: currentIaa })
+    )
+  );
+})
+
+function buildTable(rows) {
+  function addRow(container, values, datum = 'TD') {
+    const row = document.createElement('TR');
+    values.forEach((val) => {
+      const dataElem = document.createElement(datum);
+      dataElem.innerText = val;
+      row.appendChild(dataElem);
+    });
+    container.appendChild(row);
+  }
+
+  const elem = document.createElement('TABLE');
+  const [headerRow, ...bodyRows] = rows;
+
+  const thead = document.createElement('THEAD');
+  addRow(thead, headerRow);
+  elem.appendChild(thead);
+
+  const tbody = document.createElement('TBODY');
+  bodyRows.forEach((r) => addRow(tbody, r));
+  elem.appendChild(tbody);
+
+  return elem;
+}
+
+/**
+ * @return {string[][]}
+ */
+function tabulate({ data, iaa }) {
+  if (iaa) {
+    data = data.filter((d) => d.iaa == iaa);
+  }
+
+  const days = Array.from(new Set(data.map(d => d.date)));
+  days.sort((a, b) => a - b);
+
+  const iaas = Array.from(new Set(data.map(d => d.iaa)))
+  iaas.sort();
+  const issuers = Array.from(new Set(data.map(d => d.issuer)))
+  issuers.sort();
+
+  const headerRow = ['Issuer', 'IAA', ...days.map(yearMonthDayFormat)];
+  const bodyRows = issuers.map((issuer) => {
+    const issuerData = data.filter((d) => d.issuer == issuer);
+
+    return [
+      issuer,
+      issuerData[0].iaa,
+      ...days.map((date) => {
+        return issuerData.filter((d) => d.date == date)?.[0]?.count ?? 0
+      })
+    ]
+  });
+
+  return [headerRow, ...bodyRows];
+}
+
+</script>
+
+  </body>
+</html>
