@@ -215,16 +215,22 @@ function tabulate({ data, iaa }) {
   issuers.sort();
 
   const headerRow = ['Issuer', 'IAA', ...days.map(yearMonthDayFormat)];
-  const bodyRows = issuers.map((issuer) => {
-    const issuerData = data.filter((d) => d.issuer == issuer);
+  const bodyRows = iaas.flatMap((iaa) => {
+    const iaaData = data.filter((d) => d.iaa == iaa)
+    const iaaIssuers = Array.from(new Set(iaaData.map(d => d.issuer)));
+    iaaIssuers.sort();
 
-    return [
-      issuer,
-      issuerData[0].iaa,
-      ...days.map((date) => {
-        return issuerData.filter((d) => d.date == date)?.[0]?.count ?? 0
-      })
-    ]
+    return iaaIssuers.map(issuer => {
+      const issuerData = data.filter((d) => d.issuer == issuer);
+
+      return [
+        issuer,
+        iaa,
+        ...days.map((date) => {
+          return issuerData.filter((d) => d.date == date)?.[0]?.count ?? 0
+        })
+      ]
+    })
   });
 
   return [headerRow, ...bodyRows];
