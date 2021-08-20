@@ -1,0 +1,12 @@
+{
+  "root": true,
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "env": {
+    "node": true,
+    "browser": true,
+    "mocha": true,
+    "es6": true
+  }
+}
