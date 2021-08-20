@@ -7,7 +7,7 @@ describe("Report", () => {
       const date = new Date("2021-12-01");
 
       expect(path({ reportName: "some-report", date })).to.equal(
-        "/prod/some-report/2021/2021-12-01.some-report.json",
+        "/prod/some-report/2021/2021-12-01.some-report.json"
       );
     });
   });
