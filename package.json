@@ -4,7 +4,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "federalist": "npm run build",
+    "federalist": "npm run build -- --base=$BASEURL",
     "prettier:fix": "prettier --write src/",
     "serve": "vite preview",
     "test:lint": "eslint src",
