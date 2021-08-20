@@ -4,14 +4,14 @@ const yearFormat = utcFormat('%Y');
 const yearMonthDayFormat = utcFormat('%Y-%m-%d');
 
 /**
- * @typedef PathProps
+ * @typedef PathOptions
  * @prop {string} reportName
  * @prop {Date} date
  * @prop {string=} env 
  */
 
 /**
- * @param {PathProps} props
+ * @param {PathOptions} options
  */
 function path({ reportName, date, env = 'prod' }) {
   const year = yearFormat(date);
