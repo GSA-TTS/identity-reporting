@@ -7,7 +7,7 @@
     "serve": "vite preview",
     "test": "run-p test:*",
     "test:typecheck": "tsc",
-    "test:lint": "eslint src --ext .js",
+    "test:lint": "eslint src",
     "test:unit": "mocha -r esbuild-register 'src/**/*.test.js'"
   },
   "dependencies": {
