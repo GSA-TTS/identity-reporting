@@ -8,6 +8,7 @@ Summary reports of login.gov activity
 
 ```bash
 npm install
+npm run dev
 ```
 
 ### Run Tests
