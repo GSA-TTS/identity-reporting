@@ -3,6 +3,11 @@
   "parserOptions": {
     "sourceType": "module"
   },
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": "error"
+  },
+  "extends": ["plugin:prettier/recommended"],
   "env": {
     "node": true,
     "browser": true,
