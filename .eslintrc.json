@@ -1,7 +1,8 @@
 {
   "root": true,
   "parserOptions": {
-    "sourceType": "module"
+    "sourceType": "module",
+    "ecmaVersion": 2021
   },
   "plugins": ["prettier"],
   "rules": {

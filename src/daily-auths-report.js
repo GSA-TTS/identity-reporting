@@ -142,15 +142,14 @@ function DailyAuthsReport({}) {
         style: {},
         marks: [
           Plot.ruleY([0]),
-          Plot.barY(data,
-            {
-              x: "date",
-              y: "count",
-              fill: agency ? "friendly_name" : "agency",
-              title: (/** @type ProcessedResult */ d) => agency ? d.friendly_name : d.agency,
-              filter: (/** @type ProcessedResult */ d) => d.ial == ial && (!agency || d.agency == agency)
-            }
-          ),
+          Plot.barY(data, {
+            x: "date",
+            y: "count",
+            fill: agency ? "friendly_name" : "agency",
+            title: (/** @type ProcessedResult */ d) => (agency ? d.friendly_name : d.agency),
+            filter: (/** @type ProcessedResult */ d) =>
+              d.ial == ial && (!agency || d.agency == agency),
+          }),
         ],
       })
     );
