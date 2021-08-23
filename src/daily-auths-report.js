@@ -67,6 +67,12 @@ function tabulate(results, filterAgency, filterIal) {
     (d) => (!filterAgency || d.agency == filterAgency) && (!filterIal || d.ial == filterIal)
   );
 
+  const days = Array.from(new Set(filteredResults.map((d) => d.date.valueOf())))
+    .sort((a, b) => a - b)
+    .map((d) => new Date(d));
+
+  const header = ["Agency", "App", "IAL", ...days.map(yearMonthDayFormat)];
+
   const grouped = group(
     filteredResults,
     (d) => d.agency,
@@ -74,14 +80,8 @@ function tabulate(results, filterAgency, filterIal) {
     (d) => d.ial
   );
 
-  const days = Array.from(new Set(filteredResults.map((d) => d.date.valueOf())))
-    .sort((a, b) => a - b)
-    .map((d) => new Date(d));
-
   const issuerToFriendlyName = new Map();
   filteredResults.forEach((d) => issuerToFriendlyName.set(d.issuer, d.friendly_name));
-
-  const header = ["Agency", "App", "IAL", ...days.map(yearMonthDayFormat)];
 
   const body = Array.from(grouped)
     .sort(([agencyA], [agencyB]) => ascending(agencyA, agencyB))
