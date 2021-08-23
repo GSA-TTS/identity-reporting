@@ -5,10 +5,9 @@
     "build": "vite build",
     "dev": "vite",
     "federalist": "npm run build -- --base=$BASEURL",
-    "prettier:fix": "prettier --write src/",
+    "prettier:fix": "npm run test:lint -- --fix",
     "serve": "vite preview",
-    "test:lint": "eslint src",
-    "test:prettier": "prettier --check src/",
+    "test:lint": "eslint .",
     "test:typecheck": "tsc",
     "test:unit": "mocha -r esbuild-register 'src/**/*.test.js'",
     "test": "run-p test:*"

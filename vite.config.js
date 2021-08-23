@@ -1,5 +1,5 @@
 export default {
   build: {
-    outDir: '_site'
-  }
-}
+    outDir: "_site",
+  },
+};
