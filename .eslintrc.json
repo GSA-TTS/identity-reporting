@@ -12,5 +12,8 @@
     "browser": true,
     "mocha": true,
     "es6": true
-  }
+  },
+  "ignorePatterns": [
+    "_site/**"
+  ]
 }
