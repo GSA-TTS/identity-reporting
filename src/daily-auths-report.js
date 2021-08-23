@@ -22,7 +22,7 @@ import { group, ascending } from "d3-array";
  * @property {number} count
  * @property {1|2} ial
  * @property {string} issuer
- * @property {string} iaa
+ * @property {string=} iaa This is always present but we don't use it, so easier to mark as optional
  * @property {string} friendly_name
  * @property {string} agency
  */

@@ -16,7 +16,6 @@ describe("DailyAuthsReport", () => {
           issuer: "issuer1",
           agency: "agency1",
           friendly_name: "app1",
-          iaa: "iaa1",
           count: 100,
         },
         {
@@ -25,7 +24,6 @@ describe("DailyAuthsReport", () => {
           issuer: "issuer1",
           agency: "agency1",
           friendly_name: "app1",
-          iaa: "iaa1",
           count: 1,
         },
         {
@@ -34,7 +32,6 @@ describe("DailyAuthsReport", () => {
           issuer: "issuer2",
           agency: "agency2",
           friendly_name: "app2",
-          iaa: "iaa2",
           count: 1000,
         },
         {
