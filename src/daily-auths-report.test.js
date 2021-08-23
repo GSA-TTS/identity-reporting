@@ -60,12 +60,12 @@ describe("DailyAuthsReport", () => {
     it("builds a table by agency, issuer, ial", () => {
       const table = tabulate(results);
 
-      expect(table.header).to.deep.eq(["Agency", "App", "IAL", "2021-01-01", "2021-01-02"]);
+      expect(table.header).to.deep.eq(["Agency", "App", "IAL", "2021-01-01", "2021-01-02", "Total"]);
       expect(table.body).to.have.lengthOf(3);
       expect(simplifyVNodes(table.body)).to.deep.equal([
-        ["agency1", "issuer1", "1", 100, 111],
-        ["agency1", "issuer1", "2", 1, 0],
-        ["agency2", "issuer2", "1", 1000, 0],
+        ["agency1", "issuer1", "1", 100, 111, 211],
+        ["agency1", "issuer1", "2", 1, 0, 1],
+        ["agency2", "issuer2", "1", 1000, 0, 1000],
       ]);
     });
 
@@ -73,14 +73,14 @@ describe("DailyAuthsReport", () => {
       const table = tabulate(results, "agency1");
 
       expect(simplifyVNodes(table.body)).to.deep.equal([
-        ["agency1", "issuer1", "1", 100, 111],
-        ["agency1", "issuer1", "2", 1, 0],
+        ["agency1", "issuer1", "1", 100, 111, 211],
+        ["agency1", "issuer1", "2", 1, 0, 1],
       ]);
     });
     it("filters by ial", () => {
       const table = tabulate(results, undefined, 2);
 
-      expect(simplifyVNodes(table.body)).to.deep.equal([["agency1", "issuer1", "2", 1]]);
+      expect(simplifyVNodes(table.body)).to.deep.equal([["agency1", "issuer1", "2", 1, 1]]);
     });
   });
 });

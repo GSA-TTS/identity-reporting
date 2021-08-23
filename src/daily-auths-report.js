@@ -71,7 +71,7 @@ function tabulate(results, filterAgency, filterIal) {
     .sort((a, b) => a - b)
     .map((d) => new Date(d));
 
-  const header = ["Agency", "App", "IAL", ...days.map(yearMonthDayFormat)];
+  const header = ["Agency", "App", "IAL", ...days.map(yearMonthDayFormat), "Total"];
 
   const grouped = group(
     filteredResults,
@@ -90,13 +90,16 @@ function tabulate(results, filterAgency, filterIal) {
         .sort(([issuerA], [issuerB]) => ascending(issuerA, issuerB))
         .flatMap(([issuer, ials]) => {
           return Array.from(ials).map(([ial, data]) => {
+            const dayCounts = days.map(
+              (date) => data.filter((d) => d.date.valueOf() == date.valueOf())?.[0]?.count ?? 0
+            );
+
             return [
               agency,
               html`<span title=${issuer}>${issuerToFriendlyName.get(issuer)}</span>`,
               String(ial),
-              ...days.map(
-                (date) => data.filter((d) => d.date.valueOf() == date.valueOf())?.[0]?.count ?? 0
-              ),
+              ...dayCounts,
+              dayCounts.reduce((d, total) => d + total, 0),
             ];
           });
         });
