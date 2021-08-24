@@ -1,6 +1,9 @@
 {
   "name": "identity-reporting",
   "version": "0.0.0",
+  "engines": {
+    "npm": ">=7"
+  },
   "scripts": {
     "build": "vite build",
     "dev": "vite",
