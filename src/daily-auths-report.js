@@ -36,7 +36,7 @@ import { group, ascending } from "d3-array";
  * @returns {ProcessedResult[]}
  */
 function process(report) {
-  const date = new Date(Date.parse(report.start));
+  const date = new Date(report.start);
   return report.results.map((r) => Object.assign({}, r, { date }));
 }
 
