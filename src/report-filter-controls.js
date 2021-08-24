@@ -77,8 +77,8 @@ function ReportFilterControls({ children }) {
         </label>
       </div>
       <div>
-        <label><input type="radio" name="ial" value="1" checked=${ial === 1} /> IAL1</label>
-        <label><input type="radio" name="ial" value="2" checked=${ial === 2} /> IAL2</label>
+        <label><input type="radio" name="ial" value="1" defaultChecked=${ial === 1} /> IAL1</label>
+        <label><input type="radio" name="ial" value="2" defaultChecked=${ial === 2} /> IAL2</label>
       </div>
       <div>
         <label>
