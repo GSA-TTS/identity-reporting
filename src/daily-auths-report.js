@@ -64,7 +64,7 @@ function tabulate(results, filterAgency, filterIal) {
   const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 
   const filteredResults = results.filter(
-    (d) => (!filterAgency || d.agency == filterAgency) && (!filterIal || d.ial == filterIal)
+    (d) => (!filterAgency || d.agency === filterAgency) && (!filterIal || d.ial === filterIal)
   );
 
   const days = Array.from(new Set(filteredResults.map((d) => d.date.valueOf())))
@@ -91,7 +91,7 @@ function tabulate(results, filterAgency, filterIal) {
         .flatMap(([issuer, ials]) => {
           return Array.from(ials).map(([ial, data]) => {
             const dayCounts = days.map(
-              (date) => data.filter((d) => d.date.valueOf() == date.valueOf())?.[0]?.count ?? 0
+              (date) => data.filter((d) => d.date.valueOf() === date.valueOf())?.[0]?.count ?? 0
             );
 
             return [
@@ -115,7 +115,7 @@ function tabulate(results, filterAgency, filterIal) {
 /**
  * @returns {import('preact').VNode}
  */
-function DailyAuthsReport({}) {
+function DailyAuthsReport() {
   const { start, finish, agency, ial, setAllAgencies } = useContext(ReportFilterControlsContext);
   const ref = useRef();
 
@@ -151,7 +151,7 @@ function DailyAuthsReport({}) {
             fill: agency ? "friendly_name" : "agency",
             title: (/** @type ProcessedResult */ d) => (agency ? d.friendly_name : d.agency),
             filter: (/** @type ProcessedResult */ d) =>
-              d.ial == ial && (!agency || d.agency == agency),
+              d.ial === ial && (!agency || d.agency === agency),
           }),
         ],
       })

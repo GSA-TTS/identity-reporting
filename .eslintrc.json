@@ -6,7 +6,8 @@
   },
   "plugins": ["prettier"],
   "rules": {
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "eqeqeq": "error"
   },
   "env": {
     "node": true,
@@ -14,6 +15,7 @@
     "mocha": true,
     "es6": true
   },
+  "extends": "eslint:recommended",
   "ignorePatterns": [
     "_site/**"
   ]

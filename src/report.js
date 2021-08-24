@@ -1,4 +1,4 @@
-import { utcFormat, utcParse } from "d3-time-format";
+import { utcFormat } from "d3-time-format";
 
 const yearFormat = utcFormat("%Y");
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
