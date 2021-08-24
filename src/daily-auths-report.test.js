@@ -1,12 +1,12 @@
 import { expect } from "chai";
-import { tabulate } from "./daily-auths-report";
-import { html } from "htm/preact";
+import { tabulate, loadData } from "./daily-auths-report";
 import { utcParse } from "d3-time-format";
+import fetchMock from "fetch-mock";
 
 describe("DailyAuthsReport", () => {
-  describe("#tabulate", () => {
-    const yearMonthDayParse = utcParse("%Y-%m-%d");
+  const yearMonthDayParse = /** @type {(s:string)=>Date} */ (utcParse("%Y-%m-%d"));
 
+  describe("#tabulate", () => {
     const results =
       /** @type {import('./daily-auths-report').ProcessedResult[]} */
       ([
@@ -40,7 +40,6 @@ describe("DailyAuthsReport", () => {
           issuer: "issuer1",
           agency: "agency1",
           friendly_name: "app1",
-          iaa: "iaa1",
           count: 111,
         },
       ]);
@@ -60,7 +59,14 @@ describe("DailyAuthsReport", () => {
     it("builds a table by agency, issuer, ial", () => {
       const table = tabulate(results);
 
-      expect(table.header).to.deep.eq(["Agency", "App", "IAL", "2021-01-01", "2021-01-02", "Total"]);
+      expect(table.header).to.deep.eq([
+        "Agency",
+        "App",
+        "IAL",
+        "2021-01-01",
+        "2021-01-02",
+        "Total",
+      ]);
       expect(table.body).to.have.lengthOf(3);
       expect(simplifyVNodes(table.body)).to.deep.equal([
         ["agency1", "issuer1", "1", 100, 111, 211],
@@ -82,5 +88,31 @@ describe("DailyAuthsReport", () => {
 
       expect(simplifyVNodes(table.body)).to.deep.equal([["agency1", "issuer1", "2", 1, 1]]);
     });
+  });
+
+  describe("#loadData", () => {
+    it("combines data across separate fetch requests", () => {
+      const fetch = fetchMock
+        .sandbox()
+        .get("/prod/daily-auths-report/2021/2021-01-01.daily-auths-report.json", {
+          start: "2020-01-01",
+          results: [{ count: 1 }],
+        })
+        .get("/prod/daily-auths-report/2021/2021-01-02.daily-auths-report.json", {
+          start: "2020-01-02",
+          results: [{ count: 10 }],
+        });
+
+      return loadData(yearMonthDayParse("2021-01-01"), yearMonthDayParse("2021-01-03"), fetch).then(
+        (results) => {
+          expect(results).to.have.lengthOf(2);
+          results.forEach((result) => {
+            expect(result).to.have.property("date");
+          });
+        }
+      );
+    });
+
+    after(() => fetchMock.restore());
   });
 });
