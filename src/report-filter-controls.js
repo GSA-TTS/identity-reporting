@@ -67,13 +67,13 @@ function ReportFilterControls({ children }) {
       <div>
         <label>
           Start
-          <input type="date" name="start" value=${yearMonthDayFormat(start)} />
+          <input type="date" name="start" defaultValue=${yearMonthDayFormat(start)} />
         </label>
       </div>
       <div>
         <label>
           Finish
-          <input type="date" name="finish" value=${yearMonthDayFormat(finish)} />
+          <input type="date" name="finish" defaultValue=${yearMonthDayFormat(finish)} />
         </label>
       </div>
       <div>
