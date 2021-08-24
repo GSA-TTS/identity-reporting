@@ -87,7 +87,7 @@ function ReportFilterControls({ children }) {
             <option value="">All</option>
             <optgroup label="Agencies">
               ${allAgencies.map((a) => {
-                return html`<option value=${a} selected=${a === agency}>${a}</option>`;
+                return html`<option value=${a} defaultSelected=${a === agency}>${a}</option>`;
               })}
             </optgroup>
           </select>
