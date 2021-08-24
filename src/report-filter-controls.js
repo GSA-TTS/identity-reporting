@@ -1,11 +1,11 @@
 import { html } from "htm/preact";
 import { createContext } from "preact";
 import { useState } from "preact/hooks";
-import { timeFormat, timeParse } from "d3-time-format";
+import { utcFormat, utcParse } from "d3-time-format";
 import { utcWeek } from "d3-time";
 
-const yearMonthDayFormat = timeFormat("%Y-%m-%d");
-const yearMonthDayParse = timeParse("%Y-%m-%d");
+const yearMonthDayFormat = utcFormat("%Y-%m-%d");
+const yearMonthDayParse = utcParse("%Y-%m-%d");
 const DEFAULT_IAL = 1;
 
 const endOfPreviousWeek = utcWeek.floor(new Date());
