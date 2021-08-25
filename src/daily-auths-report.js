@@ -162,7 +162,7 @@ function DailyAuthsReport() {
         ],
       })
     );
-  }, [data, start.valueOf(), finish.valueOf(), ial, agency]);
+  }, [data, ial, agency]);
 
   return html` <div>
     <div class="chart-wrapper" ref=${ref} />
