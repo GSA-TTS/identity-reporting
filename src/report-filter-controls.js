@@ -51,14 +51,13 @@ function ReportFilterControls({
   start: startParam,
   finish: finishParam,
   ial: ialParam,
-  agency: agencyParam,
+  agency,
 }) {
   const [allAgencies, setAllAgencies] = useState([]);
 
   const start = (startParam ? yearMonthDayParse(startParam) : null) || startOfPreviousWeek;
   const finish = (finishParam ? yearMonthDayParse(finishParam) : null) || endOfPreviousWeek;
   const ial = parseInt(ialParam || "", 10) || DEFAULT_IAL;
-  const agency = agencyParam?.replace(/\+/g, " ");
 
   const filterControls = {
     start,
