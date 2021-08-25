@@ -9,7 +9,11 @@ const BASE_PATH = import.meta.env.BASE_URL;
  * @returns {string}
  */
 function getFullPath(path) {
-  return [BASE_PATH, path].filter((p) => p != "/").join("/") || "/";
+  if (BASE_PATH != '/' && path.startsWith(BASE_PATH)) {
+    return path;
+  } else {
+    return ['', BASE_PATH, path].map((p) => p.replace(/^\/|\/$/g, '')).join("/");
+  }
 }
 
 /**
