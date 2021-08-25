@@ -2,7 +2,7 @@ import { cloneElement, toChildArray } from "preact";
 import { html } from "htm/preact";
 import { Router as BaseRouter, Link as BaseLink, route as baseRoute } from "preact-router";
 
-const BASE_PATH = import.meta.env.BASE_URL;
+const BASE_PATH = ((base) => (base != "/" ? base : undefined))(import.meta.env.BASE_URL);
 
 function getFullPath(path) {
   return [BASE_PATH, path].filter(Boolean).join("/");
