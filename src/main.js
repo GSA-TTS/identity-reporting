@@ -1,7 +1,7 @@
 import "./css/style.css";
 import { html } from "htm/preact";
 import { render } from "preact";
-import { Link, Route } from "wouter-preact";
+import { Router, Link } from "preact-router";
 import DailyAuthsReport from "./daily-auths-report";
 import ReportFilterControls from "./report-filter-controls";
 
@@ -13,8 +13,8 @@ render(
         <div><${Link} href="/daily-auths-report"> Daily Auths Report <//></div>
       </nav>
       <main>
-        <${Route} path="/daily-auths-report">
-          <${ReportFilterControls}>
+        <${Router}>
+          <${ReportFilterControls} path="/daily-auths-report">
             <${DailyAuthsReport} />
           <//>
         <//>

@@ -23,7 +23,7 @@
     "htm": "^3.1.0",
     "preact": "^10.5.14",
     "preact-fetching": "^0.1.0",
-    "wouter-preact": "^2.7.4"
+    "preact-router": "^3.2.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",
