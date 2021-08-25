@@ -131,8 +131,14 @@ function DailyAuthsReport() {
     const allAgencies = Array.from(new Set(data.map((d) => d.agency)))
       .filter((x) => !!x)
       .sort();
-    setAllAgencies(allAgencies);
 
+    // This needs to be in a separate effect from below because
+    // this causes the <select> to refresh and triggers another change event
+    // and a bunch of bad cycles
+    setAllAgencies(allAgencies);
+  }, [data]);
+
+  useEffect(() => {
     if (ref?.current?.children[0]) {
       ref.current.children[0].remove();
     }
@@ -145,7 +151,7 @@ function DailyAuthsReport() {
         style: {},
         marks: [
           Plot.ruleY([0]),
-          Plot.barY(data, {
+          Plot.barY(data || [], {
             x: "date",
             y: "count",
             fill: agency ? "friendly_name" : "agency",
@@ -156,7 +162,7 @@ function DailyAuthsReport() {
         ],
       })
     );
-  }, [data]);
+  }, [data, start.valueOf(), finish.valueOf(), ial, agency]);
 
   return html` <div>
     <div class="chart-wrapper" ref=${ref} />

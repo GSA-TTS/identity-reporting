@@ -51,13 +51,14 @@ function ReportFilterControls({
   start: startParam,
   finish: finishParam,
   ial: ialParam,
-  agency,
+  agency: agencyParam,
 }) {
   const [allAgencies, setAllAgencies] = useState([]);
 
   const start = (startParam ? yearMonthDayParse(startParam) : null) || startOfPreviousWeek;
   const finish = (finishParam ? yearMonthDayParse(finishParam) : null) || endOfPreviousWeek;
   const ial = parseInt(ialParam || "", 10) || DEFAULT_IAL;
+  const agency = agencyParam?.replace(/\+/g, " ");
 
   const filterControls = {
     start,
@@ -70,15 +71,15 @@ function ReportFilterControls({
   /**
    * @param {Event} event
    */
-  function onSubmit(event) {
-    const form = /** @type {HTMLFormElement} */ (event.target);
+  function update(event) {
+    const form = /** @type {HTMLFormElement} */ (event.currentTarget);
     const formData = /** @type {string[][]} */ (Array.from(new FormData(form)));
     route(`${path}?${new URLSearchParams(formData).toString()}`);
     event.preventDefault();
   }
 
   return html`<div>
-    <form onSubmit=${onSubmit}>
+    <form onChange=${update}>
       <div>
         <label>
           Start
@@ -109,7 +110,6 @@ function ReportFilterControls({
         </label>
       </div>
       <div>
-        <input type="submit" value="Update" />
         <a href="?"> (Reset) </a>
       </div>
     </form>
