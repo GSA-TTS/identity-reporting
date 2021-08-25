@@ -74,7 +74,7 @@ function ReportFilterControls({
   function update(event) {
     const form = /** @type {HTMLFormElement} */ (event.currentTarget);
     const formData = /** @type {string[][]} */ (Array.from(new FormData(form)));
-    route(`${path}?${new URLSearchParams(formData).toString()}`);
+    route(`${path}?${new URLSearchParams(formData).toString().replace(/\+/g, "%20")}`);
     event.preventDefault();
   }
 
