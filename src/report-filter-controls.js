@@ -1,9 +1,9 @@
 import { html } from "htm/preact";
 import { createContext } from "preact";
 import { useState } from "preact/hooks";
-import { route } from "preact-router";
 import { utcFormat, utcParse } from "d3-time-format";
 import { utcWeek } from "d3-time";
+import { route } from "./router";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 const yearMonthDayParse = utcParse("%Y-%m-%d");

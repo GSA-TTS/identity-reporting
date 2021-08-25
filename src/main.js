@@ -1,7 +1,7 @@
 import "./css/style.css";
 import { html } from "htm/preact";
 import { render } from "preact";
-import { Router, Link } from "preact-router";
+import { Router, Link } from "./router";
 import DailyAuthsReport from "./daily-auths-report";
 import ReportFilterControls from "./report-filter-controls";
 
