@@ -70,15 +70,15 @@ function ReportFilterControls({
   /**
    * @param {Event} event
    */
-  function onSubmit(event) {
-    const form = /** @type {HTMLFormElement} */ (event.target);
+  function update(event) {
+    const form = /** @type {HTMLFormElement} */ (event.currentTarget);
     const formData = /** @type {string[][]} */ (Array.from(new FormData(form)));
-    route(`${path}?${new URLSearchParams(formData).toString()}`);
+    route(`${path}?${new URLSearchParams(formData).toString().replace(/\+/g, "%20")}`);
     event.preventDefault();
   }
 
   return html`<div>
-    <form onSubmit=${onSubmit}>
+    <form onChange=${update}>
       <div>
         <label>
           Start
@@ -109,7 +109,6 @@ function ReportFilterControls({
         </label>
       </div>
       <div>
-        <input type="submit" value="Update" />
         <a href="?"> (Reset) </a>
       </div>
     </form>
