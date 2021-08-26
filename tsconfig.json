@@ -3,7 +3,7 @@
     "allowJs": true,
     "checkJs": true,
     "module": "ESNext",
-    "target": "ESNext",
+    "target": "es2020",
     "strict": true,
     "noEmit": true,
     "moduleResolution": "node",
