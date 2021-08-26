@@ -11,13 +11,12 @@ const BASE_PATH = import.meta.env.BASE_URL;
  * @param {string=} path
  * @returns {string}
  */
-function getFullPath(path = "") {
-  if (BASE_PATH !== "/" && path.startsWith(BASE_PATH)) {
-    return path;
-  } else {
-    return ["", BASE_PATH, path].map((p) => p.replace(/^\/|\/$/g, "")).join("/");
-  }
-}
+const getFullPath = (path = "") =>
+  "/" +
+  [BASE_PATH, path]
+    .map((p) => p.replace(/^\/|\/$/g, ""))
+    .filter(Boolean)
+    .join("/");
 
 /**
  * @typedef RouterProps
