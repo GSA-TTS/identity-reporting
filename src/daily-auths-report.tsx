@@ -38,7 +38,7 @@ interface Result {
   agency: string;
 }
 
-interface ProcessedResult extends Result {
+export interface ProcessedResult extends Result {
   date: Date;
 }
 
