@@ -20,5 +20,11 @@ describe("router", () => {
       const basePath = "/some/prefix/";
       expect(getFullPath(path, basePath)).to.eq(path);
     });
+
+    it("does not remove a trailing slash", () => {
+      const path = "/foo/";
+      const basePath = "/some/prefix/";
+      expect(getFullPath(path, basePath)).to.eq("/some/prefix/foo/");
+    });
   });
 });
