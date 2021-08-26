@@ -31,6 +31,9 @@ interface Result {
 
   issuer: string;
 
+  /**
+   * This is always present but we don't use it, so easier to mark as optional
+   */
   iaa?: string;
 
   friendly_name: string;
