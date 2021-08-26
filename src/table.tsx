@@ -18,8 +18,8 @@ function Table({ data, numberFormatter = String }: TableProps): VNode {
     <table>
       <thead>
         <tr>
-          {header.map((h) => (
-            <th>{h}</th>
+          {header.map((head) => (
+            <th>{head}</th>
           ))}
         </tr>
       </thead>
