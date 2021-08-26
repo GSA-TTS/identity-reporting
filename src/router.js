@@ -2,23 +2,26 @@ import { cloneElement, toChildArray } from "preact";
 import { html } from "htm/preact";
 import { Router as BaseRouter, Link as BaseLink, route as baseRoute } from "preact-router";
 
+/** @typedef {import('preact-router').RoutableProps} RoutableProps */
+/** @typedef {import('preact').VNode<P>} VNode @template P */
+
 const BASE_PATH = import.meta.env.BASE_URL;
 
 /**
- * @param {string} path
+ * @param {string=} path
  * @returns {string}
  */
-function getFullPath(path) {
-  if (BASE_PATH != '/' && path.startsWith(BASE_PATH)) {
+function getFullPath(path = "") {
+  if (BASE_PATH !== "/" && path.startsWith(BASE_PATH)) {
     return path;
   } else {
-    return ['', BASE_PATH, path].map((p) => p.replace(/^\/|\/$/g, '')).join("/");
+    return ["", BASE_PATH, path].map((p) => p.replace(/^\/|\/$/g, "")).join("/");
   }
 }
 
 /**
  * @typedef RouterProps
- * @property {import('preact').VNode[]} children
+ * @property {import('preact').ComponentChildren} children
  */
 
 /**
@@ -26,9 +29,11 @@ function getFullPath(path) {
  * @returns {import('preact').VNode}
  */
 export function Router({ children }) {
+  const childrenAsArray = /** @type {VNode<RoutableProps>[]} */ (toChildArray(children));
+
   return html`
     <${BaseRouter}>
-      ${toChildArray(children).map(
+      ${childrenAsArray.map(
         (child) =>
           typeof child === "object" && cloneElement(child, { path: getFullPath(child.props.path) })
       )}
