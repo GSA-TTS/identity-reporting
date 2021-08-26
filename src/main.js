@@ -1,23 +1,18 @@
 import "./css/style.css";
 import { html } from "htm/preact";
 import { render } from "preact";
-import { Link, Route } from "wouter-preact";
-import DailyAuthsReport from "./daily-auths-report";
-import ReportFilterControls from "./report-filter-controls";
+import { Link } from "./router";
+import { Routes } from "./routes";
 
 render(
   html`
     <div>
       <nav>
         <div><${Link} href="/">Home<//></div>
-        <div><${Link} href="/daily-auths-report"> Daily Auths Report <//></div>
+        <div><${Link} href="/daily-auths-report/"> Daily Auths Report <//></div>
       </nav>
       <main>
-        <${Route} path="/daily-auths-report">
-          <${ReportFilterControls}>
-            <${DailyAuthsReport} />
-          <//>
-        <//>
+        <${Routes} />
       </main>
     </div>
   `,

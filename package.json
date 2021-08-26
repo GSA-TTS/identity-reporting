@@ -6,7 +6,9 @@
   },
   "scripts": {
     "build": "vite build",
+    "postbuild": "npm run generate-routes",
     "dev": "vite",
+    "generate-routes": "node -r esbuild-register bin/generate-routes.js",
     "federalist": "npm run build -- --base=$BASEURL",
     "prettier:fix": "npm run test:lint -- --fix",
     "serve": "vite preview",
@@ -23,7 +25,7 @@
     "htm": "^3.1.0",
     "preact": "^10.5.14",
     "preact-fetching": "^0.1.0",
-    "wouter-preact": "^2.7.4"
+    "preact-router": "^3.2.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",

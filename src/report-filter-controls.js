@@ -3,6 +3,7 @@ import { createContext } from "preact";
 import { useState } from "preact/hooks";
 import { utcFormat, utcParse } from "d3-time-format";
 import { utcWeek } from "d3-time";
+import { route } from "./router";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 const yearMonthDayParse = utcParse("%Y-%m-%d");
@@ -33,26 +34,30 @@ const ReportFilterControlsContext = createContext(
 /**
  * @typedef ReportFilterControlsProps
  * @property {import('preact').VNode[]} children
+ * @property {string} path
+ * @property {string=} start
+ * @property {string=} finish
+ * @property {string=} ial
+ * @property {string=} agency
  */
 
 /**
  * @param {ReportFilterControlsProps} props
  * @returns {import('preact').VNode}
  */
-function ReportFilterControls({ children }) {
+function ReportFilterControls({
+  children,
+  path,
+  start: startParam,
+  finish: finishParam,
+  ial: ialParam,
+  agency,
+}) {
   const [allAgencies, setAllAgencies] = useState([]);
-
-  const searchParams = new URLSearchParams(document.location.search);
-
-  const startParam = searchParams.get("start");
-  const finishParam = searchParams.get("finish");
-  const ialParam = searchParams.get("ial");
 
   const start = (startParam ? yearMonthDayParse(startParam) : null) || startOfPreviousWeek;
   const finish = (finishParam ? yearMonthDayParse(finishParam) : null) || endOfPreviousWeek;
   const ial = parseInt(ialParam || "", 10) || DEFAULT_IAL;
-
-  const agency = searchParams.get("agency");
 
   const filterControls = {
     start,
@@ -62,8 +67,18 @@ function ReportFilterControls({ children }) {
     setAllAgencies,
   };
 
+  /**
+   * @param {Event} event
+   */
+  function update(event) {
+    const form = /** @type {HTMLFormElement} */ (event.currentTarget);
+    const formData = /** @type {string[][]} */ (Array.from(new FormData(form)));
+    route(`${path}?${new URLSearchParams(formData).toString().replace(/\+/g, "%20")}`);
+    event.preventDefault();
+  }
+
   return html`<div>
-    <form>
+    <form onChange=${update}>
       <div>
         <label>
           Start
@@ -94,7 +109,6 @@ function ReportFilterControls({ children }) {
         </label>
       </div>
       <div>
-        <input type="submit" value="Update" />
         <a href="?"> (Reset) </a>
       </div>
     </form>

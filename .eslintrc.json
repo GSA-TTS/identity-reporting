@@ -7,7 +7,8 @@
   "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": "error",
-    "eqeqeq": "error"
+    "eqeqeq": "error",
+    "semi": "error"
   },
   "env": {
     "node": true,

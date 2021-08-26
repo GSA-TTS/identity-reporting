@@ -2,11 +2,13 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
-    "target": "ESNext",
+    "module": "ESNext",
+    "target": "es2020",
     "strict": true,
     "noEmit": true,
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["mocha"]
   },
   "include": ["./src"]
 }
