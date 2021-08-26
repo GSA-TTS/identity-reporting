@@ -11,13 +11,13 @@ const BASE_PATH = import.meta.env.BASE_URL;
  * @param {string=} path
  * @returns {string}
  */
-function getFullPath(path = "") {
-  if (path.startsWith(BASE_PATH)) {
+export function getFullPath(path = "", basePath = BASE_PATH) {
+  if (path.startsWith(basePath)) {
     return path;
   } else {
     return (
       "/" +
-      [BASE_PATH, path]
+      [basePath, path]
         .map((p) => p.replace(/^\/|\/$/g, ""))
         .filter(Boolean)
         .join("/")
