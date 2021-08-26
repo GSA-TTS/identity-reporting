@@ -12,19 +12,8 @@ const { BASE_URL = "" } = import.meta.env ?? {};
  * @param {string=} path
  * @returns {string}
  */
-export function getFullPath(path = "", basePath = BASE_URL) {
-  if (path.startsWith(basePath)) {
-    return path;
-  } else {
-    return (
-      "/" +
-      [basePath, path]
-        .map((p) => p.replace(/^\/|\/$/g, ""))
-        .filter(Boolean)
-        .join("/")
-    );
-  }
-}
+export const getFullPath = (path = "", basePath = BASE_URL) =>
+  path.startsWith(basePath) ? path : basePath + path.replace(/^\//, "");
 
 /**
  * @typedef RouterProps
