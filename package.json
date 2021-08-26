@@ -12,7 +12,7 @@
     "serve": "vite preview",
     "test:lint": "eslint .",
     "test:typecheck": "tsc",
-    "test:unit": "mocha -r mocha-setup.mjs 'src/**/*.test.js'",
+    "test:unit": "mocha -r esbuild-register 'src/**/*.test.js'",
     "test": "run-p test:*"
   },
   "dependencies": {

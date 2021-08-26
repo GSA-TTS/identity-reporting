@@ -8,7 +8,7 @@
     "noEmit": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "types": ["vite/client", "mocha"]
+    "types": ["mocha"]
   },
   "include": ["./src"]
 }

@@ -5,7 +5,7 @@ import { Router as BaseRouter, Link as BaseLink, route as baseRoute } from "prea
 /** @typedef {import('preact-router').RoutableProps} RoutableProps */
 /** @typedef {import('preact').VNode<P>} VNode @template P */
 
-const BASE_PATH = import.meta.env.BASE_URL;
+const BASE_PATH = /** @type {Record<string,any>} */ (import.meta).env?.BASE_URL;
 
 /**
  * @param {string=} path
