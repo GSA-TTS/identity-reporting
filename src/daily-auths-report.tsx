@@ -6,10 +6,9 @@ import { utcDays } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import { format } from "d3-format";
 import { useQuery } from "preact-fetching";
-import Table from "./table.js";
+import Table, { TableData } from "./table";
 import { utcFormat } from "d3-time-format";
 import { group, ascending } from "d3-array";
-import { TableData } from "./table";
 
 interface DailyAuthsReportData {
   results: Result[];
