@@ -5,13 +5,13 @@ import { Router as BaseRouter, Link as BaseLink, route as baseRoute } from "prea
 /** @typedef {import('preact-router').RoutableProps} RoutableProps */
 /** @typedef {import('preact').VNode<P>} VNode @template P */
 
-const BASE_PATH = /** @type {Record<string,any>} */ (import.meta).env?.BASE_URL;
+const { BASE_URL = "" } = /** @type {Record<string,any>} */ (import.meta).env ?? {};
 
 /**
  * @param {string=} path
  * @returns {string}
  */
-export function getFullPath(path = "", basePath = BASE_PATH) {
+export function getFullPath(path = "", basePath = BASE_URL) {
   if (path.startsWith(basePath)) {
     return path;
   } else {
