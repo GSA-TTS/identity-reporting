@@ -3,7 +3,7 @@ import { Router } from "../router";
 import ReportRoute from "./report";
 
 export const ROUTES = {
-  "/daily-auths-report": ReportRoute,
+  "/daily-auths-report/": ReportRoute,
 };
 
 export function Routes() {

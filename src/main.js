@@ -9,7 +9,7 @@ render(
     <div>
       <nav>
         <div><${Link} href="/">Home<//></div>
-        <div><${Link} href="/daily-auths-report"> Daily Auths Report <//></div>
+        <div><${Link} href="/daily-auths-report/"> Daily Auths Report <//></div>
       </nav>
       <main>
         <${Routes} />
