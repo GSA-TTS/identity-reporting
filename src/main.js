@@ -2,8 +2,11 @@ import "./css/style.css";
 import { html } from "htm/preact";
 import { render } from "preact";
 import { Router, Link } from "./router";
-import DailyAuthsReport from "./daily-auths-report";
-import ReportFilterControls from "./report-filter-controls";
+import ReportRoute from "./routes/report";
+
+export const ROUTES = {
+  "/daily-auths-report": ReportRoute,
+};
 
 render(
   html`
@@ -14,9 +17,7 @@ render(
       </nav>
       <main>
         <${Router}>
-          <${ReportFilterControls} path="/daily-auths-report">
-            <${DailyAuthsReport} />
-          <//>
+          ${Object.entries(ROUTES).map(([path, Component]) => html`<${Component} path=${path} />`)}
         <//>
       </main>
     </div>
