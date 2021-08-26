@@ -1,5 +1,6 @@
 {
   "root": true,
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2021
@@ -8,7 +9,8 @@
   "rules": {
     "prettier/prettier": "error",
     "eqeqeq": "error",
-    "semi": "error"
+    "semi": "error",
+    "no-shadow": "error"
   },
   "env": {
     "node": true,

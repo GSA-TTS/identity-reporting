@@ -4,9 +4,9 @@ const yearFormat = utcFormat("%Y");
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 
 interface PathParameters {
-  reportName: string,
-  date: Date,
-  env?: string,
+  reportName: string;
+  date: Date;
+  env?: string;
 }
 
 function path({ reportName, date, env = "prod" }: PathParameters) {
