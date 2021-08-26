@@ -1,4 +1,4 @@
-import { createContext, h, VNode } from "preact";
+import { createContext, h, VNode, ComponentChildren } from "preact";
 import { StateUpdater, useState } from "preact/hooks";
 import { utcFormat, utcParse } from "d3-time-format";
 import { utcWeek } from "d3-time";
@@ -26,8 +26,8 @@ const ReportFilterControlsContext = createContext({
   setAllAgencies: () => null,
 } as ReportFilterControlsContextValues);
 
-interface ReportFilterControlsProps {
-  children: VNode[];
+export interface ReportFilterControlsProps {
+  children: ComponentChildren;
   path: string;
   start?: string;
   finish?: string;
