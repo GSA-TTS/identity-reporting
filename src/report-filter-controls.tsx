@@ -93,7 +93,6 @@ function ReportFilterControls({
             <select name="agency">
               <option value="">All</option>
               <optgroup label="Agencies">
-                $
                 {allAgencies.map((a) => {
                   return (
                     <option value={a} default={a === agency}>
