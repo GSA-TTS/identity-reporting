@@ -41,12 +41,7 @@ export function Router({ children }) {
 }
 
 /**
- * @typedef LinkProps
- * @property {string} href
- */
-
-/**
- * @param {LinkProps} props
+ * @param {preact.JSX.HTMLAttributes} props
  * @returns {import('preact').VNode}
  */
 export function Link({ href, ...otherProps }) {
