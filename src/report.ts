@@ -3,17 +3,13 @@ import { utcFormat } from "d3-time-format";
 const yearFormat = utcFormat("%Y");
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 
-/**
- * @typedef PathOptions
- * @prop {string} reportName
- * @prop {Date} date
- * @prop {string=} env
- */
+interface PathParameters {
+  reportName: string,
+  date: Date,
+  env?: string,
+}
 
-/**
- * @param {PathOptions} options
- */
-function path({ reportName, date, env = "prod" }) {
+function path({ reportName, date, env = "prod" }: PathParameters) {
   const year = yearFormat(date);
   const day = yearMonthDayFormat(date);
 

@@ -1,4 +1,4 @@
-import { path as reportPath } from "./report.js";
+import { path as reportPath } from "./report";
 import { h, VNode } from "preact";
 import { useContext, useEffect, useRef } from "preact/hooks";
 import { ReportFilterControlsContext } from "./report-filter-controls";
