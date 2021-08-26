@@ -1,0 +1,43 @@
+import { h, VNode } from "preact";
+
+export type TableRow = (string | number | VNode)[];
+
+export interface TableData {
+  header: TableRow;
+  body: TableRow[];
+}
+
+interface TableProps {
+  data: TableData;
+  numberFormatter?: (n: number) => string;
+}
+
+function Table({ data, numberFormatter = String }: TableProps): VNode {
+  const { header, body } = data;
+  return (
+    <table>
+      <thead>
+        <tr>
+          {header.map((h) => (
+            <th>{h}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {body.map((row) => (
+          <tr>
+            {row.map((d) =>
+              typeof d === "number" ? (
+                <td class="table-number">{numberFormatter(d)}</td>
+              ) : (
+                <td>{d}</td>
+              )
+            )}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+export default Table;

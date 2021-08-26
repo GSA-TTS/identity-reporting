@@ -111,7 +111,6 @@ function tabulate(
   return {
     header,
     body,
-    numberFormatter: format(","),
   };
 }
 
@@ -166,7 +165,7 @@ function DailyAuthsReport(): VNode {
   return (
     <div>
       <div class="chart-wrapper" ref={ref} />
-      <Table data={tabulate(data || [], agency, ial)} />
+      <Table data={tabulate(data || [], agency, ial)} numberFormatter={format(",")} />
     </div>
   );
 }
