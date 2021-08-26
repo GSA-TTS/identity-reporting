@@ -5,6 +5,7 @@ import { Router as BaseRouter, Link as BaseLink, route as baseRoute } from "prea
 /** @typedef {import('preact-router').RoutableProps} RoutableProps */
 /** @typedef {import('preact').VNode<P>} VNode @template P */
 
+// @ts-ignore import.meta.env is written by vite in compilation
 const { BASE_URL = "" } = import.meta.env ?? {};
 
 /**
