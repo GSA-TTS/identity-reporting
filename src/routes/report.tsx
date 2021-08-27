@@ -1,4 +1,4 @@
-import { VNode, h } from "preact";
+import { VNode } from "preact";
 import DailyAuthsReport from "../daily-auths-report";
 import ReportFilterControls from "../report-filter-controls";
 

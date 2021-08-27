@@ -1,4 +1,4 @@
-import { h, VNode } from "preact";
+import { VNode } from "preact";
 import { Router } from "../router";
 import ReportRoute from "./report";
 

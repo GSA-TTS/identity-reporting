@@ -1,4 +1,4 @@
-import { createContext, h, VNode, ComponentChildren } from "preact";
+import { createContext, VNode, ComponentChildren } from "preact";
 import { StateUpdater, useState } from "preact/hooks";
 import { utcFormat, utcParse } from "d3-time-format";
 import { utcWeek } from "d3-time";
