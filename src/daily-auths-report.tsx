@@ -1,5 +1,5 @@
 import { path as reportPath } from "./report";
-import { h, VNode } from "preact";
+import { VNode } from "preact";
 import { useContext, useEffect, useRef } from "preact/hooks";
 import { ReportFilterControlsContext } from "./report-filter-controls";
 import { utcDays } from "d3-time";

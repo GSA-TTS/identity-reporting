@@ -1,6 +1,6 @@
 import { mkdir, copyFile } from "fs/promises";
 import { join } from "path";
-import { ROUTES } from "../src/routes/index";
+import { ROUTES } from "../src/routes";
 
 Promise.all(
   Object.keys(ROUTES).map(async (path) => {
