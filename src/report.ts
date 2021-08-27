@@ -9,7 +9,7 @@ interface PathParameters {
   env?: string;
 }
 
-function path({ reportName, date, env = "prod" }: PathParameters) {
+function path({ reportName, date, env = "prod" }: PathParameters): string {
   const year = yearFormat(date);
   const day = yearMonthDayFormat(date);
 
