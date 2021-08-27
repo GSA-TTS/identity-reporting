@@ -1,4 +1,4 @@
-import { path } from "./report.js";
+import { path } from "./report";
 import { expect } from "chai";
 
 describe("Report", () => {

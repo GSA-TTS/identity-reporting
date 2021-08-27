@@ -1,59 +1,55 @@
+import { VNode } from "preact";
 import { expect } from "chai";
-import { tabulate, loadData } from "./daily-auths-report";
+import { tabulate, loadData, ProcessedResult } from "./daily-auths-report";
+import { TableRow } from "./table";
 import { utcParse } from "d3-time-format";
 import fetchMock from "fetch-mock";
 
 describe("DailyAuthsReport", () => {
-  const yearMonthDayParse = /** @type {(s:string)=>Date} */ (utcParse("%Y-%m-%d"));
+  const yearMonthDayParse = utcParse("%Y-%m-%d") as (s: string) => Date;
 
   describe("#tabulate", () => {
-    const results =
-      /** @type {import('./daily-auths-report').ProcessedResult[]} */
-      ([
-        {
-          date: yearMonthDayParse("2021-01-01"),
-          ial: 1,
-          issuer: "issuer1",
-          agency: "agency1",
-          friendly_name: "app1",
-          count: 100,
-        },
-        {
-          date: yearMonthDayParse("2021-01-01"),
-          ial: 2,
-          issuer: "issuer1",
-          agency: "agency1",
-          friendly_name: "app1",
-          count: 1,
-        },
-        {
-          date: yearMonthDayParse("2021-01-01"),
-          ial: 1,
-          issuer: "issuer2",
-          agency: "agency2",
-          friendly_name: "app2",
-          count: 1000,
-        },
-        {
-          date: yearMonthDayParse("2021-01-02"),
-          ial: 1,
-          issuer: "issuer1",
-          agency: "agency1",
-          friendly_name: "app1",
-          count: 111,
-        },
-      ]);
+    const results = [
+      {
+        date: yearMonthDayParse("2021-01-01"),
+        ial: 1,
+        issuer: "issuer1",
+        agency: "agency1",
+        friendly_name: "app1",
+        count: 100,
+      },
+      {
+        date: yearMonthDayParse("2021-01-01"),
+        ial: 2,
+        issuer: "issuer1",
+        agency: "agency1",
+        friendly_name: "app1",
+        count: 1,
+      },
+      {
+        date: yearMonthDayParse("2021-01-01"),
+        ial: 1,
+        issuer: "issuer2",
+        agency: "agency2",
+        friendly_name: "app2",
+        count: 1000,
+      },
+      {
+        date: yearMonthDayParse("2021-01-02"),
+        ial: 1,
+        issuer: "issuer1",
+        agency: "agency1",
+        friendly_name: "app1",
+        count: 111,
+      },
+    ] as ProcessedResult[];
 
-    /**
-     * @param {import('./table').TableRow[]} body
-     * @return {(string|number)[][]}
-     * */
-    function simplifyVNodes(body) {
+    function simplifyVNodes(body: TableRow[]): (string | number)[][] {
       return body.map(([agency, issuerSpan, ...rest]) => [
         agency,
-        /** @type import('preact').VNode */ (issuerSpan).props?.title,
+        (issuerSpan as VNode<{ title: string }>).props.title,
         ...rest,
-      ]);
+      ]) as (string | number)[][];
     }
 
     it("builds a table by agency, issuer, ial", () => {

@@ -1,14 +1,17 @@
 {
   "root": true,
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2021
   },
-  "plugins": ["prettier"],
+  "plugins": ["prettier", "@typescript-eslint"],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   "rules": {
     "prettier/prettier": "error",
     "eqeqeq": "error",
-    "semi": "error"
+    "semi": "error",
+    "no-shadow": "error"
   },
   "env": {
     "node": true,
@@ -16,8 +19,5 @@
     "mocha": true,
     "es6": true
   },
-  "extends": "eslint:recommended",
-  "ignorePatterns": [
-    "_site/**"
-  ]
+  "ignorePatterns": ["_site/**"]
 }

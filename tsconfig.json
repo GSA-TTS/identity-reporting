@@ -4,6 +4,14 @@
     "checkJs": true,
     "module": "ESNext",
     "target": "es2020",
+    "jsx": "preserve",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    "jsxImportSource": "preact",
+    "baseUrl": "./",
+    "paths": {
+      "*": ["typings/*", "*"]
+    },
     "strict": true,
     "noEmit": true,
     "moduleResolution": "node",

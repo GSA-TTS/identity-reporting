@@ -1,51 +1,56 @@
-import { path as reportPath } from "./report.js";
-import { html } from "htm/preact";
+import { path as reportPath } from "./report";
+import { VNode } from "preact";
 import { useContext, useEffect, useRef } from "preact/hooks";
 import { ReportFilterControlsContext } from "./report-filter-controls";
 import { utcDays } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import { format } from "d3-format";
 import { useQuery } from "preact-fetching";
-import Table from "./table.js";
+import Table, { TableData } from "./table";
 import { utcFormat } from "d3-time-format";
 import { group, ascending } from "d3-array";
 
-/**
- * @typedef DailyAuthsReportData
- * @property {Result[]} results
- * @property {string} start ISO8601 string
- * @property {string} finish ISO8601 string
- */
+interface DailyAuthsReportData {
+  results: Result[];
 
-/**
- * @typedef Result
- * @property {number} count
- * @property {1|2} ial
- * @property {string} issuer
- * @property {string=} iaa This is always present but we don't use it, so easier to mark as optional
- * @property {string} friendly_name
- * @property {string} agency
- */
+  /**
+   * ISO8601 string
+   */
+  start: string;
 
-/**
- * @typedef {Result & { date: Date } } ProcessedResult
- */
+  /**
+   * ISO8601 string
+   */
+  finish: string;
+}
 
-/**
- * @param {DailyAuthsReportData} report
- * @returns {ProcessedResult[]}
- */
-function process(report) {
+interface Result {
+  count: number;
+
+  ial: 1 | 2;
+
+  issuer: string;
+
+  /**
+   * This is always present but we don't use it, so easier to mark as optional
+   */
+  iaa?: string;
+
+  friendly_name: string;
+
+  agency: string;
+}
+
+export interface ProcessedResult extends Result {
+  date: Date;
+}
+
+function process(report: DailyAuthsReportData): ProcessedResult[] {
   const date = new Date(report.start);
   return report.results.map((r) => Object.assign({}, r, { date }));
 }
 
-/**
- * @param {Date} start
- * @param {Date} finish
- * @return {Promise<ProcessedResult[]>}
- */
-function loadData(start, finish, fetch = window.fetch) {
+function loadData(start: Date, finish: Date, fetch = window.fetch): Promise<ProcessedResult[]> {
   return Promise.all(
     utcDays(start, finish, 1).map((date) => {
       const path = reportPath({ reportName: "daily-auths-report", date });
@@ -54,13 +59,11 @@ function loadData(start, finish, fetch = window.fetch) {
   ).then((reports) => reports.flatMap((r) => process(r)));
 }
 
-/**
- * @param {ProcessedResult[]} results
- * @param {string=} filterAgency
- * @param {number=} filterIal
- * @return {import('./table').TableData}
- */
-function tabulate(results, filterAgency, filterIal) {
+function tabulate(
+  results: ProcessedResult[],
+  filterAgency?: string,
+  filterIal?: number
+): TableData {
   const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 
   const filteredResults = results.filter(
@@ -96,7 +99,7 @@ function tabulate(results, filterAgency, filterIal) {
 
             return [
               agency,
-              html`<span title=${issuer}>${issuerToFriendlyName.get(issuer)}</span>`,
+              <span title={issuer}>{issuerToFriendlyName.get(issuer)}</span>,
               String(ial),
               ...dayCounts,
               dayCounts.reduce((d, total) => d + total, 0),
@@ -108,16 +111,12 @@ function tabulate(results, filterAgency, filterIal) {
   return {
     header,
     body,
-    numberFormatter: format(","),
   };
 }
 
-/**
- * @returns {import('preact').VNode}
- */
-function DailyAuthsReport() {
+function DailyAuthsReport(): VNode {
   const { start, finish, agency, ial, setAllAgencies } = useContext(ReportFilterControlsContext);
-  const ref = useRef();
+  const ref = useRef(null as HTMLDivElement | null);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish)
@@ -155,19 +154,20 @@ function DailyAuthsReport() {
             x: "date",
             y: "count",
             fill: agency ? "friendly_name" : "agency",
-            title: (/** @type ProcessedResult */ d) => (agency ? d.friendly_name : d.agency),
-            filter: (/** @type ProcessedResult */ d) =>
-              d.ial === ial && (!agency || d.agency === agency),
+            title: (d: ProcessedResult) => (agency ? d.friendly_name : d.agency),
+            filter: (d: ProcessedResult) => d.ial === ial && (!agency || d.agency === agency),
           }),
         ],
       })
     );
   }, [data, ial, agency]);
 
-  return html` <div>
-    <div class="chart-wrapper" ref=${ref} />
-    <${Table} data=${tabulate(data || [], agency, ial)} />
-  </div>`;
+  return (
+    <div>
+      <div class="chart-wrapper" ref={ref} />
+      <Table data={tabulate(data || [], agency, ial)} numberFormatter={format(",")} />
+    </div>
+  );
 }
 
 export default DailyAuthsReport;
