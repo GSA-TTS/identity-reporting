@@ -6,7 +6,7 @@ export default {
     sourcemap: true,
   },
   esbuild: {
-    jsxInject: "import { h } from 'preact';",
+    jsxInject: "import { h, Fragment } from 'preact';",
     jsxFactory: "h",
     jsxFragment: "Fragment",
   },
