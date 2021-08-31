@@ -27,6 +27,7 @@
     "preact-router": "^3.2.1"
   },
   "devDependencies": {
+    "@18f/eslint-plugin-identity": "^1.0.0",
     "@types/chai": "^4.2.21",
     "@types/d3-array": "^3.0.1",
     "@types/d3-format": "^3.0.1",
@@ -39,7 +40,6 @@
     "chai": "^4.3.4",
     "esbuild-register": "^3.0.0",
     "eslint": "^7.32.0",
-    "eslint-plugin-prettier": "^3.4.1",
     "fetch-mock": "^9.11.0",
     "mocha": "^9.1.0",
     "node-fetch": "^2.6.1",
