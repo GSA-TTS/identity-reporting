@@ -1,7 +1,7 @@
 import { createContext, VNode, ComponentChildren } from "preact";
 import { StateUpdater, useState } from "preact/hooks";
 import { utcFormat, utcParse } from "d3-time-format";
-import { utcWeek } from "d3-time";
+import { utcWeek, CountableTimeInterval } from "d3-time";
 import { route } from "./router";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
@@ -57,11 +57,24 @@ function ReportFilterControls({
     setAllAgencies,
   };
 
-  function update(event: Event) {
-    const form = event.currentTarget as HTMLFormElement;
+  function update(event: Event, overrideFormData = {}) {
+    const form =
+      (event.target instanceof HTMLButtonElement && event.target.form) ||
+      (event.currentTarget as HTMLFormElement);
     const formData = Array.from(new FormData(form)) as string[][];
-    route(`${path}?${new URLSearchParams(formData).toString().replace(/\+/g, "%20")}`);
+    const seachParams = new URLSearchParams(formData);
+    Object.entries(overrideFormData).forEach(([key, value]) => seachParams.set(key, String(value)));
+    route(`${path}?${seachParams.toString().replace(/\+/g, "%20")}`);
     event.preventDefault();
+  }
+
+  function updateTimeRange(interval: CountableTimeInterval, offset: number) {
+    return function (event: Event) {
+      return update(event, {
+        start: yearMonthDayFormat(interval.offset(start, offset)),
+        finish: yearMonthDayFormat(interval.offset(finish, offset)),
+      });
+    };
   }
 
   return (
@@ -78,6 +91,10 @@ function ReportFilterControls({
             Finish
             <input type="date" name="finish" value={yearMonthDayFormat(finish)} />
           </label>
+        </div>
+        <div>
+          <button onClick={updateTimeRange(utcWeek, -1)}>&larr; Previous Week</button>
+          <button onClick={updateTimeRange(utcWeek, +1)}>Next Week &rarr;</button>
         </div>
         <div>
           <label>
