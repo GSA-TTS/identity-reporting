@@ -2,7 +2,7 @@ import { path as reportPath } from "./report";
 import { VNode } from "preact";
 import { useContext, useEffect, useRef } from "preact/hooks";
 import { ReportFilterControlsContext } from "./report-filter-controls";
-import { utcDays } from "d3-time";
+import { utcDays, utcDay } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import { format } from "d3-format";
 import { useQuery } from "preact-fetching";
@@ -145,18 +145,32 @@ function DailyAuthsReport(): VNode {
     ref?.current?.appendChild(
       Plot.plot({
         y: {
-          tickFormat: format(".2s"),
+          tickFormat: format(".1s"),
         },
         style: {},
         marks: [
           Plot.ruleY([0]),
-          Plot.barY(data || [], {
-            x: "date",
-            y: "count",
-            fill: agency ? "friendly_name" : "agency",
-            title: (d: ProcessedResult) => (agency ? d.friendly_name : d.agency),
-            filter: (d: ProcessedResult) => d.ial === ial && (!agency || d.agency === agency),
-          }),
+          Plot.rectY(
+            data || [],
+            Plot.binX(
+              {
+                y: "sum",
+              },
+              {
+                y: "count",
+                x: {
+                  value: "date",
+                  thresholds: utcDay,
+                },
+                fill: agency ? "friendly_name" : "agency",
+                title: (bin: ProcessedResult[]) => {
+                  const d = bin[0];
+                  return d && (agency ? d.friendly_name : d.agency);
+                },
+                filter: (d: ProcessedResult) => d.ial === ial && (!agency || d.agency === agency),
+              }
+            )
+          ),
         ],
       })
     );
