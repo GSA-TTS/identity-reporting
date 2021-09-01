@@ -1,6 +1,6 @@
 import { VNode } from "preact";
 import { useContext, useEffect, useRef } from "preact/hooks";
-import { utcDay, utcDays, utcWeek } from "d3-time";
+import { utcDay, utcDays } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import { format } from "d3-format";
 import { useQuery } from "preact-fetching";
