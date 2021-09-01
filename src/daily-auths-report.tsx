@@ -1,14 +1,14 @@
+import { path as reportPath } from "./report";
 import { VNode } from "preact";
 import { useContext, useEffect, useRef } from "preact/hooks";
-import { utcDay, utcDays } from "d3-time";
+import { ReportFilterControlsContext } from "./report-filter-controls";
+import { utcDays } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import { format } from "d3-format";
 import { useQuery } from "preact-fetching";
+import Table, { TableData } from "./table";
 import { utcFormat } from "d3-time-format";
 import { group, ascending } from "d3-array";
-import Table, { TableData } from "./table";
-import { ReportFilterControlsContext } from "./report-filter-controls";
-import { path as reportPath } from "./report";
 
 interface DailyAuthsReportData {
   results: Result[];
@@ -88,11 +88,11 @@ function tabulate(
 
   const body = Array.from(grouped)
     .sort(([agencyA], [agencyB]) => ascending(agencyA, agencyB))
-    .flatMap(([agency, issuers]) =>
-      Array.from(issuers)
+    .flatMap(([agency, issuers]) => {
+      return Array.from(issuers)
         .sort(([issuerA], [issuerB]) => ascending(issuerA, issuerB))
-        .flatMap(([issuer, ials]) =>
-          Array.from(ials).map(([ial, data]) => {
+        .flatMap(([issuer, ials]) => {
+          return Array.from(ials).map(([ial, data]) => {
             const dayCounts = days.map(
               (date) => data.filter((d) => d.date.valueOf() === date.valueOf())?.[0]?.count ?? 0
             );
@@ -104,9 +104,9 @@ function tabulate(
               ...dayCounts,
               dayCounts.reduce((d, total) => d + total, 0),
             ];
-          })
-        )
-    );
+          });
+        });
+    });
 
   return {
     header,
