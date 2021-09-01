@@ -2,7 +2,7 @@ import { path as reportPath } from "./report";
 import { VNode } from "preact";
 import { useContext, useEffect, useRef } from "preact/hooks";
 import { ReportFilterControlsContext } from "./report-filter-controls";
-import { utcDays } from "d3-time";
+import { utcDays, utcDay } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import { format } from "d3-format";
 import { useQuery } from "preact-fetching";
