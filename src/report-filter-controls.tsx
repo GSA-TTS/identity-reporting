@@ -1,5 +1,5 @@
 import { createContext, VNode, ComponentChildren } from "preact";
-import { StateUpdater, useState } from "preact/hooks";
+import { StateUpdater, useRef, useState } from "preact/hooks";
 import { utcFormat, utcParse } from "d3-time-format";
 import { utcWeek, CountableTimeInterval } from "d3-time";
 import { route } from "./router";
@@ -57,10 +57,13 @@ function ReportFilterControls({
     setAllAgencies,
   };
 
+  const formRef = useRef(null as HTMLFormElement | null);
+
   function update(event: Event, overrideFormData = {}) {
-    const form =
-      (event.target instanceof HTMLButtonElement && event.target.form) ||
-      (event.currentTarget as HTMLFormElement);
+    const form = formRef.current;
+    if (!form) {
+      return;
+    }
     const formData = Array.from(new FormData(form)) as string[][];
     const seachParams = new URLSearchParams(formData);
     Object.entries(overrideFormData).forEach(([key, value]) => seachParams.set(key, String(value)));
@@ -79,7 +82,7 @@ function ReportFilterControls({
 
   return (
     <div>
-      <form onChange={update}>
+      <form ref={formRef} onChange={update}>
         <div>
           <label>
             Start
