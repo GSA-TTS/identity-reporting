@@ -23,6 +23,7 @@
     "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }]
   },
   "settings": {
+    "import/resolver": "eslint-import-resolver-typescript",
     "react": {
       "pragma": "h",
       "fragment": "Fragment",
