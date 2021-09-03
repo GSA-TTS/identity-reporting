@@ -19,6 +19,7 @@
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-non-null-assertion": "error",
     "@typescript-eslint/no-unused-vars": "error",
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/*.test.*", "./*"] }],
     "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }]
   },
   "settings": {
