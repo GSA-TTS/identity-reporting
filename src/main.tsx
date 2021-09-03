@@ -1,4 +1,6 @@
 import "./css/style.css";
+import '../node_modules/identity-style-guide/dist/assets/scss/_styles.scss';
+
 import { render } from "preact";
 import { Link } from "./router";
 import { Routes } from "./routes";
@@ -17,5 +19,5 @@ render(
       <Routes />
     </main>
   </div>,
-  document.body
+  document.getElementById('app') as HTMLElement,
 );
