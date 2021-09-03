@@ -28,7 +28,7 @@ function Table({ data, numberFormatter = String }: TableProps): VNode {
           <tr>
             {row.map((d) =>
               typeof d === "number" ? (
-                <td class="table-number">{numberFormatter(d)}</td>
+                <td className="table-number">{numberFormatter(d)}</td>
               ) : (
                 <td>{d}</td>
               )

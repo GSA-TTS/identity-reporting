@@ -96,8 +96,12 @@ function ReportFilterControls({
           </label>
         </div>
         <div>
-          <button onClick={updateTimeRange(utcWeek, -1)}>&larr; Previous Week</button>
-          <button onClick={updateTimeRange(utcWeek, +1)}>Next Week &rarr;</button>
+          <button type="button" onClick={updateTimeRange(utcWeek, -1)}>
+            &larr; Previous Week
+          </button>
+          <button type="button" onClick={updateTimeRange(utcWeek, +1)}>
+            Next Week &rarr;
+          </button>
         </div>
         <div>
           <label>
@@ -113,13 +117,11 @@ function ReportFilterControls({
             <select name="agency">
               <option value="">All</option>
               <optgroup label="Agencies">
-                {allAgencies.map((a) => {
-                  return (
-                    <option value={a} selected={a === agency}>
-                      {a}
-                    </option>
-                  );
-                })}
+                {allAgencies.map((a) => (
+                  <option value={a} selected={a === agency}>
+                    {a}
+                  </option>
+                ))}
               </optgroup>
             </select>
           </label>

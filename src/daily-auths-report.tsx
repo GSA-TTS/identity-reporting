@@ -1,14 +1,32 @@
-import { path as reportPath } from "./report";
 import { VNode } from "preact";
 import { useContext, useEffect, useRef } from "preact/hooks";
-import { ReportFilterControlsContext } from "./report-filter-controls";
 import { utcDays, utcDay } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import { format } from "d3-format";
 import { useQuery } from "preact-fetching";
-import Table, { TableData } from "./table";
 import { utcFormat } from "d3-time-format";
 import { group, ascending } from "d3-array";
+import { ReportFilterControlsContext } from "./report-filter-controls";
+import Table, { TableData } from "./table";
+import { path as reportPath } from "./report";
+
+interface Result {
+  count: number;
+
+  ial: 1 | 2;
+
+  issuer: string;
+
+  /**
+   * This is always present but we don't use it, so easier to mark as optional
+   */
+  iaa?: string;
+
+  // eslint-disable-next-line camelcase
+  friendly_name: string;
+
+  agency: string;
+}
 
 interface DailyAuthsReportData {
   results: Result[];
@@ -24,30 +42,13 @@ interface DailyAuthsReportData {
   finish: string;
 }
 
-interface Result {
-  count: number;
-
-  ial: 1 | 2;
-
-  issuer: string;
-
-  /**
-   * This is always present but we don't use it, so easier to mark as optional
-   */
-  iaa?: string;
-
-  friendly_name: string;
-
-  agency: string;
-}
-
 export interface ProcessedResult extends Result {
   date: Date;
 }
 
 function process(report: DailyAuthsReportData): ProcessedResult[] {
   const date = new Date(report.start);
-  return report.results.map((r) => Object.assign({}, r, { date }));
+  return report.results.map((r) => ({ ...r, date }));
 }
 
 function loadData(start: Date, finish: Date, fetch = window.fetch): Promise<ProcessedResult[]> {
@@ -88,11 +89,11 @@ function tabulate(
 
   const body = Array.from(grouped)
     .sort(([agencyA], [agencyB]) => ascending(agencyA, agencyB))
-    .flatMap(([agency, issuers]) => {
-      return Array.from(issuers)
+    .flatMap(([agency, issuers]) =>
+      Array.from(issuers)
         .sort(([issuerA], [issuerB]) => ascending(issuerA, issuerB))
-        .flatMap(([issuer, ials]) => {
-          return Array.from(ials).map(([ial, data]) => {
+        .flatMap(([issuer, ials]) =>
+          Array.from(ials).map(([ial, data]) => {
             const dayCounts = days.map(
               (date) => data.filter((d) => d.date.valueOf() === date.valueOf())?.[0]?.count ?? 0
             );
@@ -104,9 +105,9 @@ function tabulate(
               ...dayCounts,
               dayCounts.reduce((d, total) => d + total, 0),
             ];
-          });
-        });
-    });
+          })
+        )
+    );
 
   return {
     header,
@@ -178,7 +179,7 @@ function DailyAuthsReport(): VNode {
 
   return (
     <div>
-      <div class="chart-wrapper" ref={ref} />
+      <div className="chart-wrapper" ref={ref} />
       <Table data={tabulate(data || [], agency, ial)} numberFormatter={format(",")} />
     </div>
   );

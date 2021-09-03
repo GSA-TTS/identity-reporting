@@ -1,9 +1,9 @@
 import { VNode } from "preact";
 import { expect } from "chai";
-import { tabulate, loadData, ProcessedResult } from "./daily-auths-report";
-import { TableRow } from "./table";
 import { utcParse } from "d3-time-format";
 import fetchMock from "fetch-mock";
+import { tabulate, loadData, ProcessedResult } from "./daily-auths-report";
+import { TableRow } from "./table";
 
 describe("DailyAuthsReport", () => {
   const yearMonthDayParse = utcParse("%Y-%m-%d") as (s: string) => Date;
