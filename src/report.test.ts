@@ -1,5 +1,5 @@
-import { path } from "./report";
 import { expect } from "chai";
+import { path } from "./report";
 
 describe("Report", () => {
   describe("#path", () => {

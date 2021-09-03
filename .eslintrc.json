@@ -1,27 +1,35 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": ["prettier", "@typescript-eslint"],
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "plugins": ["@18f/eslint-plugin-identity", "@typescript-eslint"],
+  "extends": [
+    "plugin:@18f/eslint-plugin-identity/recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2021
   },
   "env": {
     "node": true,
-    "browser": true,
-    "mocha": true,
-    "es6": true
+    "browser": true
   },
   "rules": {
     "@typescript-eslint/explicit-module-boundary-types": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-non-null-assertion": "error",
     "@typescript-eslint/no-unused-vars": "error",
-    "prettier/prettier": "error",
-    "eqeqeq": "error",
-    "semi": "error",
-    "no-shadow": "error"
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/*.test.*", "./*"] }],
+    "jsx-a11y/label-has-associated-control": ["error", { "assert": "either" }],
+    "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }]
+  },
+  "settings": {
+    "import/resolver": "eslint-import-resolver-typescript",
+    "react": {
+      "pragma": "h",
+      "fragment": "Fragment",
+      "version": "16.0"
+    }
   },
   "ignorePatterns": ["_site/**"]
 }
