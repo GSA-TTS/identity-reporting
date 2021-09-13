@@ -5,6 +5,11 @@ import { render } from "preact";
 import { Link } from "./router";
 import { Routes } from "./routes";
 
+import * as USWDS from '../node_modules/uswds/dist/js/uswds';
+
+// Leave a reference to USWDS so the import doesn't get pruned
+const isUSWDSLoaded = typeof USWDS !== 'undefined';
+
 render(
   <div>
     <nav>
