@@ -106,10 +106,10 @@ function ReportFilterControls({
           </label>
         </div>
         <div>
-          <button type="button" onClick={updateTimeRange(utcWeek, -1)}>
+          <button type="button" className="usa-button" onClick={updateTimeRange(utcWeek, -1)}>
             &larr; Previous Week
           </button>
-          <button type="button" onClick={updateTimeRange(utcWeek, +1)}>
+          <button type="button" className="usa-button" onClick={updateTimeRange(utcWeek, +1)}>
             Next Week &rarr;
           </button>
         </div>
