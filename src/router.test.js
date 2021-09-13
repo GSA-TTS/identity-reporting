@@ -1,5 +1,5 @@
-import { getFullPath } from "./router";
 import { expect } from "chai";
+import { getFullPath } from "./router";
 
 describe("router", () => {
   describe("#getFullPath", () => {

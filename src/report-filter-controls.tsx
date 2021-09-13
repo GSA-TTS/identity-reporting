@@ -106,15 +106,15 @@ function ReportFilterControls({
           </label>
         </div>
         <div>
-          <button onClick={updateTimeRange(utcWeek, -1)} className="usa-button">
+          <button type="button" onClick={updateTimeRange(utcWeek, -1)}>
             &larr; Previous Week
           </button>
-          <button onClick={updateTimeRange(utcWeek, +1)} className="usa-button">
+          <button type="button" onClick={updateTimeRange(utcWeek, +1)}>
             Next Week &rarr;
           </button>
         </div>
         <div>
-          <div class="usa-radio">
+          <div className="usa-radio">
             <input
               type="radio"
               id="ial-1"
@@ -123,11 +123,11 @@ function ReportFilterControls({
               checked={ial === 1}
               className="usa-radio__input"
             />
-            <label for="ial-1" className="usa-radio__label">
+            <label htmlFor="ial-1" className="usa-radio__label">
               IAL 1
             </label>
           </div>
-          <div class="usa-radio">
+          <div className="usa-radio">
             <input
               type="radio"
               id="ial-2"
@@ -136,7 +136,7 @@ function ReportFilterControls({
               checked={ial === 2}
               className="usa-radio__input"
             />
-            <label for="ial-2" className="usa-radio__label">
+            <label htmlFor="ial-2" className="usa-radio__label">
               IAL2
             </label>
           </div>
@@ -147,13 +147,11 @@ function ReportFilterControls({
             <select name="agency" className="usa-select">
               <option value="">All</option>
               <optgroup label="Agencies">
-                {allAgencies.map((a) => {
-                  return (
-                    <option value={a} selected={a === agency}>
-                      {a}
-                    </option>
-                  );
-                })}
+                {allAgencies.map((a) => (
+                  <option value={a} selected={a === agency}>
+                    {a}
+                  </option>
+                ))}
               </optgroup>
             </select>
           </label>
