@@ -1,7 +1,12 @@
 import "./css/style.css";
+import "../node_modules/identity-style-guide/dist/assets/scss/_styles.scss";
+
 import { render } from "preact";
+import { banner, accordion } from "identity-style-guide";
 import { Link } from "./router";
 import { Routes } from "./routes";
+
+[banner, accordion].forEach((component) => component.on());
 
 render(
   <div>
@@ -17,5 +22,5 @@ render(
       <Routes />
     </main>
   </div>,
-  document.body
+  document.getElementById("app") as HTMLElement
 );

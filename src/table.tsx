@@ -15,7 +15,7 @@ interface TableProps {
 function Table({ data, numberFormatter = String }: TableProps): VNode {
   const { header, body } = data;
   return (
-    <table>
+    <table className="usa-table">
       <thead>
         <tr>
           {header.map((head) => (
@@ -28,7 +28,7 @@ function Table({ data, numberFormatter = String }: TableProps): VNode {
           <tr>
             {row.map((d) =>
               typeof d === "number" ? (
-                <td className="table-number">{numberFormatter(d)}</td>
+                <td className="table-number text-tabular text-right">{numberFormatter(d)}</td>
               ) : (
                 <td>{d}</td>
               )
