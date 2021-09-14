@@ -48,13 +48,18 @@ export interface ProcessedResult extends Result {
 
 function process(report: DailyAuthsReportData): ProcessedResult[] {
   const date = new Date(report.start);
-  return report.results.map((r) => ({ ...r, date }));
+  return report.results.map((r) => ({ ...r, date, agency: r.agency || "(No Agency)" }));
 }
 
-function loadData(start: Date, finish: Date, fetch = window.fetch): Promise<ProcessedResult[]> {
+function loadData(
+  start: Date,
+  finish: Date,
+  env: string,
+  fetch = window.fetch
+): Promise<ProcessedResult[]> {
   return Promise.all(
     utcDays(start, finish, 1).map((date) => {
-      const path = reportPath({ reportName: "daily-auths-report", date });
+      const path = reportPath({ reportName: "daily-auths-report", date, env });
       return fetch(path).then((response) => response.json());
     })
   ).then((reports) => reports.flatMap((r) => process(r)));
@@ -116,11 +121,13 @@ function tabulate(
 }
 
 function DailyAuthsReport(): VNode {
-  const { start, finish, agency, ial, setAllAgencies } = useContext(ReportFilterControlsContext);
+  const { start, finish, agency, ial, setAllAgencies, env } = useContext(
+    ReportFilterControlsContext
+  );
   const ref = useRef(null as HTMLDivElement | null);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
-    loadData(start, finish)
+    loadData(start, finish, env)
   );
 
   useEffect(() => {
