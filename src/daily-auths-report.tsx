@@ -155,6 +155,9 @@ function DailyAuthsReport(): VNode {
         y: {
           tickFormat: format(".1s"),
         },
+        x: {
+          domain: [start, finish],
+        },
         style: {},
         marks: [
           Plot.ruleY([0]),
