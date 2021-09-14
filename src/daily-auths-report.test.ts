@@ -92,9 +92,7 @@ describe("DailyAuthsReport", () => {
     it("filters by ial", () => {
       const table = tabulate(results, undefined, 2);
 
-      expect(simplifyVNodes(table.body)).to.deep.equal([
-        ["agency1", "issuer1", "2", 1, 1],
-      ]);
+      expect(simplifyVNodes(table.body)).to.deep.equal([["agency1", "issuer1", "2", 1, 1]]);
     });
   });
 
