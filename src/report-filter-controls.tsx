@@ -168,7 +168,7 @@ function ReportFilterControls({
             Reset
           </a>
         </div>
-        {!!env && <input type="hidden" name="env" value={env} />}
+        {env != DEFAULT_ENV && <input type="hidden" name="env" value={env} />}
       </form>
       <ReportFilterControlsContext.Provider value={filterControls}>
         {children}
