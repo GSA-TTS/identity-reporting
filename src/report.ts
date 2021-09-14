@@ -12,7 +12,7 @@ function domain(env: string): string {
     case "dm":
       return `https://public-reporting-data.${env}.login.gov`;
     default:
-      return `https://public-reporting-data.${env}.identitysandbox.gov`;
+      return `https://public-reporting-data.${env.replace(/[^a-z]/gi, "")}.identitysandbox.gov`;
   }
 }
 
