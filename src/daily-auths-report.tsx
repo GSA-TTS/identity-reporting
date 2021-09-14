@@ -5,7 +5,7 @@ import * as Plot from "@observablehq/plot";
 import { format } from "d3-format";
 import { useQuery } from "preact-fetching";
 import { utcFormat } from "d3-time-format";
-import { group, ascending } from "d3-array";
+import { group, ascending, rollup } from "d3-array";
 import { ReportFilterControlsContext } from "./report-filter-controls";
 import Table, { TableData } from "./table";
 import { path as reportPath } from "./report";
@@ -65,13 +65,13 @@ function loadData(
   ).then((reports) => reports.flatMap((r) => process(r)));
 }
 
+const yearMonthDayFormat = utcFormat("%Y-%m-%d");
+
 function tabulate(
   results: ProcessedResult[],
   filterAgency?: string,
   filterIal?: number
 ): TableData {
-  const yearMonthDayFormat = utcFormat("%Y-%m-%d");
-
   const filteredResults = results.filter(
     (d) => (!filterAgency || d.agency === filterAgency) && (!filterIal || d.ial === filterIal)
   );
@@ -120,6 +120,38 @@ function tabulate(
   };
 }
 
+function tabulateSumByAgency(results: ProcessedResult[], filterIal?: number): TableData {
+  const filteredResults = results.filter((d) => !filterIal || d.ial === filterIal);
+
+  const days = Array.from(new Set(filteredResults.map((d) => d.date.valueOf())))
+    .sort((a, b) => a - b)
+    .map((d) => new Date(d));
+
+  const rolledup = rollup(
+    filteredResults,
+    (bin) => bin.reduce((sum, d) => sum + d.count, 0),
+    (d) => d.agency,
+    (d) => d.ial,
+    (d) => yearMonthDayFormat(d.date)
+  );
+
+  const header = ["Agency", "IAL", ...days.map(yearMonthDayFormat), "Total"];
+
+  const body = Array.from(rolledup)
+    .sort(([agencyA], [agencyB]) => ascending(agencyA, agencyB))
+    .flatMap(([agency, ials]) =>
+      Array.from(ials).map(([ial, ialDays]) => {
+        const dayCounts = days.map((date) => ialDays.get(yearMonthDayFormat(date)) || 0);
+
+        return [agency, String(ial), ...dayCounts, dayCounts.reduce((d, total) => d + total, 0)];
+      })
+    );
+
+  return {
+    header,
+    body,
+  };
+}
 function DailyAuthsReport(): VNode {
   const { start, finish, agency, ial, setAllAgencies, env } = useContext(
     ReportFilterControlsContext
@@ -173,7 +205,7 @@ function DailyAuthsReport(): VNode {
                   value: "date",
                   thresholds: utcDay,
                 },
-                fill: agency ? "friendly_name" : "agency",
+                fill: agency ? "friendly_name" : "steelblue",
                 title: (bin: ProcessedResult[]) => {
                   const d = bin[0];
                   return d && (agency ? d.friendly_name : d.agency);
@@ -190,10 +222,13 @@ function DailyAuthsReport(): VNode {
   return (
     <div>
       <div className="chart-wrapper" ref={ref} />
-      <Table data={tabulate(data || [], agency, ial)} numberFormatter={format(",")} />
+      <Table
+        data={agency ? tabulate(data || [], agency, ial) : tabulateSumByAgency(data || [], ial)}
+        numberFormatter={format(",")}
+      />
     </div>
   );
 }
 
 export default DailyAuthsReport;
-export { tabulate, loadData };
+export { tabulate, tabulateSumByAgency, loadData };
