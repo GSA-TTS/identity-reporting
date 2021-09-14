@@ -185,7 +185,7 @@ function DailyAuthsReport(): VNode {
         ],
       })
     );
-  }, [data, ial, agency]);
+  }, [data, ial, agency, start.valueOf(), finish.valueOf()]);
 
   return (
     <div>
