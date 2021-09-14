@@ -127,9 +127,9 @@ describe("DailyAuthsReport", () => {
         yearMonthDayParse("2021-01-03"),
         "local",
         fetch
-      ).then((results) => {
-        expect(results).to.have.lengthOf(2);
-        results.forEach((result) => {
+      ).then((processed) => {
+        expect(processed).to.have.lengthOf(2);
+        processed.forEach((result) => {
           expect(result).to.have.property("date");
           expect(result.agency, "sets a default agency if missing").to.not.be.undefined;
         });
