@@ -90,23 +90,27 @@ describe("DailyAuthsReport", () => {
     it("combines data across separate fetch requests", () => {
       const fetch = fetchMock
         .sandbox()
-        .get("/prod/daily-auths-report/2021/2021-01-01.daily-auths-report.json", {
+        .get("/local/daily-auths-report/2021/2021-01-01.daily-auths-report.json", {
           start: "2020-01-01",
           results: [{ count: 1 }],
         })
-        .get("/prod/daily-auths-report/2021/2021-01-02.daily-auths-report.json", {
+        .get("/local/daily-auths-report/2021/2021-01-02.daily-auths-report.json", {
           start: "2020-01-02",
           results: [{ count: 10 }],
         });
 
-      return loadData(yearMonthDayParse("2021-01-01"), yearMonthDayParse("2021-01-03"), fetch).then(
-        (results) => {
-          expect(results).to.have.lengthOf(2);
-          results.forEach((result) => {
-            expect(result).to.have.property("date");
-          });
-        }
-      );
+      return loadData(
+        yearMonthDayParse("2021-01-01"),
+        yearMonthDayParse("2021-01-03"),
+        "local",
+        fetch
+      ).then((results) => {
+        expect(results).to.have.lengthOf(2);
+        results.forEach((result) => {
+          expect(result).to.have.property("date");
+          expect(result.agency, "sets a default agency if missing").to.not.be.undefined;
+        });
+      });
     });
 
     after(() => fetchMock.restore());

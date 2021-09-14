@@ -8,6 +8,7 @@ export interface ReportRouteProps {
   finish?: string;
   ial?: string;
   agency?: string;
+  env?: string;
 }
 
 function ReportRoute(props: ReportRouteProps): VNode {

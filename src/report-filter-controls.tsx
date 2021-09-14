@@ -7,6 +7,7 @@ import { route } from "./router";
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 const yearMonthDayParse = utcParse("%Y-%m-%d");
 const DEFAULT_IAL = 1;
+const DEFAULT_ENV = "prod";
 
 const endOfPreviousWeek = utcWeek.floor(new Date());
 const startOfPreviousWeek = utcWeek.floor(new Date(endOfPreviousWeek.valueOf() - 1));
@@ -16,6 +17,7 @@ interface ReportFilterControlsContextValues {
   finish: Date;
   ial: 1 | 2;
   agency?: string;
+  env: string;
   setAllAgencies: StateUpdater<string[]>;
 }
 
@@ -24,6 +26,7 @@ const ReportFilterControlsContext = createContext({
   finish: endOfPreviousWeek,
   ial: 1,
   setAllAgencies: () => null,
+  env: DEFAULT_ENV,
 } as ReportFilterControlsContextValues);
 
 export interface ReportFilterControlsProps {
@@ -33,6 +36,7 @@ export interface ReportFilterControlsProps {
   finish?: string;
   ial?: string;
   agency?: string;
+  env?: string;
 }
 
 function ReportFilterControls({
@@ -42,12 +46,14 @@ function ReportFilterControls({
   finish: finishParam,
   ial: ialParam,
   agency,
+  env: envParam,
 }: ReportFilterControlsProps): VNode {
   const [allAgencies, setAllAgencies] = useState([] as string[]);
 
   const start = (startParam ? yearMonthDayParse(startParam) : null) || startOfPreviousWeek;
   const finish = (finishParam ? yearMonthDayParse(finishParam) : null) || endOfPreviousWeek;
   const ial = (parseInt(ialParam || "", 10) || DEFAULT_IAL) as 1 | 2;
+  const env = envParam || DEFAULT_ENV;
 
   const filterControls = {
     start,
@@ -55,6 +61,7 @@ function ReportFilterControls({
     agency,
     ial,
     setAllAgencies,
+    env,
   };
 
   const formRef = useRef(null as HTMLFormElement | null);
@@ -161,6 +168,7 @@ function ReportFilterControls({
             Reset
           </a>
         </div>
+        {env !== DEFAULT_ENV && <input type="hidden" name="env" value={env} />}
       </form>
       <ReportFilterControlsContext.Provider value={filterControls}>
         {children}
