@@ -1,6 +1,6 @@
-body {
-  font-family: HelveticaNeue, Helvetica, sans-serif;
-}
+@import "/node_modules/identity-style-guide/dist/assets/scss/packages/required";
+
+@include usa-link-style;
 
 .plot text {
   font-size: 10px;

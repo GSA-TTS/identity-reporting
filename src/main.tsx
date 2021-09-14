@@ -1,5 +1,4 @@
-import "./css/style.css";
-import "../node_modules/identity-style-guide/dist/assets/scss/_styles.scss";
+import "./css/style.scss";
 
 import { render } from "preact";
 import { banner, accordion } from "identity-style-guide";
