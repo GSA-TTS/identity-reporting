@@ -29,10 +29,9 @@ const ReportFilterControlsContext = createContext({
 
 export interface ReportFilterControlsProps {
   agencies: string[];
-  children?: ComponentChildren;
 }
 
-function ReportFilterControls({ agencies, children }: ReportFilterControlsProps): VNode {
+function ReportFilterControls({ agencies }: ReportFilterControlsProps): VNode {
   const { start, finish, agency, ial, path, env } = useContext(ReportFilterControlsContext);
 
   const formRef = useRef(null as HTMLFormElement | null);
@@ -141,7 +140,6 @@ function ReportFilterControls({ agencies, children }: ReportFilterControlsProps)
         </div>
         {env !== DEFAULT_ENV && <input type="hidden" name="env" value={env} />}
       </form>
-      {children}
     </>
   );
 }
