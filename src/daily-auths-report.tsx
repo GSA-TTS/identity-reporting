@@ -259,9 +259,13 @@ function DailyAuthsReport(): VNode {
   return (
     <div>
       <h2>Daily Auths Report</h2>
-      <details>
-        <summary>How is this measured?</summary>
-        <div className="usa-prose">
+      <div className="usa-accordion usa-accordion--bordered margin-bottom-2">
+        <h3 className="usa-accordion__heading">
+          <button className="usa-accordion__button" aria-controls="how-is-it-measured" aria-expanded="false">
+            How is this measured?
+          </button>
+        </h3>
+        <div className="usa-prose usa-accordion__content" id="how-is-it-measured" hidden>
           <p>
             <strong>Timing: </strong>
             All data is collected, grouped, and displayed in the UTC timezone.
@@ -272,7 +276,7 @@ function DailyAuthsReport(): VNode {
             twice will count twice. It does not de-duplicate users or provide unique auths.
           </p>
         </div>
-      </details>
+      </div>
       <PlotComponent
         plotter={() => plot({ data, ial, agency, start, finish })}
         inputs={[data, ial, agency, start.valueOf(), finish.valueOf()]}
