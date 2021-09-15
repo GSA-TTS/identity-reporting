@@ -261,7 +261,12 @@ function DailyAuthsReport(): VNode {
       <h2>Daily Auths Report</h2>
       <div className="usa-accordion usa-accordion--bordered margin-bottom-2">
         <h3 className="usa-accordion__heading">
-          <button className="usa-accordion__button" aria-controls="how-is-it-measured" aria-expanded="false">
+          <button
+            className="usa-accordion__button"
+            aria-controls="how-is-it-measured"
+            aria-expanded="false"
+            type="button"
+          >
             How is this measured?
           </button>
         </h3>
