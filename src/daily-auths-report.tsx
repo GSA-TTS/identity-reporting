@@ -68,11 +68,11 @@ function loadData(
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 
 function tabulate(
-  results: ProcessedResult[],
+  results?: ProcessedResult[],
   filterAgency?: string,
   filterIal?: number
 ): TableData {
-  const filteredResults = results.filter(
+  const filteredResults = (results || []).filter(
     (d) => (!filterAgency || d.agency === filterAgency) && (!filterIal || d.ial === filterIal)
   );
 
@@ -120,8 +120,8 @@ function tabulate(
   };
 }
 
-function tabulateSumByAgency(results: ProcessedResult[], filterIal?: number): TableData {
-  const filteredResults = results.filter((d) => !filterIal || d.ial === filterIal);
+function tabulateSumByAgency(results?: ProcessedResult[], filterIal?: number): TableData {
+  const filteredResults = (results || []).filter((d) => !filterIal || d.ial === filterIal);
 
   const days = Array.from(new Set(filteredResults.map((d) => d.date.valueOf())))
     .sort((a, b) => a - b)
@@ -220,7 +220,7 @@ function DailyAuthsReport(): VNode {
     <div>
       <div className="chart-wrapper" ref={ref} />
       <Table
-        data={agency ? tabulate(data || [], agency, ial) : tabulateSumByAgency(data || [], ial)}
+        data={agency ? tabulate(data, agency, ial) : tabulateSumByAgency(data, ial)}
         numberFormatter={format(",")}
       />
     </div>
