@@ -1,11 +1,10 @@
 import { createContext, VNode, ComponentChildren } from "preact";
-import { StateUpdater, useRef, useState } from "preact/hooks";
-import { utcFormat, utcParse } from "d3-time-format";
+import { StateUpdater, useRef, useContext } from "preact/hooks";
+import { utcFormat } from "d3-time-format";
 import { utcWeek, CountableTimeInterval } from "d3-time";
 import { route } from "./router";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
-const yearMonthDayParse = utcParse("%Y-%m-%d");
 const DEFAULT_IAL = 1;
 const DEFAULT_ENV = "prod";
 
@@ -13,6 +12,7 @@ const endOfPreviousWeek = utcWeek.floor(new Date());
 const startOfPreviousWeek = utcWeek.floor(new Date(endOfPreviousWeek.valueOf() - 1));
 
 interface ReportFilterControlsContextValues {
+  path: string;
   start: Date;
   finish: Date;
   ial: 1 | 2;
@@ -22,47 +22,21 @@ interface ReportFilterControlsContextValues {
 }
 
 const ReportFilterControlsContext = createContext({
+  path: "/",
   start: startOfPreviousWeek,
   finish: endOfPreviousWeek,
-  ial: 1,
+  ial: DEFAULT_IAL,
   setAllAgencies: () => null,
   env: DEFAULT_ENV,
 } as ReportFilterControlsContextValues);
 
 export interface ReportFilterControlsProps {
-  children: ComponentChildren;
-  path: string;
-  start?: string;
-  finish?: string;
-  ial?: string;
-  agency?: string;
-  env?: string;
+  agencies: string[];
+  children?: ComponentChildren;
 }
 
-function ReportFilterControls({
-  children,
-  path,
-  start: startParam,
-  finish: finishParam,
-  ial: ialParam,
-  agency,
-  env: envParam,
-}: ReportFilterControlsProps): VNode {
-  const [allAgencies, setAllAgencies] = useState([] as string[]);
-
-  const start = (startParam ? yearMonthDayParse(startParam) : null) || startOfPreviousWeek;
-  const finish = (finishParam ? yearMonthDayParse(finishParam) : null) || endOfPreviousWeek;
-  const ial = (parseInt(ialParam || "", 10) || DEFAULT_IAL) as 1 | 2;
-  const env = envParam || DEFAULT_ENV;
-
-  const filterControls = {
-    start,
-    finish,
-    agency,
-    ial,
-    setAllAgencies,
-    env,
-  };
+function ReportFilterControls({ agencies, children }: ReportFilterControlsProps): VNode {
+  const { start, finish, agency, ial, path, env } = useContext(ReportFilterControlsContext);
 
   const formRef = useRef(null as HTMLFormElement | null);
 
@@ -154,7 +128,7 @@ function ReportFilterControls({
             <select name="agency" className="usa-select">
               <option value="">All</option>
               <optgroup label="Agencies">
-                {allAgencies.map((a) => (
+                {agencies.map((a) => (
                   <option value={a} selected={a === agency}>
                     {a}
                   </option>
@@ -170,12 +144,10 @@ function ReportFilterControls({
         </div>
         {env !== DEFAULT_ENV && <input type="hidden" name="env" value={env} />}
       </form>
-      <ReportFilterControlsContext.Provider value={filterControls}>
-        {children}
-      </ReportFilterControlsContext.Provider>
+      {children}
     </>
   );
 }
 
 export default ReportFilterControls;
-export { ReportFilterControlsContext };
+export { ReportFilterControlsContext, DEFAULT_ENV, DEFAULT_IAL };

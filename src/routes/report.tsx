@@ -1,6 +1,15 @@
 import { VNode } from "preact";
+import { utcParse } from "d3-time-format";
+import { utcWeek } from "d3-time";
+import { useState } from "preact/hooks";
+import ReportFilterControls, {
+  ReportFilterControlsContext,
+  DEFAULT_IAL,
+  DEFAULT_ENV,
+} from "../report-filter-controls";
 import DailyAuthsReport from "../daily-auths-report";
-import ReportFilterControls from "../report-filter-controls";
+
+const yearMonthDayParse = utcParse("%Y-%m-%d");
 
 export interface ReportRouteProps {
   path: string;
@@ -11,11 +20,30 @@ export interface ReportRouteProps {
   env?: string;
 }
 
-function ReportRoute(props: ReportRouteProps): VNode {
+function ReportRoute({
+  path,
+  start: startParam,
+  finish: finishParam,
+  ial: ialParam,
+  agency,
+  env: envParam,
+}: ReportRouteProps): VNode {
+  const endOfPreviousWeek = utcWeek.floor(new Date());
+  const startOfPreviousWeek = utcWeek.floor(new Date(endOfPreviousWeek.valueOf() - 1));
+
+  const start = (startParam ? yearMonthDayParse(startParam) : null) || startOfPreviousWeek;
+  const finish = (finishParam ? yearMonthDayParse(finishParam) : null) || endOfPreviousWeek;
+  const ial = (parseInt(ialParam || "", 10) || DEFAULT_IAL) as 1 | 2;
+  const env = envParam || DEFAULT_ENV;
+  const [allAgencies, setAllAgencies] = useState([] as string[]);
+
   return (
-    <ReportFilterControls {...props}>
+    <ReportFilterControlsContext.Provider
+      value={{ path, start, finish, ial, agency, env, setAllAgencies }}
+    >
+      <ReportFilterControls agencies={allAgencies} />
       <DailyAuthsReport />
-    </ReportFilterControls>
+    </ReportFilterControlsContext.Provider>
   );
 }
 
