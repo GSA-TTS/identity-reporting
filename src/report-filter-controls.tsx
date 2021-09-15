@@ -1,8 +1,9 @@
-import { createContext, VNode, ComponentChildren } from "preact";
-import { StateUpdater, useRef, useContext } from "preact/hooks";
+import { createContext, VNode } from "preact";
+import { useRef, useContext } from "preact/hooks";
 import { utcFormat } from "d3-time-format";
 import { utcWeek, CountableTimeInterval } from "d3-time";
 import { route } from "./router";
+import AgenciesContext from "./agencies-context";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 const DEFAULT_IAL = 1;
@@ -15,7 +16,6 @@ interface ReportFilterControlsContextValues {
   ial: 1 | 2;
   agency?: string;
   env: string;
-  setAllAgencies: StateUpdater<string[]>;
 }
 
 const ReportFilterControlsContext = createContext({
@@ -23,16 +23,12 @@ const ReportFilterControlsContext = createContext({
   start: new Date(),
   finish: new Date(),
   ial: DEFAULT_IAL,
-  setAllAgencies: () => null,
   env: DEFAULT_ENV,
 } as ReportFilterControlsContextValues);
 
-export interface ReportFilterControlsProps {
-  agencies: string[];
-}
-
-function ReportFilterControls({ agencies }: ReportFilterControlsProps): VNode {
+function ReportFilterControls(): VNode {
   const { start, finish, agency, ial, path, env } = useContext(ReportFilterControlsContext);
+  const { agencies } = useContext(AgenciesContext);
 
   const formRef = useRef(null as HTMLFormElement | null);
 
