@@ -261,7 +261,7 @@ function DailyAuthsReport(): VNode {
       <h2>Daily Auths Report</h2>
       <details>
         <summary>How is this measured?</summary>
-        <div class="usa-prose">
+        <div className="usa-prose">
           <p>
             <strong>Timing: </strong>
             All data is collected, grouped, and displayed in the UTC timezone.
@@ -269,7 +269,7 @@ function DailyAuthsReport(): VNode {
           <p>
             <strong>Counting: </strong>
             This report displays the total number of authentications, so one user authenticating
-            twice will count twice. It does not de-duplicate users or provide "unique" auths.
+            twice will count twice. It does not de-duplicate users or provide unique auths.
           </p>
         </div>
       </details>
