@@ -159,20 +159,30 @@ function plot({
   data,
   agency,
   ial,
+  facetAgency,
 }: {
   start: Date;
   finish: Date;
-  data: ProcessedResult[] | undefined;
-  agency: string | undefined;
+  data?: ProcessedResult[];
+  agency?: string;
   ial: number;
+  facetAgency?: boolean;
 }): HTMLElement {
   return Plot.plot({
+    height: facetAgency ? new Set((data || []).map(d => d.agency)).size * 60 : undefined,
     y: {
       tickFormat: format(".1s"),
     },
     x: {
       domain: [start, finish],
     },
+    facet: facetAgency
+      ? {
+          data: data || [],
+          y: "agency",
+          marginRight: 150,
+        }
+      : undefined,
     style: {},
     marks: [
       Plot.ruleY([0]),
@@ -249,9 +259,15 @@ function DailyAuthsReport(): VNode {
   return (
     <div>
       <PlotComponent
-        plotter={() => plot({ start, finish, data, agency, ial })}
+        plotter={() => plot({ data, ial, agency, start, finish })}
         inputs={[data, ial, agency, start.valueOf(), finish.valueOf()]}
       />
+      {!agency && (
+        <PlotComponent
+          plotter={() => plot({ data, ial, start, finish, facetAgency: true })}
+          inputs={[data, ial, start.valueOf(), finish.valueOf()]}
+        />
+      )}
       <Table
         data={agency ? tabulate(data, agency, ial) : tabulateSumByAgency(data, ial)}
         numberFormatter={format(",")}
