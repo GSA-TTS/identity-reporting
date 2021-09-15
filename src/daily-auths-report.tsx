@@ -1,5 +1,5 @@
-import { VNode } from "preact";
-import { useContext, useEffect, useRef } from "preact/hooks";
+import { VNode, ComponentChildren } from "preact";
+import { useContext, useEffect, useRef, Inputs } from "preact/hooks";
 import { utcDays, utcDay } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import { format } from "d3-format";
@@ -152,11 +152,80 @@ function tabulateSumByAgency(results?: ProcessedResult[], filterIal?: number): T
     body,
   };
 }
+
+function plot({
+  start,
+  finish,
+  data,
+  agency,
+  ial,
+}: {
+  start: Date;
+  finish: Date;
+  data: ProcessedResult[] | undefined;
+  agency: string | undefined;
+  ial: number;
+}): HTMLElement {
+  return Plot.plot({
+    y: {
+      tickFormat: format(".1s"),
+    },
+    x: {
+      domain: [start, finish],
+    },
+    style: {},
+    marks: [
+      Plot.ruleY([0]),
+      Plot.rectY(
+        data || [],
+        Plot.binX(
+          {
+            y: "sum",
+          },
+          {
+            y: "count",
+            x: {
+              value: "date",
+              thresholds: utcDay,
+            },
+            fill: agency ? "friendly_name" : "steelblue",
+            title: agency ? (bin: ProcessedResult[]) => bin[0]?.friendly_name : undefined,
+            filter: (d: ProcessedResult) => d.ial === ial && (!agency || d.agency === agency),
+          }
+        )
+      ),
+    ],
+  });
+}
+
+interface PlotComponentProps {
+  inputs: Inputs;
+  plotter: () => HTMLElement;
+  children?: ComponentChildren;
+}
+
+function PlotComponent({ plotter, inputs, children }: PlotComponentProps): VNode {
+  const ref = useRef(null as HTMLDivElement | null);
+
+  useEffect(() => {
+    if (ref?.current?.children[0]) {
+      ref.current.children[0].remove();
+    }
+
+    ref?.current?.appendChild(plotter());
+  }, inputs);
+
+  return (
+    <div className="chart-wrapper" ref={ref}>
+      {children}
+    </div>
+  );
+}
+
 function DailyAuthsReport(): VNode {
   const { start, finish, agency, ial, setAllAgencies, env } = useContext(
     ReportFilterControlsContext
   );
-  const ref = useRef(null as HTMLDivElement | null);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
@@ -177,48 +246,12 @@ function DailyAuthsReport(): VNode {
     setAllAgencies(allAgencies);
   }, [data]);
 
-  useEffect(() => {
-    if (ref?.current?.children[0]) {
-      ref.current.children[0].remove();
-    }
-
-    ref?.current?.appendChild(
-      Plot.plot({
-        y: {
-          tickFormat: format(".1s"),
-        },
-        x: {
-          domain: [start, finish],
-        },
-        style: {},
-        marks: [
-          Plot.ruleY([0]),
-          Plot.rectY(
-            data || [],
-            Plot.binX(
-              {
-                y: "sum",
-              },
-              {
-                y: "count",
-                x: {
-                  value: "date",
-                  thresholds: utcDay,
-                },
-                fill: agency ? "friendly_name" : "steelblue",
-                title: agency ? (bin: ProcessedResult[]) => bin[0]?.friendly_name : undefined,
-                filter: (d: ProcessedResult) => d.ial === ial && (!agency || d.agency === agency),
-              }
-            )
-          ),
-        ],
-      })
-    );
-  }, [data, ial, agency, start.valueOf(), finish.valueOf()]);
-
   return (
     <div>
-      <div className="chart-wrapper" ref={ref} />
+      <PlotComponent
+        plotter={() => plot({ start, finish, data, agency, ial })}
+        inputs={[data, ial, agency, start.valueOf(), finish.valueOf()]}
+      />
       <Table
         data={agency ? tabulate(data, agency, ial) : tabulateSumByAgency(data, ial)}
         numberFormatter={format(",")}
