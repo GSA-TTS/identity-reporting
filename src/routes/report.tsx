@@ -40,8 +40,8 @@ function ReportRoute({
 
   return (
     <AgenciesContext.Provider value={{ agencies, setAgencies }}>
-      <ReportFilterControlsContext.Provider value={{ path, start, finish, ial, agency, env }}>
-        <ReportFilterControls />
+      <ReportFilterControlsContext.Provider value={{ start, finish, ial, agency, env }}>
+        <ReportFilterControls path={path} />
         <DailyAuthsReport />
       </ReportFilterControlsContext.Provider>
     </AgenciesContext.Provider>

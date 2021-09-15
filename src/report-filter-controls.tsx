@@ -10,7 +10,6 @@ const DEFAULT_IAL = 1;
 const DEFAULT_ENV = "prod";
 
 interface ReportFilterControlsContextValues {
-  path: string;
   start: Date;
   finish: Date;
   ial: 1 | 2;
@@ -19,15 +18,18 @@ interface ReportFilterControlsContextValues {
 }
 
 const ReportFilterControlsContext = createContext({
-  path: "/",
   start: new Date(),
   finish: new Date(),
   ial: DEFAULT_IAL,
   env: DEFAULT_ENV,
 } as ReportFilterControlsContextValues);
 
-function ReportFilterControls(): VNode {
-  const { start, finish, agency, ial, path, env } = useContext(ReportFilterControlsContext);
+interface ReportFilterControlsProps {
+  path: string;
+}
+
+function ReportFilterControls({ path }: ReportFilterControlsProps): VNode {
+  const { start, finish, agency, ial, env } = useContext(ReportFilterControlsContext);
   const { agencies } = useContext(AgenciesContext);
 
   const formRef = useRef(null as HTMLFormElement | null);
