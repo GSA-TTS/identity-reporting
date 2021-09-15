@@ -206,10 +206,7 @@ function DailyAuthsReport(): VNode {
                   thresholds: utcDay,
                 },
                 fill: agency ? "friendly_name" : "steelblue",
-                title: (bin: ProcessedResult[]) => {
-                  const d = bin[0];
-                  return d && (agency ? d.friendly_name : d.agency);
-                },
+                title: agency ? (bin: ProcessedResult[]) => bin[0]?.friendly_name : undefined,
                 filter: (d: ProcessedResult) => d.ial === ial && (!agency || d.agency === agency),
               }
             )
