@@ -12,14 +12,14 @@ render(
     <header className="usa-header usa-header--extended">
       <div className="usa-navbar">
         <div className="usa-logo">
-          <a href="/" title="Home" aria-label="Home">
+          <Link href="/" title="Home" aria-label="Home">
             <img
               src="/node_modules/identity-style-guide/dist/assets/img/login-gov-logo.svg"
               className="usa-logo__img"
               alt="Login.gov"
             />
             <em className="usa-logo__text">Data</em>
-          </a>
+          </Link>
         </div>
         <button className="usa-menu-btn" type="button">
           Menu
