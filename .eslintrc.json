@@ -28,7 +28,7 @@
     "react": {
       "pragma": "h",
       "fragment": "Fragment",
-      "version": "16.0"
+      "version": "16.2"
     }
   },
   "ignorePatterns": ["_site/**"]

@@ -88,8 +88,8 @@ function ReportFilterControls({
   }
 
   return (
-    <div className="usa-form">
-      <form ref={formRef} onChange={update}>
+    <>
+      <form ref={formRef} onChange={update} className="usa-form">
         <div>
           <label>
             Start
@@ -173,7 +173,7 @@ function ReportFilterControls({
       <ReportFilterControlsContext.Provider value={filterControls}>
         {children}
       </ReportFilterControlsContext.Provider>
-    </div>
+    </>
   );
 }
 
