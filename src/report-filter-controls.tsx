@@ -8,9 +8,6 @@ const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 const DEFAULT_IAL = 1;
 const DEFAULT_ENV = "prod";
 
-const endOfPreviousWeek = utcWeek.floor(new Date());
-const startOfPreviousWeek = utcWeek.floor(new Date(endOfPreviousWeek.valueOf() - 1));
-
 interface ReportFilterControlsContextValues {
   path: string;
   start: Date;
@@ -23,8 +20,8 @@ interface ReportFilterControlsContextValues {
 
 const ReportFilterControlsContext = createContext({
   path: "/",
-  start: startOfPreviousWeek,
-  finish: endOfPreviousWeek,
+  start: new Date(),
+  finish: new Date(),
   ial: DEFAULT_IAL,
   setAllAgencies: () => null,
   env: DEFAULT_ENV,

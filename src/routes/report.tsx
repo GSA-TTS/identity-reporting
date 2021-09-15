@@ -31,8 +31,8 @@ function ReportRoute({
   const endOfPreviousWeek = utcWeek.floor(new Date());
   const startOfPreviousWeek = utcWeek.floor(new Date(endOfPreviousWeek.valueOf() - 1));
 
-  const start = (startParam ? yearMonthDayParse(startParam) : null) || startOfPreviousWeek;
-  const finish = (finishParam ? yearMonthDayParse(finishParam) : null) || endOfPreviousWeek;
+  const start = (startParam && yearMonthDayParse(startParam)) || startOfPreviousWeek;
+  const finish = (finishParam && yearMonthDayParse(finishParam)) || endOfPreviousWeek;
   const ial = (parseInt(ialParam || "", 10) || DEFAULT_IAL) as 1 | 2;
   const env = envParam || DEFAULT_ENV;
   const [allAgencies, setAllAgencies] = useState([] as string[]);
