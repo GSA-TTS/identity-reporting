@@ -5,4 +5,5 @@ declare module "identity-style-guide" {
 
   const accordion: Component;
   const banner: Component;
+  const navigation: Component;
 }
