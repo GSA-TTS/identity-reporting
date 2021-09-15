@@ -169,7 +169,7 @@ function plot({
   facetAgency?: boolean;
 }): HTMLElement {
   return Plot.plot({
-    height: facetAgency ? new Set((data || []).map(d => d.agency)).size * 60 : undefined,
+    height: facetAgency ? new Set((data || []).map((d) => d.agency)).size * 60 : undefined,
     y: {
       tickFormat: format(".1s"),
     },
