@@ -1,5 +1,5 @@
-import { VNode, ComponentChildren } from "preact";
-import { useContext, useEffect, useRef, Inputs, useState } from "preact/hooks";
+import { VNode } from "preact";
+import { useContext, useEffect, useRef, useState } from "preact/hooks";
 import { utcDays, utcDay } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import { format } from "d3-format";
@@ -9,6 +9,7 @@ import { group, ascending, rollup } from "d3-array";
 import { ReportFilterControlsContext } from "./report-filter-controls";
 import Table, { TableData } from "./table";
 import { path as reportPath } from "./report";
+import PlotComponent from "./plot";
 
 interface Result {
   count: number;
@@ -209,30 +210,6 @@ function plot({
       ),
     ],
   });
-}
-
-interface PlotComponentProps {
-  inputs: Inputs;
-  plotter: () => HTMLElement;
-  children?: ComponentChildren;
-}
-
-function PlotComponent({ plotter, inputs, children }: PlotComponentProps): VNode {
-  const ref = useRef(null as HTMLDivElement | null);
-
-  useEffect(() => {
-    if (ref?.current?.children[0]) {
-      ref.current.children[0].remove();
-    }
-
-    ref?.current?.appendChild(plotter());
-  }, inputs);
-
-  return (
-    <div className="chart-wrapper" ref={ref}>
-      {children}
-    </div>
-  );
 }
 
 function DailyAuthsReport(): VNode {
