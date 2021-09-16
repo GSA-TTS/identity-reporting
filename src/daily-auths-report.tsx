@@ -9,6 +9,7 @@ import { group, ascending, rollup } from "d3-array";
 import { ReportFilterControlsContext } from "./report-filter-controls";
 import Table, { TableData } from "./table";
 import { path as reportPath } from "./report";
+import { AgenciesContext } from "./context/agencies-context";
 
 interface Result {
   count: number;
@@ -236,9 +237,8 @@ function PlotComponent({ plotter, inputs, children }: PlotComponentProps): VNode
 }
 
 function DailyAuthsReport(): VNode {
-  const { start, finish, agency, ial, setAllAgencies, env } = useContext(
-    ReportFilterControlsContext
-  );
+  const { setAgencies } = useContext(AgenciesContext);
+  const { start, finish, agency, ial, env } = useContext(ReportFilterControlsContext);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
@@ -253,10 +253,7 @@ function DailyAuthsReport(): VNode {
       .filter((x) => !!x)
       .sort();
 
-    // This needs to be in a separate effect from below because
-    // this causes the <select> to refresh and triggers another change event
-    // and a bunch of bad cycles
-    setAllAgencies(allAgencies);
+    setAgencies(allAgencies);
   }, [data]);
 
   return (
