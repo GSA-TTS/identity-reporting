@@ -11,8 +11,14 @@ function Page({ path, children, title }: PageProps): VNode {
   return (
     <>
       <Header path={path} />
-      <h1>{title}</h1>
-      <main>{children}</main>
+      <div className="grid-container">
+        <div className="grid-row">
+          <div className="grid-col-auto">
+            <h1>{title}</h1>
+            <main>{children}</main>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
