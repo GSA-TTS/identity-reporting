@@ -6,7 +6,7 @@ import { format } from "d3-format";
 import { useQuery } from "preact-fetching";
 import { utcFormat } from "d3-time-format";
 import { group, ascending, rollup } from "d3-array";
-import { ReportFilterControlsContext } from "./report-filter-controls";
+import { ReportFilterContext } from "./context/report-filter-context";
 import Table, { TableData } from "./table";
 import { path as reportPath } from "./report";
 import PlotComponent from "./plot";
@@ -227,7 +227,7 @@ function DailyAuthsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
   const { setAgencies } = useContext(AgenciesContext);
-  const { start, finish, agency, ial, env } = useContext(ReportFilterControlsContext);
+  const { start, finish, agency, ial, env } = useContext(ReportFilterContext);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
