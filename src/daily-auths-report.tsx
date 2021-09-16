@@ -6,7 +6,7 @@ import { format } from "d3-format";
 import { useQuery } from "preact-fetching";
 import { utcFormat } from "d3-time-format";
 import { group, ascending, rollup } from "d3-array";
-import { ReportFilterControlsContext } from "./report-filter-controls";
+import ReportFilterControlsContext from "./context/report-filter-controls-context";
 import Table, { TableData } from "./table";
 import { path as reportPath } from "./report";
 import AgenciesContext from "./agencies-context";
