@@ -153,6 +153,9 @@ function tabulateSumByAgency(results?: ProcessedResult[], filterIal?: number): T
   };
 }
 
+const formatSIPrefix = format(".2s");
+const formatSIDropTrailingZeroes = (d: number): string => formatSIPrefix(d).replace(/\.0+/, "");
+
 function plot({
   start,
   finish,
@@ -171,7 +174,7 @@ function plot({
   return Plot.plot({
     height: facetAgency ? new Set((data || []).map((d) => d.agency)).size * 60 : undefined,
     y: {
-      tickFormat: format(".1s"),
+      tickFormat: formatSIDropTrailingZeroes,
     },
     x: {
       domain: [start, finish],
@@ -277,4 +280,4 @@ function DailyAuthsReport(): VNode {
 }
 
 export default DailyAuthsReport;
-export { tabulate, tabulateSumByAgency, loadData };
+export { tabulate, tabulateSumByAgency, loadData, formatSIDropTrailingZeroes };
