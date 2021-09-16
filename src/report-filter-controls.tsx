@@ -40,9 +40,11 @@ function ReportFilterControls({ path }: ReportFilterControlsProps): VNode {
       return;
     }
     const formData = Array.from(new FormData(form)) as string[][];
-    const seachParams = new URLSearchParams(formData);
-    Object.entries(overrideFormData).forEach(([key, value]) => seachParams.set(key, String(value)));
-    route(`${path}?${seachParams.toString().replace(/\+/g, "%20")}`);
+    const searchParams = new URLSearchParams(formData);
+    Object.entries(overrideFormData).forEach(([key, value]) =>
+      searchParams.set(key, String(value))
+    );
+    route(pathWithParams(path, searchParams));
     event.preventDefault();
   }
 

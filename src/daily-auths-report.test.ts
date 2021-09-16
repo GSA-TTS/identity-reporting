@@ -103,12 +103,20 @@ describe("DailyAuthsReport", () => {
   });
 
   describe("#tabulateSumByAgency", () => {
+    function simplifyVNodes(body: TableRow[]): (string | number)[][] {
+      return body.map(([agency, ...rest]) => [(agency as VNode).props.children, ...rest]) as (
+        | string
+        | number
+      )[][];
+    }
+
     it("builds a table by agency, ial and sums across issuers", () => {
-      const table = tabulateSumByAgency(results, 1);
+      const fakeLocation = { search: "", pathname: "/foobar" } as Location;
+      const table = tabulateSumByAgency(results, 1, fakeLocation);
 
       expect(table.header).to.deep.eq(["Agency", "IAL", "2021-01-01", "2021-01-02", "Total"]);
       expect(table.body).to.have.lengthOf(2);
-      expect(table.body).to.deep.equal([
+      expect(simplifyVNodes(table.body)).to.deep.equal([
         ["agency1", "1", 1100, 111, 1211],
         ["agency2", "1", 555, 0, 555],
       ]);

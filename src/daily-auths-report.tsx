@@ -11,6 +11,8 @@ import Table, { TableData } from "./table";
 import { path as reportPath } from "./report";
 import PlotComponent from "./plot";
 import { AgenciesContext } from "./context/agencies-context";
+import { Link } from "./router";
+import { pathWithParams } from "./url-params";
 
 interface Result {
   count: number;
@@ -122,7 +124,11 @@ function tabulate(
   };
 }
 
-function tabulateSumByAgency(results?: ProcessedResult[], filterIal?: number): TableData {
+function tabulateSumByAgency(
+  results?: ProcessedResult[],
+  filterIal?: number,
+  location: Location = window.location
+): TableData {
   const filteredResults = (results || []).filter((d) => !filterIal || d.ial === filterIal);
 
   const days = Array.from(new Set(filteredResults.map((d) => d.date.valueOf())))
@@ -145,7 +151,16 @@ function tabulateSumByAgency(results?: ProcessedResult[], filterIal?: number): T
       Array.from(ials).map(([ial, ialDays]) => {
         const dayCounts = days.map((date) => ialDays.get(yearMonthDayFormat(date)) || 0);
 
-        return [agency, String(ial), ...dayCounts, dayCounts.reduce((d, total) => d + total, 0)];
+        const searchParams = new URLSearchParams(location.search);
+        searchParams.set("agency", agency);
+        const url = pathWithParams(location.pathname, searchParams);
+
+        return [
+          <Link href={url}>{agency}</Link>,
+          String(ial),
+          ...dayCounts,
+          dayCounts.reduce((d, total) => d + total, 0),
+        ];
       })
     );
 
