@@ -9,7 +9,7 @@ import { group, ascending, rollup } from "d3-array";
 import { ReportFilterControlsContext } from "./report-filter-controls";
 import Table, { TableData } from "./table";
 import { path as reportPath } from "./report";
-import AgenciesContext from "./agencies-context";
+import { AgenciesContext } from "./context/agencies-context";
 
 interface Result {
   count: number;

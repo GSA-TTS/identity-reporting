@@ -3,7 +3,7 @@ import { useRef, useContext } from "preact/hooks";
 import { utcFormat } from "d3-time-format";
 import { utcWeek, CountableTimeInterval } from "d3-time";
 import { route } from "./router";
-import AgenciesContext from "./agencies-context";
+import { AgenciesContext } from "./context/agencies-context";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 const DEFAULT_IAL = 1;
