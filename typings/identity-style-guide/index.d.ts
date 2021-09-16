@@ -1,3 +1,5 @@
+declare module "*.svg";
+
 declare module "identity-style-guide" {
   interface Component {
     on: () => void;

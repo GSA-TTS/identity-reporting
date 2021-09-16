@@ -1,6 +1,7 @@
 import { VNode } from "preact";
 import DailyAuthsReport from "../daily-auths-report";
 import ReportFilterControls from "../report-filter-controls";
+import Page from "../page";
 
 export interface ReportRouteProps {
   path: string;
@@ -12,10 +13,14 @@ export interface ReportRouteProps {
 }
 
 function ReportRoute(props: ReportRouteProps): VNode {
+  const { path } = props;
+
   return (
-    <ReportFilterControls {...props}>
-      <DailyAuthsReport />
-    </ReportFilterControls>
+    <Page path={path} title="Daily Auths Report">
+      <ReportFilterControls {...props}>
+        <DailyAuthsReport />
+      </ReportFilterControls>
+    </Page>
   );
 }
 
