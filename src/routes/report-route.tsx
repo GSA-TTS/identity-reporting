@@ -8,6 +8,7 @@ import ReportFilterControls, {
   DEFAULT_ENV,
 } from "../report-filter-controls";
 import DailyAuthsReport from "../daily-auths-report";
+import Page from "../page";
 
 const yearMonthDayParse = utcParse("%Y-%m-%d");
 
@@ -37,12 +38,14 @@ function ReportRoute({
   const env = envParam || DEFAULT_ENV;
 
   return (
-    <AgenciesContextProvider>
-      <ReportFilterControlsContext.Provider value={{ start, finish, ial, agency, env }}>
-        <ReportFilterControls path={path} />
-        <DailyAuthsReport />
-      </ReportFilterControlsContext.Provider>
-    </AgenciesContextProvider>
+    <Page path={path} title="Daily Auths Report">
+      <AgenciesContextProvider>
+        <ReportFilterControlsContext.Provider value={{ start, finish, ial, agency, env }}>
+          <ReportFilterControls path={path} />
+          <DailyAuthsReport />
+        </ReportFilterControlsContext.Provider>
+      </AgenciesContextProvider>
+    </Page>
   );
 }
 
