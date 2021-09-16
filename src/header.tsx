@@ -1,7 +1,7 @@
 import { VNode } from "preact";
 import logoURL from "../node_modules/identity-style-guide/dist/assets/img/login-gov-logo.svg";
 import closeURL from "../node_modules/identity-style-guide/dist/assets/img/close.svg";
-import { Link } from "./router";
+import { getFullPath, Link } from "./router";
 
 interface HeaderProps {
   path: string;
@@ -28,14 +28,14 @@ function Header({ path }: HeaderProps): VNode {
           </button>
           <ul className="usa-nav__primary usa-accordion">
             <li className="usa-nav__primary-item">
-              <Link href="/" className={path === "/" ? "usa-current" : undefined}>
+              <Link href="/" className={path === getFullPath("/") ? "usa-current" : undefined}>
                 Home
               </Link>
             </li>
             <li className="usa-nav__primary-item">
               <Link
                 href="/daily-auths-report/"
-                className={path === "/daily-auths-report/" ? "usa-current" : undefined}
+                className={path === getFullPath("/daily-auths-report/") ? "usa-current" : undefined}
               >
                 Daily Auths Report
               </Link>
