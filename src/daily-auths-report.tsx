@@ -1,5 +1,5 @@
 import { VNode, ComponentChildren } from "preact";
-import { useContext, useEffect, useRef, Inputs } from "preact/hooks";
+import { useContext, useEffect, useRef, Inputs, useState } from "preact/hooks";
 import { utcDays, utcDay } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import { format } from "d3-format";
@@ -160,6 +160,7 @@ function plot({
   agency,
   ial,
   facetAgency,
+  width,
 }: {
   start: Date;
   finish: Date;
@@ -167,9 +168,11 @@ function plot({
   agency?: string;
   ial: number;
   facetAgency?: boolean;
+  width?: number;
 }): HTMLElement {
   return Plot.plot({
     height: facetAgency ? new Set((data || []).map((d) => d.agency)).size * 60 : undefined,
+    width,
     y: {
       tickFormat: format(".1s"),
     },
@@ -233,6 +236,9 @@ function PlotComponent({ plotter, inputs, children }: PlotComponentProps): VNode
 }
 
 function DailyAuthsReport(): VNode {
+  const ref = useRef(null as HTMLDivElement | null);
+  const [width, setWidth] = useState(undefined as number | undefined);
+
   const { start, finish, agency, ial, setAllAgencies, env } = useContext(
     ReportFilterControlsContext
   );
@@ -256,16 +262,25 @@ function DailyAuthsReport(): VNode {
     setAllAgencies(allAgencies);
   }, [data]);
 
+  useEffect(() => {
+    const listener = () => setWidth(ref.current?.offsetWidth);
+
+    listener();
+
+    window.addEventListener("resize", listener);
+    return () => window.removeEventListener("resize", listener);
+  });
+
   return (
-    <div>
+    <div ref={ref}>
       <PlotComponent
-        plotter={() => plot({ data, ial, agency, start, finish })}
-        inputs={[data, ial, agency, start.valueOf(), finish.valueOf()]}
+        plotter={() => plot({ data, ial, agency, start, finish, width })}
+        inputs={[data, ial, agency, start.valueOf(), finish.valueOf(), width]}
       />
       {!agency && (
         <PlotComponent
-          plotter={() => plot({ data, ial, start, finish, facetAgency: true })}
-          inputs={[data, ial, start.valueOf(), finish.valueOf()]}
+          plotter={() => plot({ data, ial, start, finish, width, facetAgency: true })}
+          inputs={[data, ial, start.valueOf(), finish.valueOf(), width]}
         />
       )}
       <Table
