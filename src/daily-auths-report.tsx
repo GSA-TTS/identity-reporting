@@ -10,6 +10,7 @@ import { ReportFilterControlsContext } from "./report-filter-controls";
 import Table, { TableData } from "./table";
 import { path as reportPath } from "./report";
 import PlotComponent from "./plot";
+import { AgenciesContext } from "./context/agencies-context";
 
 interface Result {
   count: number;
@@ -154,6 +155,9 @@ function tabulateSumByAgency(results?: ProcessedResult[], filterIal?: number): T
   };
 }
 
+const formatSIPrefix = format(".2s");
+const formatSIDropTrailingZeroes = (d: number): string => formatSIPrefix(d).replace(/\.0+/, "");
+
 function plot({
   start,
   finish,
@@ -175,7 +179,7 @@ function plot({
     height: facetAgency ? new Set((data || []).map((d) => d.agency)).size * 60 : undefined,
     width,
     y: {
-      tickFormat: format(".1s"),
+      tickFormat: formatSIDropTrailingZeroes,
     },
     x: {
       domain: [start, finish],
@@ -215,10 +219,8 @@ function plot({
 function DailyAuthsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
-
-  const { start, finish, agency, ial, setAllAgencies, env } = useContext(
-    ReportFilterControlsContext
-  );
+  const { setAgencies } = useContext(AgenciesContext);
+  const { start, finish, agency, ial, env } = useContext(ReportFilterControlsContext);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
@@ -233,10 +235,7 @@ function DailyAuthsReport(): VNode {
       .filter((x) => !!x)
       .sort();
 
-    // This needs to be in a separate effect from below because
-    // this causes the <select> to refresh and triggers another change event
-    // and a bunch of bad cycles
-    setAllAgencies(allAgencies);
+    setAgencies(allAgencies);
   }, [data]);
 
   useEffect(() => {
@@ -269,4 +268,4 @@ function DailyAuthsReport(): VNode {
 }
 
 export default DailyAuthsReport;
-export { tabulate, tabulateSumByAgency, loadData };
+export { tabulate, tabulateSumByAgency, loadData, formatSIDropTrailingZeroes };

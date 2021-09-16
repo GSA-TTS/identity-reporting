@@ -2,7 +2,13 @@ import { VNode } from "preact";
 import { expect } from "chai";
 import { utcParse } from "d3-time-format";
 import fetchMock from "fetch-mock";
-import { tabulate, tabulateSumByAgency, loadData, ProcessedResult } from "./daily-auths-report";
+import {
+  tabulate,
+  tabulateSumByAgency,
+  loadData,
+  formatSIDropTrailingZeroes,
+  ProcessedResult,
+} from "./daily-auths-report";
 import { TableRow } from "./table";
 
 describe("DailyAuthsReport", () => {
@@ -137,5 +143,15 @@ describe("DailyAuthsReport", () => {
     });
 
     after(() => fetchMock.restore());
+  });
+
+  describe("#formatSIDropTrailingZeroes", () => {
+    it("formats with an SI prefix", () => {
+      expect(formatSIDropTrailingZeroes(1_230_000)).to.eq("1.2M");
+    });
+
+    it("drops trailing zeroes", () => {
+      expect(formatSIDropTrailingZeroes(1_000.0)).to.eq("1k");
+    });
   });
 });
