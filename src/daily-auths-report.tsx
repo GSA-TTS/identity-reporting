@@ -249,6 +249,29 @@ function DailyAuthsReport(): VNode {
 
   return (
     <div ref={ref}>
+      <div className="usa-accordion usa-accordion--bordered margin-bottom-2">
+        <h3 className="usa-accordion__heading">
+          <button
+            className="usa-accordion__button"
+            aria-controls="how-is-it-measured"
+            aria-expanded="false"
+            type="button"
+          >
+            How is this measured?
+          </button>
+        </h3>
+        <div className="usa-prose usa-accordion__content" id="how-is-it-measured" hidden>
+          <p>
+            <strong>Timing: </strong>
+            All data is collected, grouped, and displayed in the UTC timezone.
+          </p>
+          <p>
+            <strong>Counting: </strong>
+            This report displays the total number of authentications, so one user authenticating
+            twice will count twice. It does not de-duplicate users or provide unique auths.
+          </p>
+        </div>
+      </div>
       <PlotComponent
         plotter={() => plot({ data, ial, agency, start, finish, width })}
         inputs={[data, ial, agency, start.valueOf(), finish.valueOf(), width]}
