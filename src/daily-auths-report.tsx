@@ -213,10 +213,7 @@ function plot({
               const total = formatWithCommas((bin || []).reduce((sum, d) => sum + d.count, 0));
               const friendlyName = bin[0]?.friendly_name;
 
-              return [
-                agency && `${friendlyName}:`,
-                total, `(${date})`
-              ].filter(Boolean).join(" ");
+              return [agency && `${friendlyName}:`, total, `(${date})`].filter(Boolean).join(" ");
             },
             filter: (d: ProcessedResult) => d.ial === ial && (!agency || d.agency === agency),
           }
