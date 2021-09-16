@@ -5,7 +5,6 @@ import { utcWeek, CountableTimeInterval } from "d3-time";
 import { route } from "./router";
 import { AgenciesContext } from "./context/agencies-context";
 import { ReportFilterContext, DEFAULT_ENV } from "./context/report-filter-context";
-import { pathWithParams } from "./url-params";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 
