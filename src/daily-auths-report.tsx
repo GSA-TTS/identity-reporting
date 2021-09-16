@@ -258,7 +258,7 @@ function DailyAuthsReport(): VNode {
 
   return (
     <div>
-      <h2>Daily Auths Report</h2>
+      <h1>Daily Auths Report</h1>
       <div className="usa-accordion usa-accordion--bordered margin-bottom-2">
         <h3 className="usa-accordion__heading">
           <button
