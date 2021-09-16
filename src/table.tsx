@@ -15,28 +15,30 @@ interface TableProps {
 function Table({ data, numberFormatter = String }: TableProps): VNode {
   const { header, body } = data;
   return (
-    <table className="usa-table">
-      <thead>
-        <tr>
-          {header.map((head) => (
-            <th>{head}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {body.map((row) => (
+    <div className="usa-table-container--scrollable">
+      <table className="usa-table usa-table--compact">
+        <thead>
           <tr>
-            {row.map((d) =>
-              typeof d === "number" ? (
-                <td className="table-number text-tabular text-right">{numberFormatter(d)}</td>
-              ) : (
-                <td>{d}</td>
-              )
-            )}
+            {header.map((head) => (
+              <th>{head}</th>
+            ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {body.map((row) => (
+            <tr>
+              {row.map((d) =>
+                typeof d === "number" ? (
+                  <td className="table-number text-tabular text-right">{numberFormatter(d)}</td>
+                ) : (
+                  <td>{d}</td>
+                )
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

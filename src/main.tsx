@@ -46,7 +46,13 @@ render(
       </nav>
     </header>
     <main>
-      <Routes />
+      <div className="grid-container">
+        <div className="grid-row">
+          <div className="grid-col-auto">
+            <Routes />
+          </div>
+        </div>
+      </div>
     </main>
   </div>,
   document.getElementById("app") as HTMLElement
