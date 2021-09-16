@@ -210,7 +210,7 @@ function plot({
             fill: agency ? "friendly_name" : "steelblue",
             title: (bin: ProcessedResult[]) => {
               const date = yearMonthDayFormat(bin[0].date);
-              const total = formatWithCommas((bin || []).reduce((sum, d) => sum + d.count, 0));
+              const total = formatWithCommas(bin.reduce((sum, d) => sum + d.count, 0));
               const friendlyName = bin[0]?.friendly_name;
 
               return [agency && `${friendlyName}:`, total, `(${date})`].filter(Boolean).join(" ");
