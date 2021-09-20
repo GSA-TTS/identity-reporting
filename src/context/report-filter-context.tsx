@@ -1,6 +1,5 @@
 import { createContext, VNode, ComponentChildren } from "preact";
 import { route } from "../router";
-import { pathWithParams } from "../url-params";
 
 const DEFAULT_IAL = 1;
 const DEFAULT_ENV = "prod";
@@ -12,6 +11,13 @@ interface ReportFilterContextValues {
   agency?: string;
   env: string;
   setParameters: (params: Record<string, string>) => void;
+}
+
+/**
+ * preact-router does not parse "+" as spaces the way JS encodes them
+ */
+function pathWithParams(path: string, searchParams: URLSearchParams): string {
+  return `${path}?${searchParams.toString().replace(/\+/g, "%20")}`;
 }
 
 function defaultSetParameters(
