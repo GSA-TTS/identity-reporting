@@ -16,7 +16,7 @@ function Header({ path }: HeaderProps): VNode {
             <img src={logoURL} className="usa-logo__img" alt="Login.gov" />
             <em className="usa-logo__text">
               Data
-              <span className="usa-tag bg-blue">Beta</span>
+              <span className="usa-tag bg-blue margin-left-05">Beta</span>
             </em>
           </Link>
         </div>
