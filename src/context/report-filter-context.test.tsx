@@ -1,9 +1,7 @@
 import { expect } from "chai";
-import { DEFAULT_ENV, DEFAULT_IAL, ReportFilterContext } from "./report-filter-context";
 import { useContext } from "preact/hooks";
 import { renderHook } from "@testing-library/preact-hooks";
-import { VNode } from "preact";
-import { JSDOM } from "jsdom";
+import { DEFAULT_ENV, DEFAULT_IAL, ReportFilterContext } from "./report-filter-context";
 
 describe("ReportFilterContext", () => {
   it("has expected default properties", () => {
