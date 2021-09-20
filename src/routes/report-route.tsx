@@ -2,11 +2,11 @@ import { VNode } from "preact";
 import { utcParse } from "d3-time-format";
 import { utcWeek } from "d3-time";
 import { AgenciesContextProvider } from "../context/agencies-context";
-import ReportFilterControls, {
-  ReportFilterControlsContext,
+import ReportFilterContextProvider, {
   DEFAULT_IAL,
   DEFAULT_ENV,
-} from "../report-filter-controls";
+} from "../context/report-filter-context";
+import ReportFilterControls from "../report-filter-controls";
 import DailyAuthsReport from "../daily-auths-report";
 import Page from "../page";
 
@@ -40,10 +40,16 @@ function ReportRoute({
   return (
     <Page path={path} title="Daily Auths Report">
       <AgenciesContextProvider>
-        <ReportFilterControlsContext.Provider value={{ start, finish, ial, agency, env }}>
+        <ReportFilterContextProvider
+          start={start}
+          finish={finish}
+          ial={ial}
+          agency={agency}
+          env={env}
+        >
           <ReportFilterControls path={path} />
           <DailyAuthsReport />
-        </ReportFilterControlsContext.Provider>
+        </ReportFilterContextProvider>
       </AgenciesContextProvider>
     </Page>
   );

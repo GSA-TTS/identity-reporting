@@ -1,36 +1,20 @@
-import { createContext, VNode } from "preact";
+import { VNode } from "preact";
 import { useRef, useContext } from "preact/hooks";
 import { utcFormat } from "d3-time-format";
 import { utcWeek, CountableTimeInterval } from "d3-time";
 import { route } from "./router";
 import { AgenciesContext } from "./context/agencies-context";
 import { pathWithParams } from "./url-params";
+import { ReportFilterContext, DEFAULT_ENV } from "./context/report-filter-context";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
-const DEFAULT_IAL = 1;
-const DEFAULT_ENV = "prod";
-
-interface ReportFilterControlsContextValues {
-  start: Date;
-  finish: Date;
-  ial: 1 | 2;
-  agency?: string;
-  env: string;
-}
-
-const ReportFilterControlsContext = createContext({
-  start: new Date(),
-  finish: new Date(),
-  ial: DEFAULT_IAL,
-  env: DEFAULT_ENV,
-} as ReportFilterControlsContextValues);
 
 interface ReportFilterControlsProps {
   path: string;
 }
 
 function ReportFilterControls({ path }: ReportFilterControlsProps): VNode {
-  const { start, finish, agency, ial, env } = useContext(ReportFilterControlsContext);
+  const { start, finish, agency, ial, env } = useContext(ReportFilterContext);
   const { agencies } = useContext(AgenciesContext);
 
   const formRef = useRef(null as HTMLFormElement | null);
@@ -146,4 +130,3 @@ function ReportFilterControls({ path }: ReportFilterControlsProps): VNode {
 }
 
 export default ReportFilterControls;
-export { ReportFilterControlsContext, DEFAULT_ENV, DEFAULT_IAL };
