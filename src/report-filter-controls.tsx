@@ -19,12 +19,11 @@ function ReportFilterControls(): VNode {
       return;
     }
 
-    const formData = Array.from(new FormData(form)) as string[][];
-    const searchParams = new URLSearchParams(formData);
+    const formData = new FormData(form);
     Object.entries(overrideFormData).forEach(([key, value]) =>
-      searchParams.set(key, String(value))
+      formData.set(key, String(value))
     );
-    setParameters(Object.fromEntries(searchParams));
+    setParameters(Object.fromEntries(formData) as Record<string, string>);
     event.preventDefault();
   }
 
