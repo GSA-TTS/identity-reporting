@@ -14,7 +14,10 @@ function Header({ path }: HeaderProps): VNode {
         <div className="usa-logo">
           <Link href="/" title="Home" aria-label="Home">
             <img src={logoURL} className="usa-logo__img" alt="Login.gov" />
-            <em className="usa-logo__text">Data</em>
+            <em className="usa-logo__text">
+              Data
+              <span className="usa-tag bg-blue">Beta</span>
+            </em>
           </Link>
         </div>
         <button className="usa-menu-btn" type="button">
