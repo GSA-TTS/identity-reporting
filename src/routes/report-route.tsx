@@ -5,7 +5,6 @@ import { AgenciesContextProvider } from "../context/agencies-context";
 import ReportFilterContextProvider, {
   DEFAULT_IAL,
   DEFAULT_ENV,
-  defaultSetParameters,
 } from "../context/report-filter-context";
 import ReportFilterControls from "../report-filter-controls";
 import DailyAuthsReport from "../daily-auths-report";
@@ -47,7 +46,6 @@ function ReportRoute({
           ial={ial}
           agency={agency}
           env={env}
-          setParameters={defaultSetParameters}
         >
           <ReportFilterControls />
           <DailyAuthsReport />

@@ -20,9 +20,7 @@ function ReportFilterControls(): VNode {
     }
 
     const formData = new FormData(form);
-    Object.entries(overrideFormData).forEach(([key, value]) =>
-      formData.set(key, String(value))
-    );
+    Object.entries(overrideFormData).forEach(([key, value]) => formData.set(key, String(value)));
     setParameters(Object.fromEntries(formData) as Record<string, string>);
     event.preventDefault();
   }
