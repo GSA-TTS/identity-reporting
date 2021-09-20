@@ -6,7 +6,7 @@ import { format } from "d3-format";
 import { useQuery } from "preact-fetching";
 import { utcFormat } from "d3-time-format";
 import { group, ascending, rollup } from "d3-array";
-import { ReportFilterControlsContext } from "./report-filter-controls";
+import { ReportFilterContext } from "./context/report-filter-context";
 import Table, { TableData } from "./table";
 import { path as reportPath } from "./report";
 import PlotComponent from "./plot";
@@ -69,11 +69,15 @@ function loadData(
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 
-function tabulate(
-  results?: ProcessedResult[],
-  filterAgency?: string,
-  filterIal?: number
-): TableData {
+function tabulate({
+  results,
+  filterAgency,
+  filterIal,
+}: {
+  results?: ProcessedResult[];
+  filterAgency?: string;
+  filterIal?: number;
+}): TableData {
   const filteredResults = (results || []).filter(
     (d) => (!filterAgency || d.agency === filterAgency) && (!filterIal || d.ial === filterIal)
   );
@@ -122,7 +126,15 @@ function tabulate(
   };
 }
 
-function tabulateSumByAgency(results?: ProcessedResult[], filterIal?: number): TableData {
+function tabulateSumByAgency({
+  results,
+  filterIal,
+  setParameters,
+}: {
+  results?: ProcessedResult[];
+  filterIal?: number;
+  setParameters: (params: Record<string, string>) => void;
+}): TableData {
   const filteredResults = (results || []).filter((d) => !filterIal || d.ial === filterIal);
 
   const days = Array.from(new Set(filteredResults.map((d) => d.date.valueOf())))
@@ -145,7 +157,18 @@ function tabulateSumByAgency(results?: ProcessedResult[], filterIal?: number): T
       Array.from(ials).map(([ial, ialDays]) => {
         const dayCounts = days.map((date) => ialDays.get(yearMonthDayFormat(date)) || 0);
 
-        return [agency, String(ial), ...dayCounts, dayCounts.reduce((d, total) => d + total, 0)];
+        return [
+          <button
+            type="button"
+            className="usa-button usa-button--unstyled"
+            onClick={() => setParameters({ agency })}
+          >
+            {agency}
+          </button>,
+          String(ial),
+          ...dayCounts,
+          dayCounts.reduce((d, total) => d + total, 0),
+        ];
       })
     );
 
@@ -227,7 +250,7 @@ function DailyAuthsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
   const { setAgencies } = useContext(AgenciesContext);
-  const { start, finish, agency, ial, env } = useContext(ReportFilterControlsContext);
+  const { start, finish, agency, ial, env, setParameters } = useContext(ReportFilterContext);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
@@ -290,7 +313,11 @@ function DailyAuthsReport(): VNode {
         />
       )}
       <Table
-        data={agency ? tabulate(data, agency, ial) : tabulateSumByAgency(data, ial)}
+        data={
+          agency
+            ? tabulate({ results: data, filterAgency: agency, filterIal: ial })
+            : tabulateSumByAgency({ results: data, filterIal: ial, setParameters })
+        }
         numberFormatter={formatWithCommas}
       />
     </div>
