@@ -10,6 +10,7 @@ interface ReportFilterContextValues {
   ial: 1 | 2;
   agency?: string;
   env: string;
+  setParameters: (params: Record<string, string>) => void;
 }
 
 /**
@@ -34,12 +35,14 @@ const ReportFilterContext = createContext({
   ial: DEFAULT_IAL,
   env: DEFAULT_ENV,
   setParameters: defaultSetParameters,
-} as ReportFilterContextValues & { setParameters: (params: Record<string, string>) => void });
+} as ReportFilterContextValues);
+
+type ReportFilterContextProviderProps = Omit<ReportFilterContextValues, "setParameters">;
 
 function ReportFilterContextProvider({
   children,
   ...rest
-}: { children: ComponentChildren } & ReportFilterContextValues): VNode {
+}: { children: ComponentChildren } & ReportFilterContextProviderProps): VNode {
   return (
     <ReportFilterContext.Provider value={{ ...rest, setParameters: defaultSetParameters }}>
       {children}
