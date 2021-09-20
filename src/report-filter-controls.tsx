@@ -2,34 +2,29 @@ import { VNode } from "preact";
 import { useRef, useContext } from "preact/hooks";
 import { utcFormat } from "d3-time-format";
 import { utcWeek, CountableTimeInterval } from "d3-time";
-import { route } from "./router";
 import { AgenciesContext } from "./context/agencies-context";
-import { pathWithParams } from "./url-params";
 import { ReportFilterContext, DEFAULT_ENV } from "./context/report-filter-context";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 
-interface ReportFilterControlsProps {
-  path: string;
-}
-
-function ReportFilterControls({ path }: ReportFilterControlsProps): VNode {
-  const { start, finish, agency, ial, env } = useContext(ReportFilterContext);
+function ReportFilterControls(): VNode {
+  const { start, finish, agency, ial, env, setParameters } = useContext(ReportFilterContext);
   const { agencies } = useContext(AgenciesContext);
 
   const formRef = useRef(null as HTMLFormElement | null);
 
-  function update(event: Event, overrideFormData = {}) {
+  function update(event: Event, overrideFormData: Record<string, string> = {}) {
     const form = formRef.current;
     if (!form) {
       return;
     }
+
     const formData = Array.from(new FormData(form)) as string[][];
     const searchParams = new URLSearchParams(formData);
     Object.entries(overrideFormData).forEach(([key, value]) =>
       searchParams.set(key, String(value))
     );
-    route(pathWithParams(path, searchParams));
+    setParameters(Object.fromEntries(searchParams));
     event.preventDefault();
   }
 

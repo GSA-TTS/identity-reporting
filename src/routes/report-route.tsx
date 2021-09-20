@@ -49,7 +49,7 @@ function ReportRoute({
           env={env}
           setParameters={defaultSetParameters}
         >
-          <ReportFilterControls path={path} />
+          <ReportFilterControls />
           <DailyAuthsReport />
         </ReportFilterContextProvider>
       </AgenciesContextProvider>
