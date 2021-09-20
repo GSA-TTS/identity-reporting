@@ -111,8 +111,7 @@ describe("DailyAuthsReport", () => {
     }
 
     it("builds a table by agency, ial and sums across issuers", () => {
-      const fakeLocation = { search: "", pathname: "/foobar" } as Location;
-      const table = tabulateSumByAgency(results, 1, fakeLocation);
+      const table = tabulateSumByAgency(results, 1);
 
       expect(table.header).to.deep.eq(["Agency", "IAL", "2021-01-01", "2021-01-02", "Total"]);
       expect(table.body).to.have.lengthOf(2);

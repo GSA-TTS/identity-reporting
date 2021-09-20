@@ -11,8 +11,6 @@ import Table, { TableData } from "./table";
 import { path as reportPath } from "./report";
 import PlotComponent from "./plot";
 import { AgenciesContext } from "./context/agencies-context";
-import { Link } from "./router";
-import { pathWithParams } from "./url-params";
 
 interface Result {
   count: number;
@@ -127,7 +125,7 @@ function tabulate(
 function tabulateSumByAgency(
   results?: ProcessedResult[],
   filterIal?: number,
-  location: Location = window.location
+  setParameters?: (params: Record<string, string>) => void
 ): TableData {
   const filteredResults = (results || []).filter((d) => !filterIal || d.ial === filterIal);
 
@@ -151,12 +149,14 @@ function tabulateSumByAgency(
       Array.from(ials).map(([ial, ialDays]) => {
         const dayCounts = days.map((date) => ialDays.get(yearMonthDayFormat(date)) || 0);
 
-        const searchParams = new URLSearchParams(location.search);
-        searchParams.set("agency", agency);
-        const url = pathWithParams(location.pathname, searchParams);
-
         return [
-          <Link href={url}>{agency}</Link>,
+          <button
+            type="button"
+            className="usa-button usa-button--unstyled"
+            onClick={() => setParameters?.({ agency })}
+          >
+            {agency}
+          </button>,
           String(ial),
           ...dayCounts,
           dayCounts.reduce((d, total) => d + total, 0),
@@ -242,7 +242,7 @@ function DailyAuthsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
   const { setAgencies } = useContext(AgenciesContext);
-  const { start, finish, agency, ial, env } = useContext(ReportFilterContext);
+  const { start, finish, agency, ial, env, setParameters } = useContext(ReportFilterContext);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
@@ -305,7 +305,7 @@ function DailyAuthsReport(): VNode {
         />
       )}
       <Table
-        data={agency ? tabulate(data, agency, ial) : tabulateSumByAgency(data, ial)}
+        data={agency ? tabulate(data, agency, ial) : tabulateSumByAgency(data, ial, setParameters)}
         numberFormatter={formatWithCommas}
       />
     </div>
