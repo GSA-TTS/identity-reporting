@@ -69,11 +69,15 @@ function loadData(
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 
-function tabulate(
-  results?: ProcessedResult[],
-  filterAgency?: string,
-  filterIal?: number
-): TableData {
+function tabulate({
+  results,
+  filterAgency,
+  filterIal,
+}: {
+  results?: ProcessedResult[];
+  filterAgency?: string;
+  filterIal?: number;
+}): TableData {
   const filteredResults = (results || []).filter(
     (d) => (!filterAgency || d.agency === filterAgency) && (!filterIal || d.ial === filterIal)
   );
@@ -122,11 +126,15 @@ function tabulate(
   };
 }
 
-function tabulateSumByAgency(
-  results?: ProcessedResult[],
-  filterIal?: number,
-  setParameters?: (params: Record<string, string>) => void
-): TableData {
+function tabulateSumByAgency({
+  results,
+  filterIal,
+  setParameters,
+}: {
+  results?: ProcessedResult[];
+  filterIal?: number;
+  setParameters: (params: Record<string, string>) => void;
+}): TableData {
   const filteredResults = (results || []).filter((d) => !filterIal || d.ial === filterIal);
 
   const days = Array.from(new Set(filteredResults.map((d) => d.date.valueOf())))
@@ -153,7 +161,7 @@ function tabulateSumByAgency(
           <button
             type="button"
             className="usa-button usa-button--unstyled"
-            onClick={() => setParameters?.({ agency })}
+            onClick={() => setParameters({ agency })}
           >
             {agency}
           </button>,
@@ -305,7 +313,11 @@ function DailyAuthsReport(): VNode {
         />
       )}
       <Table
-        data={agency ? tabulate(data, agency, ial) : tabulateSumByAgency(data, ial, setParameters)}
+        data={
+          agency
+            ? tabulate({ results: data, filterAgency: agency, filterIal: ial })
+            : tabulateSumByAgency({ results: data, filterIal: ial, setParameters })
+        }
         numberFormatter={formatWithCommas}
       />
     </div>
