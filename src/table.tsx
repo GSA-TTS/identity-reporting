@@ -18,11 +18,7 @@ function Table({ data, numberFormatter = String }: TableProps): VNode {
     <div className="usa-table-container--scrollable">
       <table className="usa-table usa-table--compact">
         <thead>
-          <tr>
-            {header.map((head) => (
-              <th>{head}</th>
-            ))}
-          </tr>
+          <tr>{header.map((head) => (typeof head === "object" ? head : <th>{head}</th>))}</tr>
         </thead>
         <tbody>
           {body.map((row) => (
