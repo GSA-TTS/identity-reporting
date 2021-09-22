@@ -8,6 +8,7 @@ import { AgenciesContext } from "./context/agencies-context";
 import Table, { TableData } from "./table";
 import { ReportFilterContext } from "./context/report-filter-context";
 import { path as reportPath } from "./report";
+import { scaleLinear } from "d3-scale";
 
 enum Step {
   WELCOME = "welcome",
@@ -138,6 +139,14 @@ function tabulate({
     (d) => d.issuer
   );
 
+  const color = scaleLinear()
+    .domain([1, 0])
+    .range([
+      // scaleLinear can interpolate string colors, but the 3rd party type annotations don't know that yet
+      "steelblue" as unknown as number,
+      "white" as unknown as number,
+    ]);
+
   const body = Array.from(grouped)
     .sort(([agencyA], [agencyB]) => ascending(agencyA, agencyB))
     .flatMap(([agency, issuers]) =>
@@ -150,13 +159,25 @@ function tabulate({
             <span title={issuer}>{issuerToFriendlyName.get(issuer)}</span>,
             ...STEP_TITLES.flatMap(({ key }, idx) => {
               const count = stepCounts?.get(key) || 0;
-              const cells = [formatWithCommas(count)];
+              let comparedToFirst = 1;
 
               if (idx > 0) {
                 const firstCount = stepCounts?.get(STEP_TITLES[0].key) || 0;
-                const comparedToFirst = count / firstCount;
-                cells.push(formatAsPercent(comparedToFirst));
+                comparedToFirst = count / firstCount;
               }
+
+              const backgroundColor = `background-color: ${color(comparedToFirst)};`;
+
+              const cells = [
+                <td className="table-number text-tabular text-right" style={backgroundColor}>
+                  {formatWithCommas(count)}
+                </td>,
+                idx > 0 && (
+                  <td className="table-number text-tabular text-right" style={backgroundColor}>
+                    {formatAsPercent(comparedToFirst)}
+                  </td>
+                ),
+              ].filter(Boolean);
 
               return cells;
             }),
