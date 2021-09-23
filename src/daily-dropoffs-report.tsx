@@ -11,7 +11,7 @@ import { path as reportPath } from "./report";
 import { scalePoint, scaleLinear, scaleOrdinal } from "d3-scale";
 import { csvParse, autoType } from "d3-dsv";
 import { line as d3Line } from "d3-shape";
-import { select, selectAll } from "d3-selection";
+import { select } from "d3-selection";
 import { Axis as D3Axis, axisBottom, axisLeft } from "d3-axis";
 import { schemeCategory10 } from "d3-scale-chromatic";
 
@@ -40,7 +40,7 @@ enum Step {
   VERIFIED = "verified",
 }
 
-const STEP_TITLES = [
+const STEPS = [
   { key: Step.WELCOME, title: "Welcome" },
   { key: Step.AGREEMENT, title: "Agreement" },
   { key: Step.CAPTURE_DOCUMENT, title: "Capture Document" },
@@ -53,6 +53,10 @@ const STEP_TITLES = [
   { key: Step.PERSONAL_KEY, title: "Personal Key" },
   { key: Step.VERIFIED, title: "Verified" },
 ];
+
+function stepToTitle(step: Step): string {
+  return STEPS.find(({ key }) => key === step)?.title || "";
+}
 
 interface DailyDropoffsRow extends Record<Step, number> {
   issuer: string;
@@ -105,7 +109,7 @@ function aggregate(rows: DailyDropoffsRow[]): DailyDropoffsRow[] {
     .map(([_start, bin]) => {
       const steps: Map<Step, number> = new Map();
       bin.forEach((row) => {
-        STEP_TITLES.forEach(({ key }) => {
+        STEPS.forEach(({ key }) => {
           const oldCount = steps.get(key) || 0;
           steps.set(key, row[key] + oldCount);
         });
@@ -139,7 +143,7 @@ function tabulate({
   const header = [
     "Agency",
     "App",
-    ...STEP_TITLES.map(({ title }, idx) => <th colSpan={idx === 0 ? 1 : 2}>{title}</th>),
+    ...STEPS.map(({ title }, idx) => <th colSpan={idx === 0 ? 1 : 2}>{title}</th>),
   ];
 
   const color = scaleLinear()
@@ -159,12 +163,12 @@ function tabulate({
         <span style={`color: ${issuerColor(issuer)}`}>⬤ </span>
         {friendly_name}
       </span>,
-      ...STEP_TITLES.flatMap(({ key }, idx) => {
+      ...STEPS.flatMap(({ key }, idx) => {
         const count = row[key] || 0;
         let comparedToFirst = 1;
 
         if (idx > 0) {
-          const firstCount = row[STEP_TITLES[0].key] || 0;
+          const firstCount = row[STEPS[0].key] || 0;
           comparedToFirst = count / firstCount;
         }
 
@@ -201,22 +205,34 @@ interface StepCount {
 }
 
 function toStepCounts(row: DailyDropoffsRow): StepCount[] {
-  return STEP_TITLES.map(({ key }) => ({
+  return STEPS.map(({ key }) => ({
     step: key,
     count: row[key],
   }));
 }
 
-function Axis({ axis, transform }: { axis: D3Axis<any>; transform: string }): VNode {
+function Axis({
+  axis,
+  transform,
+  rotateLabels,
+  className,
+}: {
+  axis: D3Axis<any>;
+  transform: string;
+  rotateLabels?: boolean;
+  className?: string;
+}): VNode {
   const ref = useRef(null as SVGGElement | null);
 
   useEffect(() => {
     if (ref.current) {
-      select(ref.current).call(axis);
+      select(ref.current)
+        .call(axis)
+        .classed('rotate-labels', !!rotateLabels)
     }
   });
 
-  return <g ref={ref} transform={transform} />;
+  return <g ref={ref} className={className} transform={transform} />;
 }
 
 function LineChart({
@@ -242,7 +258,7 @@ function LineChart({
   const ref = useRef(null as SVGSVGElement | null);
 
   const x = scalePoint()
-    .domain(STEP_TITLES.map(({ key }) => key))
+    .domain(STEPS.map(({ key }) => key))
     .range([0, innerWidth]);
 
   const y = scaleLinear()
@@ -257,8 +273,10 @@ function LineChart({
     <svg ref={ref} height={height} width={width}>
       <Axis axis={axisLeft(y)} transform={`translate(${margin.left}, ${margin.top})`} />
       <Axis
-        axis={axisBottom(x)}
+        axis={axisBottom(x).tickFormat(stepToTitle as (s: string) => string)}
         transform={`translate(${margin.left}, ${margin.top + innerHeight})`}
+        className={"x-axis"}
+        rotateLabels={width < 700}
       />
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         {(data || []).map((row) => (
@@ -293,7 +311,11 @@ function LineChart({
                   <circle cx={x(step)} cy={y(count)} r="3" fill={color(row.issuer)} />
                   <text x={x(step)} y={y(count)} font-size="12" dx="3" dy="-3">
                     <tspan x={x(step)}>{formatWithCommas(count)}</tspan>
-                    {idx > 0 && <tspan x={x(step)} dy="1.2em">(${formatAsPercent(comparedToFirst)})</tspan>}
+                    {idx > 0 && (
+                      <tspan x={x(step)} dy="1.2em">
+                        (${formatAsPercent(comparedToFirst)})
+                      </tspan>
+                    )}
                   </text>
                 </>
               );
