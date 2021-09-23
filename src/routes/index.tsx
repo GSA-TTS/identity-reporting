@@ -6,8 +6,8 @@ import HomeRoute from "./home-route";
 import ReportRoute from "./report-route";
 
 export const ROUTES = {
-  "/daily-auths-report/": ReportRoute(DailyAuthsReport),
-  "/daily-dropoffs-report/": ReportRoute(DailyDropffsReport),
+  "/daily-auths-report/": ReportRoute(DailyAuthsReport, "Daily Auths Report"),
+  "/daily-dropoffs-report/": ReportRoute(DailyDropffsReport, "Daily Dropoffs Report"),
   "/": HomeRoute,
 };
 

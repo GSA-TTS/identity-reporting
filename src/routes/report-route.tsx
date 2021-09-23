@@ -20,7 +20,7 @@ export interface ReportRouteProps {
   env?: string;
 }
 
-function ReportRoute(Report: () => VNode): (props: ReportRouteProps) => VNode {
+function ReportRoute(Report: () => VNode, title: string): (props: ReportRouteProps) => VNode {
   return ({
     path,
     start: startParam,
@@ -38,7 +38,7 @@ function ReportRoute(Report: () => VNode): (props: ReportRouteProps) => VNode {
     const env = envParam || DEFAULT_ENV;
 
     return (
-      <Page path={path} title="Daily Auths Report">
+      <Page path={path} title={title}>
         <AgenciesContextProvider>
           <ReportFilterContextProvider
             start={start}

@@ -27,15 +27,17 @@ function Table({ data, numberFormatter = String }: TableProps): VNode {
         <tbody>
           {body.map((row) => (
             <tr>
-              {row.map((d) =>
-                typeof d === "object" && d.type === "td" ? (
-                  d
-                ) : typeof d === "number" ? (
-                  <td className="table-number text-tabular text-right">{numberFormatter(d)}</td>
-                ) : (
-                  <td>{d}</td>
-                )
-              )}
+              {row.map((d) => {
+                if (typeof d === "object" && d.type === "td") {
+                  return d;
+                }
+                if (typeof d === "number") {
+                  return (
+                    <td className="table-number text-tabular text-right">{numberFormatter(d)}</td>
+                  );
+                }
+                return <td>{d}</td>;
+              })}
             </tr>
           ))}
         </tbody>

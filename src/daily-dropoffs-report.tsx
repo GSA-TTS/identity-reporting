@@ -4,27 +4,27 @@ import { utcDays } from "d3-time";
 import { useQuery } from "preact-fetching";
 import { format } from "d3-format";
 import { group, ascending, max } from "d3-array";
-import { AgenciesContext } from "./context/agencies-context";
-import Table, { TableData } from "./table";
-import { ReportFilterContext } from "./context/report-filter-context";
-import { path as reportPath } from "./report";
-import { scalePoint, scaleLinear, scaleOrdinal } from "d3-scale";
+import { scalePoint, scaleLinear, scaleOrdinal, NumberValue } from "d3-scale";
 import { csvParse, autoType } from "d3-dsv";
 import { line as d3Line } from "d3-shape";
 import { select } from "d3-selection";
 import { Axis as D3Axis, axisBottom, axisLeft } from "d3-axis";
 import { schemeCategory10 } from "d3-scale-chromatic";
+import { path as reportPath } from "./report";
+import { ReportFilterContext } from "./context/report-filter-context";
+import Table, { TableData } from "./table";
+import { AgenciesContext } from "./context/agencies-context";
 
-enum Mode {
-  /**
-   * Starts funnel at the welcome screen
-   */
-  OVERALL = "overall",
-  /**
-   * Starts funnel at the image submission screen
-   */
-  BLANKET = "blanket",
-}
+// enum Mode {
+//   /**
+//    * Starts funnel at the welcome screen
+//    */
+//   OVERALL = "overall",
+//   /**
+//    * Starts funnel at the image submission screen
+//    */
+//   BLANKET = "blanket",
+// }
 
 enum Step {
   WELCOME = "welcome",
@@ -83,20 +83,6 @@ function process(str: string): DailyDropoffsRow[] {
   });
 }
 
-function loadData(
-  start: Date,
-  finish: Date,
-  env: string,
-  fetch = window.fetch
-): Promise<DailyDropoffsRow[]> {
-  return Promise.all(
-    utcDays(start, finish, 1).map((date) => {
-      const path = reportPath({ reportName: "daily-dropoffs-report", date, env, extension: "csv" });
-      return fetch(path).then((response) => response.text());
-    })
-  ).then((reports) => aggregate(reports.flatMap((r) => process(r))));
-}
-
 /**
  * Sums up counts by day
  */
@@ -106,7 +92,7 @@ function aggregate(rows: DailyDropoffsRow[]): DailyDropoffsRow[] {
       ([issuerA, binA], [issuerB, binB]) =>
         ascending(issuerA, issuerB) || ascending(binA[0].friendly_name, binB[0].friendly_name)
     )
-    .map(([_start, bin]) => {
+    .map(([, bin]) => {
       const steps: Map<Step, number> = new Map();
       bin.forEach((row) => {
         STEPS.forEach(({ key }) => {
@@ -115,6 +101,7 @@ function aggregate(rows: DailyDropoffsRow[]): DailyDropoffsRow[] {
         });
       });
 
+      // eslint-disable-next-line camelcase
       const { issuer, friendly_name, iaa, agency, start, finish } = bin[0];
 
       return {
@@ -155,12 +142,14 @@ function tabulate({
     ]);
 
   const body = filteredRows.map((row) => {
+    // eslint-disable-next-line camelcase
     const { agency, issuer, friendly_name } = row;
 
     return [
       agency,
       <span title={issuer}>
         <span style={`color: ${issuerColor(issuer)}`}>⬤ </span>
+        {/* eslint-disable-next-line camelcase */}
         {friendly_name}
       </span>,
       ...STEPS.flatMap(({ key }, idx) => {
@@ -199,6 +188,20 @@ function tabulate({
   };
 }
 
+function loadData(
+  start: Date,
+  finish: Date,
+  env: string,
+  fetch = window.fetch
+): Promise<DailyDropoffsRow[]> {
+  return Promise.all(
+    utcDays(start, finish, 1).map((date) => {
+      const path = reportPath({ reportName: "daily-dropoffs-report", date, env, extension: "csv" });
+      return fetch(path).then((response) => response.text());
+    })
+  ).then((reports) => aggregate(reports.flatMap((r) => process(r))));
+}
+
 interface StepCount {
   step: Step;
   count: number;
@@ -217,7 +220,7 @@ function Axis({
   rotateLabels,
   className,
 }: {
-  axis: D3Axis<any>;
+  axis: D3Axis<NumberValue> | D3Axis<string>;
   transform: string;
   rotateLabels?: boolean;
   className?: string;
@@ -226,9 +229,7 @@ function Axis({
 
   useEffect(() => {
     if (ref.current) {
-      select(ref.current)
-        .call(axis)
-        .classed('rotate-labels', !!rotateLabels)
+      select(ref.current).call(axis).classed("rotate-labels", !!rotateLabels);
     }
   });
 
@@ -265,9 +266,9 @@ function LineChart({
     .domain([0, max(data || [], (d) => d.welcome) as number])
     .range([innerHeight, 0]);
 
-  const line: any = d3Line()
-    .x((d: any) => x(d.step) as number)
-    .y((d: any) => y(d.count) as number);
+  const line = d3Line()
+    .x((d) => x((d as unknown as StepCount).step) as number)
+    .y((d) => y((d as unknown as StepCount).count) as number) as (s: StepCount[]) => string;
 
   return (
     <svg ref={ref} height={height} width={width}>
@@ -275,7 +276,7 @@ function LineChart({
       <Axis
         axis={axisBottom(x).tickFormat(stepToTitle as (s: string) => string)}
         transform={`translate(${margin.left}, ${margin.top + innerHeight})`}
-        className={"x-axis"}
+        className="x-axis"
         rotateLabels={width < 700}
       />
       <g transform={`translate(${margin.left}, ${margin.top})`}>
@@ -284,7 +285,7 @@ function LineChart({
             d={line(toStepCounts(row))}
             fill="none"
             stroke={color(row.issuer)}
-            stroke-width="1"
+            strokeWidth="1"
             onMouseEnter={() =>
               ref.current &&
               select(ref.current)
@@ -299,7 +300,7 @@ function LineChart({
       </g>
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         {(data || []).map((row) => (
-          <g class="dots" hidden data-issuer={row.issuer}>
+          <g className="dots" hidden data-issuer={row.issuer}>
             {toStepCounts(row).map(({ step, count }, idx, stepCounts) => {
               let comparedToFirst = 0;
               if (idx > 0) {
@@ -309,7 +310,7 @@ function LineChart({
               return (
                 <>
                   <circle cx={x(step)} cy={y(count)} r="3" fill={color(row.issuer)} />
-                  <text x={x(step)} y={y(count)} font-size="12" dx="3" dy="-3">
+                  <text x={x(step)} y={y(count)} fontSize="12" dx="3" dy="-3">
                     <tspan x={x(step)}>{formatWithCommas(count)}</tspan>
                     {idx > 0 && (
                       <tspan x={x(step)} dy="1.2em">
