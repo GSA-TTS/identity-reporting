@@ -151,17 +151,8 @@ function tabulate({
         <span style={`color: ${issuerColor(issuer)}`}>⬤ </span>
         {friendlyName}
       </span>,
-      ...STEPS.flatMap(({ key }, idx) => {
-        const count = row[key] || 0;
-        let comparedToFirst = 1;
-
-        if (idx > 0) {
-          const firstCount = row[STEPS[0].key] || 0;
-          comparedToFirst = count / firstCount;
-        }
-
-        const backgroundColor = `background-color: ${color(comparedToFirst)};`;
-
+      ...toStepCounts(row).flatMap(({ count, percentOfFirst }, idx) => {
+        const backgroundColor = `background-color: ${color(percentOfFirst)};`;
         const cells = [
           <td className="table-number text-tabular text-right" style={backgroundColor}>
             {formatWithCommas(count)}
@@ -171,7 +162,7 @@ function tabulate({
         if (idx > 0) {
           cells.push(
             <td className="table-number text-tabular text-right" style={backgroundColor}>
-              {formatAsPercent(comparedToFirst)}
+              {formatAsPercent(percentOfFirst)}
             </td>
           );
         }
@@ -204,13 +195,30 @@ function loadData(
 interface StepCount {
   step: Step;
   count: number;
+  /**
+   * compare to step[0]
+   */
+  percentOfFirst: number;
+  /**
+   * compare to step[n - 1]
+   */
+  percentOfPrevious: number;
 }
 
 function toStepCounts(row: DailyDropoffsRow): StepCount[] {
-  return STEPS.map(({ key }) => ({
-    step: key,
-    count: row[key],
-  }));
+  const firstCount = row[STEPS[0].key] || 0;
+
+  return STEPS.map(({ key }, idx) => {
+    const count = row[key] || 0;
+    const prevCount = (idx > 0 && row[STEPS[idx - 1].key]) || 0;
+
+    return {
+      step: key,
+      count,
+      percentOfFirst: count / firstCount || 0, // protect against NaN from divide by zero
+      percentOfPrevious: count / prevCount || 0,
+    };
+  });
 }
 
 function Axis({
@@ -303,12 +311,7 @@ function LineChart({
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         {highlightedRow && (
           <g className="dots">
-            {toStepCounts(highlightedRow).map(({ step, count }, idx, stepCounts) => {
-              let comparedToFirst = 0;
-              if (idx > 0) {
-                comparedToFirst = count / stepCounts[0].count;
-              }
-
+            {toStepCounts(highlightedRow).map(({ step, count, percentOfFirst }, idx) => {
               return (
                 <>
                   <circle cx={x(step)} cy={y(count)} r="3" fill={color(highlightedRow.issuer)} />
@@ -316,7 +319,7 @@ function LineChart({
                     <tspan x={x(step)}>{formatWithCommas(count)}</tspan>
                     {idx > 0 && (
                       <tspan x={x(step)} dy="1.2em">
-                        (${formatAsPercent(comparedToFirst)})
+                        (${formatAsPercent(percentOfFirst)})
                       </tspan>
                     )}
                   </text>
