@@ -24,7 +24,10 @@
     "jsx-a11y/label-has-associated-control": ["error", { "assert": "either" }],
     "no-shadow": "off",
     "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }],
-    "react/no-unknown-property": ["error", { "ignore": ["font-size", "stroke-width"] }]
+    "react/no-unknown-property": [
+      "error",
+      { "ignore": ["font-size", "stroke-width", "text-anchor"] }
+    ]
   },
   "settings": {
     "import/resolver": "eslint-import-resolver-typescript",

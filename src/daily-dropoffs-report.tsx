@@ -284,7 +284,7 @@ function LineChart({
         className="x-axis"
         rotateLabels={width < 700}
       />
-      <text x={margin.left + innerWidth} y={margin.top} class="title" text-anchor="end">
+      <text x={margin.left + innerWidth} y={margin.top} className="title" text-anchor="end">
         {highlightedRow?.friendly_name}
       </text>
       <g transform={`translate(${margin.left}, ${margin.top})`}>
