@@ -1,11 +1,9 @@
-import { VNode } from "preact";
 import { expect } from "chai";
 import fetchMock from "fetch-mock";
 import { utcParse } from "d3-time-format";
 import {
   DailyDropoffsRow,
   Step,
-  tabulate,
   aggregate,
   loadData,
   toStepCounts,
