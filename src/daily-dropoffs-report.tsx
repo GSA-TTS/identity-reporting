@@ -250,7 +250,7 @@ function Axis({
     if (ref.current) {
       select(ref.current).call(axis).classed("rotate-labels", !!rotateLabels);
     }
-  });
+  }, [axis, rotateLabels]);
 
   return <g ref={ref} className={className} transform={transform} />;
 }
