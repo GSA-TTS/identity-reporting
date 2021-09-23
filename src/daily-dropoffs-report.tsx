@@ -9,6 +9,18 @@ import Table, { TableData } from "./table";
 import { ReportFilterContext } from "./context/report-filter-context";
 import { path as reportPath } from "./report";
 import { scaleLinear } from "d3-scale";
+import { csvParse, autoType } from "d3-dsv";
+
+enum Mode {
+  /**
+   * Starts funnel at the welcome screen
+   */
+  OVERALL = "overall",
+  /**
+   * Starts funnel at the image submission screen
+   */
+  BLANKET = "blanket",
+}
 
 enum Step {
   WELCOME = "welcome",
@@ -38,53 +50,29 @@ const STEP_TITLES = [
   { key: Step.VERIFIED, title: "Verified" },
 ];
 
-interface StepCount {
-  name: Step;
-  count: number;
-}
-
-interface Result {
-  steps: StepCount[];
+interface DailyDropoffsRow extends Record<Step, number> {
   issuer: string;
-  /**
-   * This is always present but we don't use it, so easier to mark as optional
-   */
-  iaa?: string;
   // eslint-disable-next-line camelcase
   friendly_name: string;
+  iaa: string;
   agency: string;
-}
-
-interface DailyDropoffsReportData {
-  results: Result[];
-
-  /**
-   * ISO8601 string
-   */
-  start: string;
-
-  /**
-   * ISO8601 string
-   */
-  finish: string;
-}
-
-export interface ProcessedResult extends Result {
-  date: Date;
+  start: Date;
+  finish: Date;
 }
 
 const formatWithCommas = format(",");
 const formatAsPercent = format(".0%");
 
-function process({ start, results }: DailyDropoffsReportData): ProcessedResult[] {
-  const date = new Date(start);
-  return results.map((r) => ({
-    ...r,
-    date,
-    issuer: r.issuer || "(No Issuer)",
-    agency: r.agency || "(No Agency)",
-    friendly_name: r.friendly_name || "(No App)",
-  }));
+function process(str: string): DailyDropoffsRow[] {
+  return csvParse(str, autoType).map((parsedRow) => {
+    const r = parsedRow as DailyDropoffsRow;
+    return {
+      ...r,
+      issuer: r.issuer || "(No Issuer)",
+      agency: r.agency || "(No Agency)",
+      friendly_name: r.friendly_name || "(No App)",
+    };
+  });
 }
 
 function loadData(
@@ -92,52 +80,61 @@ function loadData(
   finish: Date,
   env: string,
   fetch = window.fetch
-): Promise<ProcessedResult[]> {
+): Promise<DailyDropoffsRow[]> {
   return Promise.all(
     utcDays(start, finish, 1).map((date) => {
-      const path = reportPath({ reportName: "daily-dropoffs-report", date, env });
-      return fetch(path).then((response) => response.json());
+      const path = reportPath({ reportName: "daily-dropoffs-report", date, env, extension: "csv" });
+      return fetch(path).then((response) => response.text());
     })
-  ).then((reports) => reports.flatMap((r) => process(r)));
+  ).then((reports) => aggregate(reports.flatMap((r) => process(r))));
+}
+
+/**
+ * Sums up counts by day
+ */
+function aggregate(rows: DailyDropoffsRow[]): DailyDropoffsRow[] {
+  return Array.from(group(rows, (d) => d.issuer))
+    .sort(
+      ([issuerA, binA], [issuerB, binB]) =>
+        ascending(issuerA, issuerB) || ascending(binA[0].friendly_name, binB[0].friendly_name)
+    )
+    .map(([_start, bin]) => {
+      const steps: Map<Step, number> = new Map();
+      bin.forEach((row) => {
+        STEP_TITLES.forEach(({ key }) => {
+          const oldCount = steps.get(key) || 0;
+          steps.set(key, row[key] + oldCount);
+        });
+      });
+
+      const { issuer, friendly_name, iaa, agency, start, finish } = bin[0];
+
+      return {
+        issuer,
+        friendly_name,
+        iaa,
+        agency,
+        start,
+        finish,
+        ...Object.fromEntries(steps),
+      } as DailyDropoffsRow;
+    });
 }
 
 function tabulate({
-  results,
+  rows: results,
   filterAgency,
 }: {
-  results?: ProcessedResult[];
+  rows?: DailyDropoffsRow[];
   filterAgency?: string;
 }): TableData {
-  const filteredResults = (results || []).filter((d) => !filterAgency || d.agency === filterAgency);
+  const filteredRows = (results || []).filter((d) => !filterAgency || d.agency === filterAgency);
 
   const header = [
     "Agency",
     "App",
     ...STEP_TITLES.map(({ title }, idx) => <th colSpan={idx === 0 ? 1 : 2}>{title}</th>),
   ];
-
-  const issuerToFriendlyName = new Map();
-  const issuerToStep: Map<string, Map<Step, number>> = new Map();
-
-  filteredResults.forEach((d) => {
-    issuerToFriendlyName.set(d.issuer, d.friendly_name);
-    issuerToStep.set(d.issuer, new Map());
-  });
-
-  filteredResults.forEach((d) => {
-    const stepMap = issuerToStep.get(d.issuer) || new Map();
-
-    d.steps.forEach(({ name, count }) => {
-      const oldCount = stepMap.get(name) || 0;
-      stepMap.set(name, oldCount + count);
-    });
-  });
-
-  const grouped = group(
-    filteredResults,
-    (d) => d.agency,
-    (d) => d.issuer
-  );
 
   const color = scaleLinear()
     .domain([1, 0])
@@ -147,43 +144,41 @@ function tabulate({
       "white" as unknown as number,
     ]);
 
-  const body = Array.from(grouped)
-    .sort(([agencyA], [agencyB]) => ascending(agencyA, agencyB))
-    .flatMap(([agency, issuers]) =>
-      Array.from(issuers)
-        .sort(([issuerA], [issuerB]) => ascending(issuerA, issuerB))
-        .map(([issuer]) => {
-          const stepCounts = issuerToStep.get(issuer);
-          return [
-            agency,
-            <span title={issuer}>{issuerToFriendlyName.get(issuer)}</span>,
-            ...STEP_TITLES.flatMap(({ key }, idx) => {
-              const count = stepCounts?.get(key) || 0;
-              let comparedToFirst = 1;
+  const body = filteredRows.map((row) => {
+    const { agency, issuer, friendly_name } = row;
 
-              if (idx > 0) {
-                const firstCount = stepCounts?.get(STEP_TITLES[0].key) || 0;
-                comparedToFirst = count / firstCount;
-              }
+    return [
+      agency,
+      <span title={issuer}>{friendly_name}</span>,
+      ...STEP_TITLES.flatMap(({ key }, idx) => {
+        const count = row[key] || 0;
+        let comparedToFirst = 1;
 
-              const backgroundColor = `background-color: ${color(comparedToFirst)};`;
+        if (idx > 0) {
+          const firstCount = row[STEP_TITLES[0].key] || 0;
+          comparedToFirst = count / firstCount;
+        }
 
-              const cells = [
-                <td className="table-number text-tabular text-right" style={backgroundColor}>
-                  {formatWithCommas(count)}
-                </td>,
-                idx > 0 && (
-                  <td className="table-number text-tabular text-right" style={backgroundColor}>
-                    {formatAsPercent(comparedToFirst)}
-                  </td>
-                ),
-              ].filter(Boolean);
+        const backgroundColor = `background-color: ${color(comparedToFirst)};`;
 
-              return cells;
-            }),
-          ];
-        })
-    );
+        const cells = [
+          <td className="table-number text-tabular text-right" style={backgroundColor}>
+            {formatWithCommas(count)}
+          </td>,
+        ];
+
+        if (idx > 0) {
+          cells.push(
+            <td className="table-number text-tabular text-right" style={backgroundColor}>
+              {formatAsPercent(comparedToFirst)}
+            </td>
+          );
+        }
+
+        return cells;
+      }),
+    ];
+  });
 
   return {
     header,
@@ -214,10 +209,10 @@ function DailyDropffsReport(): VNode {
   return (
     <>
       <Table
-        data={tabulate({ results: data, filterAgency: agency })}
+        data={tabulate({ rows: data, filterAgency: agency })}
         numberFormatter={formatWithCommas}
       />
-    </>
+    </div>
   );
 }
 

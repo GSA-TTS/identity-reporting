@@ -20,14 +20,15 @@ interface PathParameters {
   reportName: string;
   date: Date;
   env: string;
+  extension?: string;
 }
 
-function path({ reportName, date, env }: PathParameters): string {
+function path({ reportName, date, env, extension = "json" }: PathParameters): string {
   const year = yearFormat(date);
   const day = yearMonthDayFormat(date);
 
   // ex: /prod/daily-auths-report/2021/2021-07-27.daily-auths-report.json
-  return `${domain(env)}/${env}/${reportName}/${year}/${day}.${reportName}.json`;
+  return `${domain(env)}/${env}/${reportName}/${year}/${day}.${reportName}.${extension}`;
 }
 
 export { path };
