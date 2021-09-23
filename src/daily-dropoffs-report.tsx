@@ -97,7 +97,7 @@ function aggregate(rows: DailyDropoffsRow[]): DailyDropoffsRow[] {
       bin.forEach((row) => {
         STEPS.forEach(({ key }) => {
           const oldCount = steps.get(key) || 0;
-          steps.set(key, row[key] + oldCount);
+          steps.set(key, (row[key] || 0) + oldCount);
         });
       });
 
@@ -245,7 +245,7 @@ function LineChart({
   height?: number;
 }): VNode {
   const margin = {
-    top: 20,
+    top: 30,
     right: 50,
     bottom: 50,
     left: 50,
@@ -276,6 +276,7 @@ function LineChart({
         className="x-axis"
         rotateLabels={width < 700}
       />
+      <text x={margin.left + innerWidth} y={margin.top} class="title" text-anchor="end" />
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         {(data || []).map((row) => (
           <path
@@ -283,15 +284,17 @@ function LineChart({
             fill="none"
             stroke={color(row.issuer)}
             stroke-width="1"
-            onMouseEnter={() =>
-              ref.current &&
-              select(ref.current)
-                .selectAll(".dots")
-                .attr("hidden", function () {
-                  const elem = this as SVGGElement;
-                  return elem.dataset.issuer === row.issuer ? null : false;
-                })
-            }
+            onMouseEnter={() => {
+              if (!ref.current) {
+                return;
+              }
+              const svg = select(ref.current);
+              svg.selectAll(".dots").attr("hidden", function () {
+                const elem = this as SVGGElement;
+                return elem.dataset.issuer === row.issuer ? null : false;
+              });
+              svg.select("text.title").text(row.friendly_name);
+            }}
           />
         ))}
       </g>
@@ -370,4 +373,4 @@ function DailyDropffsReport(): VNode {
 }
 
 export default DailyDropffsReport;
-export { tabulate };
+export { Step, DailyDropoffsRow, aggregate, tabulate, loadData };
