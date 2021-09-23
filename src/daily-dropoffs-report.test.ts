@@ -1,13 +1,7 @@
 import { expect } from "chai";
 import fetchMock from "fetch-mock";
 import { utcParse } from "d3-time-format";
-import {
-  DailyDropoffsRow,
-  Step,
-  aggregate,
-  loadData,
-  toStepCounts,
-} from "./daily-dropoffs-report";
+import { DailyDropoffsRow, Step, aggregate, loadData, toStepCounts } from "./daily-dropoffs-report";
 
 describe("DailyDropoffsReport", () => {
   describe("#aggregate", () => {
