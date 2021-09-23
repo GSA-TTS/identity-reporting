@@ -101,12 +101,11 @@ function aggregate(rows: DailyDropoffsRow[]): DailyDropoffsRow[] {
         });
       });
 
-      // eslint-disable-next-line camelcase
-      const { issuer, friendly_name, iaa, agency, start, finish } = bin[0];
+      const { issuer, friendly_name: friendlyName, iaa, agency, start, finish } = bin[0];
 
       return {
         issuer,
-        friendly_name,
+        friendly_name: friendlyName,
         iaa,
         agency,
         start,
@@ -142,15 +141,13 @@ function tabulate({
     ]);
 
   const body = filteredRows.map((row) => {
-    // eslint-disable-next-line camelcase
-    const { agency, issuer, friendly_name } = row;
+    const { agency, issuer, friendly_name: friendlyName } = row;
 
     return [
       agency,
       <span title={issuer}>
         <span style={`color: ${issuerColor(issuer)}`}>⬤ </span>
-        {/* eslint-disable-next-line camelcase */}
-        {friendly_name}
+        {friendlyName}
       </span>,
       ...STEPS.flatMap(({ key }, idx) => {
         const count = row[key] || 0;
