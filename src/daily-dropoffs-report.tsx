@@ -10,12 +10,12 @@ import { line as d3Line } from "d3-shape";
 import { select } from "d3-selection";
 import { Axis as D3Axis, axisBottom, axisLeft } from "d3-axis";
 import { schemeCategory10 } from "d3-scale-chromatic";
+import Markdown from "preact-markdown";
 import { path as reportPath } from "./report";
 import { ReportFilterContext } from "./context/report-filter-context";
 import Table, { TableData } from "./table";
 import { AgenciesContext } from "./context/agencies-context";
 import Accordion from "./accordion";
-import Markdown from "preact-markdown";
 
 // enum Mode {
 //   /**
@@ -81,6 +81,35 @@ function process(str: string): DailyDropoffsRow[] {
       issuer: r.issuer || "(No Issuer)",
       agency: r.agency || "(No Agency)",
       friendly_name: r.friendly_name || "(No App)",
+    };
+  });
+}
+
+interface StepCount {
+  step: Step;
+  count: number;
+  /**
+   * compare to step[0]
+   */
+  percentOfFirst: number;
+  /**
+   * compare to step[n - 1]
+   */
+  percentOfPrevious: number;
+}
+
+function toStepCounts(row: DailyDropoffsRow): StepCount[] {
+  const firstCount = row[STEPS[0].key] || 0;
+
+  return STEPS.map(({ key }, idx) => {
+    const count = row[key] || 0;
+    const prevCount = idx > 0 ? row[STEPS[idx - 1].key] || 0 : firstCount;
+
+    return {
+      step: key,
+      count,
+      percentOfFirst: count / firstCount || 0, // guard against NaN from divide by zero
+      percentOfPrevious: count / prevCount || 0,
     };
   });
 }
@@ -192,35 +221,6 @@ function loadData(
   ).then((reports) => aggregate(reports.flatMap((r) => process(r))));
 }
 
-interface StepCount {
-  step: Step;
-  count: number;
-  /**
-   * compare to step[0]
-   */
-  percentOfFirst: number;
-  /**
-   * compare to step[n - 1]
-   */
-  percentOfPrevious: number;
-}
-
-function toStepCounts(row: DailyDropoffsRow): StepCount[] {
-  const firstCount = row[STEPS[0].key] || 0;
-
-  return STEPS.map(({ key }, idx) => {
-    const count = row[key] || 0;
-    const prevCount = (idx > 0 && row[STEPS[idx - 1].key]) || 0;
-
-    return {
-      step: key,
-      count,
-      percentOfFirst: count / firstCount || 0, // protect against NaN from divide by zero
-      percentOfPrevious: count / prevCount || 0,
-    };
-  });
-}
-
 function Axis({
   axis,
   transform,
@@ -311,21 +311,19 @@ function LineChart({
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         {highlightedRow && (
           <g className="dots">
-            {toStepCounts(highlightedRow).map(({ step, count, percentOfFirst }, idx) => {
-              return (
-                <>
-                  <circle cx={x(step)} cy={y(count)} r="3" fill={color(highlightedRow.issuer)} />
-                  <text x={x(step)} y={y(count)} font-size="12" dx="3" dy="-3">
-                    <tspan x={x(step)}>{formatWithCommas(count)}</tspan>
-                    {idx > 0 && (
-                      <tspan x={x(step)} dy="1.2em">
-                        (${formatAsPercent(percentOfFirst)})
-                      </tspan>
-                    )}
-                  </text>
-                </>
-              );
-            })}
+            {toStepCounts(highlightedRow).map(({ step, count, percentOfFirst }, idx) => (
+              <>
+                <circle cx={x(step)} cy={y(count)} r="3" fill={color(highlightedRow.issuer)} />
+                <text x={x(step)} y={y(count)} font-size="12" dx="3" dy="-3">
+                  <tspan x={x(step)}>{formatWithCommas(count)}</tspan>
+                  {idx > 0 && (
+                    <tspan x={x(step)} dy="1.2em">
+                      (${formatAsPercent(percentOfFirst)})
+                    </tspan>
+                  )}
+                </text>
+              </>
+            ))}
           </g>
         )}
       </g>
@@ -391,4 +389,4 @@ The data model table can't accurately capture:
 }
 
 export default DailyDropffsReport;
-export { Step, DailyDropoffsRow, aggregate, tabulate, loadData };
+export { Step, DailyDropoffsRow, aggregate, tabulate, loadData, toStepCounts };
