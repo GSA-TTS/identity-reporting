@@ -20,7 +20,7 @@ export interface ReportRouteProps {
   env?: string;
 }
 
-function ReportRoute(Report: () => VNode, title: string): (props: ReportRouteProps) => VNode {
+function createReportRoute(Report: () => VNode, title: string): (props: ReportRouteProps) => VNode {
   return ({
     path,
     start: startParam,
@@ -56,4 +56,4 @@ function ReportRoute(Report: () => VNode, title: string): (props: ReportRoutePro
   };
 }
 
-export default ReportRoute;
+export default createReportRoute;

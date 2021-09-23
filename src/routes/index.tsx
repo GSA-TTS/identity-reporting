@@ -3,11 +3,11 @@ import DailyAuthsReport from "../daily-auths-report";
 import DailyDropffsReport from "../daily-dropoffs-report";
 import { Router } from "../router";
 import HomeRoute from "./home-route";
-import ReportRoute from "./report-route";
+import createReportRoute from "./report-route";
 
 export const ROUTES = {
-  "/daily-auths-report/": ReportRoute(DailyAuthsReport, "Daily Auths Report"),
-  "/daily-dropoffs-report/": ReportRoute(DailyDropffsReport, "Daily Dropoffs Report"),
+  "/daily-auths-report/": createReportRoute(DailyAuthsReport, "Daily Auths Report"),
+  "/daily-dropoffs-report/": createReportRoute(DailyDropffsReport, "Daily Dropoffs Report"),
   "/": HomeRoute,
 };
 
