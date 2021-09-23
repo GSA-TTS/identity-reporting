@@ -334,7 +334,7 @@ function DailyDropffsReport(): VNode {
   const { setAgencies } = useContext(AgenciesContext);
   const { start, finish, agency, env } = useContext(ReportFilterContext);
 
-  const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
+  const { data } = useQuery(`dropoffs/${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
   );
 
