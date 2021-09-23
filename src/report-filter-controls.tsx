@@ -78,8 +78,8 @@ function ReportFilterControls({
           </button>
         </div>
         {showIal && (
-          <div>
-            <strong>IAL</strong>
+          <fieldset className="usa-fieldset">
+            <legend className="usa-legend">IAL</legend>
             <div className="usa-radio">
               <input
                 type="radio"
@@ -106,11 +106,11 @@ function ReportFilterControls({
                 IAL2
               </label>
             </div>
-          </div>
+          </fieldset>
         )}
         {showFunnelMode && (
-          <div>
-            <strong>Funnel Mode</strong>
+          <fieldset className="usa-fieldset">
+            <legend className="usa-legend">Funnel Mode</legend>
             <div className="usa-radio">
               <input
                 type="radio"
@@ -137,7 +137,7 @@ function ReportFilterControls({
                 Blanket
               </label>
             </div>
-          </div>
+          </fieldset>
         )}
         <div>
           <label>
