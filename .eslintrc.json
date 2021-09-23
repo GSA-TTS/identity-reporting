@@ -21,7 +21,8 @@
     "@typescript-eslint/no-unused-vars": "error",
     "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/*.test.*", "./*"] }],
     "jsx-a11y/label-has-associated-control": ["error", { "assert": "either" }],
-    "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }]
+    "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }],
+    "react/no-unknown-property": ["error", { "ignore": ["font-size", "stroke-width"] }]
   },
   "settings": {
     "import/resolver": "eslint-import-resolver-typescript",
