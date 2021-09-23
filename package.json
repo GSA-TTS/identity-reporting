@@ -33,6 +33,7 @@
     "identity-style-guide": "^6.0.0",
     "preact": "^10.5.14",
     "preact-fetching": "^0.1.0",
+    "preact-markdown": "^2.0.0",
     "preact-router": "^3.2.1"
   },
   "devDependencies": {

@@ -6,11 +6,13 @@ import { format } from "d3-format";
 import { useQuery } from "preact-fetching";
 import { utcFormat } from "d3-time-format";
 import { group, ascending, rollup } from "d3-array";
+import Markdown from "preact-markdown";
 import { ReportFilterContext } from "./context/report-filter-context";
 import Table, { TableData } from "./table";
 import { path as reportPath } from "./report";
 import PlotComponent from "./plot";
 import { AgenciesContext } from "./context/agencies-context";
+import Accordion from "./accordion";
 
 interface Result {
   count: number;
@@ -279,29 +281,15 @@ function DailyAuthsReport(): VNode {
 
   return (
     <div ref={ref}>
-      <div className="usa-accordion usa-accordion--bordered margin-top-2 margin-bottom-2">
-        <h3 className="usa-accordion__heading">
-          <button
-            className="usa-accordion__button"
-            aria-controls="how-is-it-measured"
-            aria-expanded="false"
-            type="button"
-          >
-            How is this measured?
-          </button>
-        </h3>
-        <div className="usa-prose usa-accordion__content" id="how-is-it-measured" hidden>
-          <p>
-            <strong>Timing: </strong>
-            All data is collected, grouped, and displayed in the UTC timezone.
-          </p>
-          <p>
-            <strong>Counting: </strong>
-            This report displays the total number of authentications, so one user authenticating
-            twice will count twice. It does not de-duplicate users or provide unique auths.
-          </p>
-        </div>
-      </div>
+      <Accordion id="how-is-it-measured" title="How is this measured?">
+        <Markdown
+          markdown={`
+**Timing**: All data is collected, grouped, and displayed in the UTC timezone.
+
+**Counting**: This report displays the total number of authentications, so one user authenticating
+twice will count twice. It does not de-duplicate users or provide unique auths.`}
+        />
+      </Accordion>
       <PlotComponent
         plotter={() => plot({ data, ial, agency, start, finish, width })}
         inputs={[data, ial, agency, start.valueOf(), finish.valueOf(), width]}

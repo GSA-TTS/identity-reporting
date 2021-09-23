@@ -14,6 +14,8 @@ import { path as reportPath } from "./report";
 import { ReportFilterContext } from "./context/report-filter-context";
 import Table, { TableData } from "./table";
 import { AgenciesContext } from "./context/agencies-context";
+import Accordion from "./accordion";
+import Markdown from "preact-markdown";
 
 // enum Mode {
 //   /**
@@ -363,6 +365,19 @@ function DailyDropffsReport(): VNode {
 
   return (
     <div ref={ref}>
+      <Accordion id="how-is-it-measured" title="How is this measured?">
+        <Markdown
+          markdown={`
+**Timing**: All data is collected, grouped, and displayed in the UTC timezone.
+
+**Known Limitations**:
+
+The data model table can't accurately capture:
+- Users who become verified on a different day than the day they start proofing (such as verify by mail)
+- Users who attempt proofing at one partner app, and reattempt with a different partner app.
+`}
+        />
+      </Accordion>
       <LineChart data={data || []} width={width} color={issuerColor} />
       <Table
         data={tabulate({ rows: data, filterAgency: agency, issuerColor })}

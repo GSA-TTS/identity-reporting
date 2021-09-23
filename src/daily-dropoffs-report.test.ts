@@ -1,8 +1,8 @@
 import { VNode } from "preact";
 import { expect } from "chai";
-import { DailyDropoffsRow, Step, tabulate, aggregate, loadData } from "./daily-dropoffs-report";
 import fetchMock from "fetch-mock";
 import { utcParse } from "d3-time-format";
+import { DailyDropoffsRow, Step, tabulate, aggregate, loadData } from "./daily-dropoffs-report";
 
 describe("DailyDropoffsReport", () => {
   describe("#aggregate", () => {
@@ -114,8 +114,8 @@ issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+
       ).then((combinedRows) => {
         expect(combinedRows).to.have.lengthOf(1);
         const row = combinedRows[0];
-        expect(row.issuer).to.equal('issuer1');
-        expect(row.friendly_name).to.equal('The App');
+        expect(row.issuer).to.equal("issuer1");
+        expect(row.friendly_name).to.equal("The App");
         expect(row.welcome).to.equal(5);
         expect(row.verified).to.equal(1);
       });
