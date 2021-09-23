@@ -285,7 +285,7 @@ function LineChart({
             d={line(toStepCounts(row))}
             fill="none"
             stroke={color(row.issuer)}
-            strokeWidth="1"
+            stroke-width="1"
             onMouseEnter={() =>
               ref.current &&
               select(ref.current)
@@ -310,7 +310,7 @@ function LineChart({
               return (
                 <>
                   <circle cx={x(step)} cy={y(count)} r="3" fill={color(row.issuer)} />
-                  <text x={x(step)} y={y(count)} fontSize="12" dx="3" dy="-3">
+                  <text x={x(step)} y={y(count)} font-size="12" dx="3" dy="-3">
                     <tspan x={x(step)}>{formatWithCommas(count)}</tspan>
                     {idx > 0 && (
                       <tspan x={x(step)} dy="1.2em">
