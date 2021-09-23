@@ -1,6 +1,6 @@
-import Table, { TableData } from "./table";
 import { expect } from "chai";
 import { render } from "@testing-library/preact";
+import Table, { TableData } from "./table";
 
 describe("Table", () => {
   it("wraps header elements in <th> and body elements in <td>", () => {
