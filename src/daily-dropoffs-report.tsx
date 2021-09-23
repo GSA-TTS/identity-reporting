@@ -244,6 +244,10 @@ function LineChart({
   width?: number;
   height?: number;
 }): VNode {
+  const ref = useRef(null as SVGSVGElement | null);
+  const [highlightedIssuer, setHighlightedIssuer] = useState(undefined as string | undefined);
+  const highlightedRow = data.find(({ issuer }) => issuer === highlightedIssuer);
+
   const margin = {
     top: 30,
     right: 50,
@@ -253,7 +257,6 @@ function LineChart({
 
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
-  const ref = useRef(null as SVGSVGElement | null);
 
   const x = scalePoint()
     .domain(STEPS.map(({ key }) => key))
@@ -268,7 +271,12 @@ function LineChart({
     .y((d) => y((d as unknown as StepCount).count) as number) as (s: StepCount[]) => string;
 
   return (
-    <svg ref={ref} height={height} width={width}>
+    <svg
+      ref={ref}
+      height={height}
+      width={width}
+      onPointerLeave={() => setHighlightedIssuer(undefined)}
+    >
       <Axis axis={axisLeft(y)} transform={`translate(${margin.left}, ${margin.top})`} />
       <Axis
         axis={axisBottom(x).tickFormat(stepToTitle as (s: string) => string)}
@@ -276,7 +284,9 @@ function LineChart({
         className="x-axis"
         rotateLabels={width < 700}
       />
-      <text x={margin.left + innerWidth} y={margin.top} class="title" text-anchor="end" />
+      <text x={margin.left + innerWidth} y={margin.top} class="title" text-anchor="end">
+        {highlightedRow?.friendly_name}
+      </text>
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         {(data || []).map((row) => (
           <path
@@ -284,24 +294,14 @@ function LineChart({
             fill="none"
             stroke={color(row.issuer)}
             stroke-width="1"
-            onMouseEnter={() => {
-              if (!ref.current) {
-                return;
-              }
-              const svg = select(ref.current);
-              svg.selectAll(".dots").attr("hidden", function () {
-                const elem = this as SVGGElement;
-                return elem.dataset.issuer === row.issuer ? null : false;
-              });
-              svg.select("text.title").text(row.friendly_name);
-            }}
+            onPointerEnter={() => setHighlightedIssuer(row.issuer)}
           />
         ))}
       </g>
       <g transform={`translate(${margin.left}, ${margin.top})`}>
-        {(data || []).map((row) => (
-          <g className="dots" hidden data-issuer={row.issuer}>
-            {toStepCounts(row).map(({ step, count }, idx, stepCounts) => {
+        {highlightedRow && (
+          <g className="dots">
+            {toStepCounts(highlightedRow).map(({ step, count }, idx, stepCounts) => {
               let comparedToFirst = 0;
               if (idx > 0) {
                 comparedToFirst = count / stepCounts[0].count;
@@ -309,7 +309,7 @@ function LineChart({
 
               return (
                 <>
-                  <circle cx={x(step)} cy={y(count)} r="3" fill={color(row.issuer)} />
+                  <circle cx={x(step)} cy={y(count)} r="3" fill={color(highlightedRow.issuer)} />
                   <text x={x(step)} y={y(count)} font-size="12" dx="3" dy="-3">
                     <tspan x={x(step)}>{formatWithCommas(count)}</tspan>
                     {idx > 0 && (
@@ -322,7 +322,7 @@ function LineChart({
               );
             })}
           </g>
-        ))}
+        )}
       </g>
     </svg>
   );
