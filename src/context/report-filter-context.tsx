@@ -10,6 +10,7 @@ interface ReportFilterContextValues {
   ial: 1 | 2;
   agency?: string;
   env: string;
+  funnelMode: string;
   setParameters: (params: Record<string, string>) => void;
 }
 

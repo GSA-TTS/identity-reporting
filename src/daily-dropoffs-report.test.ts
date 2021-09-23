@@ -1,7 +1,14 @@
 import { expect } from "chai";
 import fetchMock from "fetch-mock";
 import { utcParse } from "d3-time-format";
-import { DailyDropoffsRow, Step, aggregate, loadData, toStepCounts } from "./daily-dropoffs-report";
+import {
+  DailyDropoffsRow,
+  Step,
+  aggregate,
+  loadData,
+  toStepCounts,
+  FunnelMode,
+} from "./daily-dropoffs-report";
 
 describe("DailyDropoffsReport", () => {
   describe("#aggregate", () => {
@@ -124,28 +131,28 @@ issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+
   });
 
   describe("#toStepCounts", () => {
-    it("converts a single row into an array of steps with counts and percents", () => {
-      const row = {
-        issuer: "issuer1",
-        friendly_name: "app1",
-        agency: "agency1",
-        iaa: "iaa123",
-        start: new Date(),
-        finish: new Date(),
-        [Step.WELCOME]: 1e10,
-        [Step.AGREEMENT]: 1e9,
-        [Step.CAPTURE_DOCUMENT]: 1e8,
-        [Step.CAP_DOC_SUBMIT]: 1e7,
-        [Step.SSN]: 1e6,
-        [Step.VERIFY_INFO]: 1e5,
-        [Step.VERIFY_SUBMIT]: 1e4,
-        [Step.PHONE]: 1000,
-        [Step.ENCRYPT]: 100,
-        [Step.PERSONAL_KEY]: 10,
-        [Step.VERIFIED]: 1,
-      };
+    const row = {
+      issuer: "issuer1",
+      friendly_name: "app1",
+      agency: "agency1",
+      iaa: "iaa123",
+      start: new Date(),
+      finish: new Date(),
+      [Step.WELCOME]: 1e10,
+      [Step.AGREEMENT]: 1e9,
+      [Step.CAPTURE_DOCUMENT]: 1e8,
+      [Step.CAP_DOC_SUBMIT]: 1e7,
+      [Step.SSN]: 1e6,
+      [Step.VERIFY_INFO]: 1e5,
+      [Step.VERIFY_SUBMIT]: 1e4,
+      [Step.PHONE]: 1000,
+      [Step.ENCRYPT]: 100,
+      [Step.PERSONAL_KEY]: 10,
+      [Step.VERIFIED]: 1,
+    };
 
-      expect(toStepCounts(row)).to.deep.equal([
+    it("converts a single row into an array of steps with counts and percents", () => {
+      expect(toStepCounts(row, FunnelMode.OVERALL)).to.deep.equal([
         { step: Step.WELCOME, count: 1e10, percentOfFirst: 1, percentOfPrevious: 1 },
         { step: Step.AGREEMENT, count: 1e9, percentOfFirst: 0.1, percentOfPrevious: 0.1 },
         { step: Step.CAPTURE_DOCUMENT, count: 1e8, percentOfFirst: 0.01, percentOfPrevious: 0.1 },
@@ -157,6 +164,19 @@ issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+
         { step: Step.ENCRYPT, count: 100, percentOfFirst: 1e-8, percentOfPrevious: 0.1 },
         { step: Step.PERSONAL_KEY, count: 10, percentOfFirst: 1e-9, percentOfPrevious: 0.1 },
         { step: Step.VERIFIED, count: 1, percentOfFirst: 1e-10, percentOfPrevious: 0.1 },
+      ]);
+    });
+
+    it("starts at the image submit step for BLANKET mode", () => {
+      expect(toStepCounts(row, FunnelMode.BLANKET)).to.deep.equal([
+        { step: Step.CAP_DOC_SUBMIT, count: 1e7, percentOfFirst: 1, percentOfPrevious: 1 },
+        { step: Step.SSN, count: 1e6, percentOfFirst: 0.1, percentOfPrevious: 0.1 },
+        { step: Step.VERIFY_INFO, count: 1e5, percentOfFirst: 0.01, percentOfPrevious: 0.1 },
+        { step: Step.VERIFY_SUBMIT, count: 1e4, percentOfFirst: 0.001, percentOfPrevious: 0.1 },
+        { step: Step.PHONE, count: 1000, percentOfFirst: 1e-4, percentOfPrevious: 0.1 },
+        { step: Step.ENCRYPT, count: 100, percentOfFirst: 1e-5, percentOfPrevious: 0.1 },
+        { step: Step.PERSONAL_KEY, count: 10, percentOfFirst: 1e-6, percentOfPrevious: 0.1 },
+        { step: Step.VERIFIED, count: 1, percentOfFirst: 1e-7, percentOfPrevious: 0.1 },
       ]);
     });
   });

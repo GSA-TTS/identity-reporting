@@ -17,16 +17,18 @@ import Table, { TableData } from "./table";
 import { AgenciesContext } from "./context/agencies-context";
 import Accordion from "./accordion";
 
-// enum Mode {
-//   /**
-//    * Starts funnel at the welcome screen
-//    */
-//   OVERALL = "overall",
-//   /**
-//    * Starts funnel at the image submission screen
-//    */
-//   BLANKET = "blanket",
-// }
+enum FunnelMode {
+  /**
+   * Starts funnel at the welcome screen
+   */
+  OVERALL = "overall",
+  /**
+   * Starts funnel at the image submission screen
+   */
+  BLANKET = "blanket",
+}
+
+const DEFAULT_FUNNEL_MODE = FunnelMode.OVERALL;
 
 enum Step {
   WELCOME = "welcome",
@@ -85,6 +87,10 @@ function process(str: string): DailyDropoffsRow[] {
   });
 }
 
+function funnelSteps(funnelMode: FunnelMode) {
+  return funnelMode === FunnelMode.OVERALL ? STEPS : STEPS.slice(3);
+}
+
 interface StepCount {
   step: Step;
   count: number;
@@ -98,12 +104,14 @@ interface StepCount {
   percentOfPrevious: number;
 }
 
-function toStepCounts(row: DailyDropoffsRow): StepCount[] {
-  const firstCount = row[STEPS[0].key] || 0;
+function toStepCounts(row: DailyDropoffsRow, funnelMode: FunnelMode): StepCount[] {
+  const steps = funnelSteps(funnelMode);
 
-  return STEPS.map(({ key }, idx) => {
+  const firstCount = row[steps[0].key] || 0;
+
+  return steps.map(({ key }, idx) => {
     const count = row[key] || 0;
-    const prevCount = idx > 0 ? row[STEPS[idx - 1].key] || 0 : firstCount;
+    const prevCount = idx > 0 ? row[steps[idx - 1].key] || 0 : firstCount;
 
     return {
       step: key,
@@ -148,10 +156,12 @@ function aggregate(rows: DailyDropoffsRow[]): DailyDropoffsRow[] {
 
 function tabulate({
   rows: results,
+  funnelMode,
   filterAgency,
   issuerColor,
 }: {
   rows?: DailyDropoffsRow[];
+  funnelMode: FunnelMode;
   filterAgency?: string;
   issuerColor: (issuer: string) => string;
 }): TableData {
@@ -160,7 +170,9 @@ function tabulate({
   const header = [
     "Agency",
     "App",
-    ...STEPS.map(({ title }, idx) => <th colSpan={idx === 0 ? 1 : 2}>{title}</th>),
+    ...funnelSteps(funnelMode).map(({ title }, idx) => (
+      <th colSpan={idx === 0 ? 1 : 2}>{title}</th>
+    )),
   ];
 
   const color = scaleLinear()
@@ -180,7 +192,7 @@ function tabulate({
         <span style={`color: ${issuerColor(issuer)}`}>⬤ </span>
         {friendlyName}
       </span>,
-      ...toStepCounts(row).flatMap(({ count, percentOfFirst }, idx) => {
+      ...toStepCounts(row, funnelMode).flatMap(({ count, percentOfFirst }, idx) => {
         const backgroundColor = `background-color: ${color(percentOfFirst)};`;
         const cells = [
           <td className="table-number text-tabular text-right" style={backgroundColor}>
@@ -245,11 +257,13 @@ function Axis({
 
 function LineChart({
   data,
+  funnelMode,
   color,
   width = 400,
   height = 400,
 }: {
   data: DailyDropoffsRow[];
+  funnelMode: FunnelMode;
   color: (issuer: string) => string;
   width?: number;
   height?: number;
@@ -268,12 +282,14 @@ function LineChart({
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
+  const steps = funnelSteps(funnelMode);
+
   const x = scalePoint()
-    .domain(STEPS.map(({ key }) => key))
+    .domain(steps.map(({ key }) => key))
     .range([0, innerWidth]);
 
   const y = scaleLinear()
-    .domain([0, max(data || [], (d) => d.welcome) as number])
+    .domain([0, max(data || [], (d) => d[steps[0].key]) as number])
     .range([innerHeight, 0]);
 
   const line = d3Line()
@@ -300,7 +316,7 @@ function LineChart({
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         {(data || []).map((row) => (
           <path
-            d={line(toStepCounts(row))}
+            d={line(toStepCounts(row, funnelMode))}
             fill="none"
             stroke={color(row.issuer)}
             stroke-width="1"
@@ -311,19 +327,21 @@ function LineChart({
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         {highlightedRow && (
           <g className="dots">
-            {toStepCounts(highlightedRow).map(({ step, count, percentOfFirst }, idx) => (
-              <>
-                <circle cx={x(step)} cy={y(count)} r="3" fill={color(highlightedRow.issuer)} />
-                <text x={x(step)} y={y(count)} font-size="12" dx="3" dy="-3">
-                  <tspan x={x(step)}>{formatWithCommas(count)}</tspan>
-                  {idx > 0 && (
-                    <tspan x={x(step)} dy="1.2em">
-                      (${formatAsPercent(percentOfFirst)})
-                    </tspan>
-                  )}
-                </text>
-              </>
-            ))}
+            {toStepCounts(highlightedRow, funnelMode).map(
+              ({ step, count, percentOfFirst }, idx) => (
+                <>
+                  <circle cx={x(step)} cy={y(count)} r="3" fill={color(highlightedRow.issuer)} />
+                  <text x={x(step)} y={y(count)} font-size="12" dx="3" dy="-3">
+                    <tspan x={x(step)}>{formatWithCommas(count)}</tspan>
+                    {idx > 0 && (
+                      <tspan x={x(step)} dy="1.2em">
+                        (${formatAsPercent(percentOfFirst)})
+                      </tspan>
+                    )}
+                  </text>
+                </>
+              )
+            )}
           </g>
         )}
       </g>
@@ -335,7 +353,7 @@ function DailyDropffsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
   const { setAgencies } = useContext(AgenciesContext);
-  const { start, finish, agency, env } = useContext(ReportFilterContext);
+  const { start, finish, agency, env, funnelMode } = useContext(ReportFilterContext);
 
   const { data } = useQuery(`dropoffs/${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
@@ -369,6 +387,11 @@ function DailyDropffsReport(): VNode {
       <Accordion id="how-is-it-measured" title="How is this measured?">
         <Markdown
           markdown={`
+**Definitions**:
+
+- *Blanket*: The funnel starts at the image submit step
+- *Overall*: The funnel starts at the welcome step
+
 **Timing**: All data is collected, grouped, and displayed in the UTC timezone.
 
 **Known Limitations**:
@@ -379,9 +402,9 @@ The data model table can't accurately capture:
 `}
         />
       </Accordion>
-      <LineChart data={data || []} width={width} color={issuerColor} />
+      <LineChart data={data || []} width={width} color={issuerColor} funnelMode={funnelMode} />
       <Table
-        data={tabulate({ rows: data, filterAgency: agency, issuerColor })}
+        data={tabulate({ rows: data, filterAgency: agency, issuerColor, funnelMode })}
         numberFormatter={formatWithCommas}
       />
     </div>
@@ -389,4 +412,13 @@ The data model table can't accurately capture:
 }
 
 export default DailyDropffsReport;
-export { Step, DailyDropoffsRow, aggregate, tabulate, loadData, toStepCounts };
+export {
+  Step,
+  DailyDropoffsRow,
+  FunnelMode,
+  DEFAULT_FUNNEL_MODE,
+  aggregate,
+  tabulate,
+  loadData,
+  toStepCounts,
+};

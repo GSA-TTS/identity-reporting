@@ -6,8 +6,14 @@ import HomeRoute from "./home-route";
 import createReportRoute from "./report-route";
 
 export const ROUTES = {
-  "/daily-auths-report/": createReportRoute(DailyAuthsReport, "Daily Auths Report"),
-  "/daily-dropoffs-report/": createReportRoute(DailyDropffsReport, "Daily Dropoffs Report"),
+  "/daily-auths-report/": createReportRoute(DailyAuthsReport, {
+    title: "Daily Auths Report",
+    filterOpts: { showIal: true, showFunnelMode: false },
+  }),
+  "/daily-dropoffs-report/": createReportRoute(DailyDropffsReport, {
+    title: "Daily Dropoffs Report",
+    filterOpts: { showIal: false, showFunnelMode: true },
+  }),
   "/": HomeRoute,
 };
 
