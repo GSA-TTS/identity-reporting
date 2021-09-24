@@ -3,7 +3,7 @@ import fetchMock from "fetch-mock";
 import { yearMonthDayParse } from "../formats";
 import { loadData } from "./daily-auths-report-data";
 
-describe("DailyAuthsReport", () => {
+describe("DailyAuthsReportData", () => {
   describe("#loadData", () => {
     it("combines data across separate fetch requests", () => {
       const fetch = fetchMock

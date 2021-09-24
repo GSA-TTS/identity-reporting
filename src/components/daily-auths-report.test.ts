@@ -1,11 +1,11 @@
 import { expect } from "chai";
 import { VNode } from "preact";
-import { ProcessedResult } from "src/models/daily-auths-report-data";
+import { ProcessedResult } from "../models/daily-auths-report-data";
 import { TableRow } from "./table";
 import { yearMonthDayParse } from "../formats";
 import { tabulate, tabulateSumByAgency } from "./daily-auths-report";
 
-describe("models/DailyAuthsReport", () => {
+describe("DailyAuthsReportData", () => {
   const results = [
     {
       date: yearMonthDayParse("2021-01-01"),
