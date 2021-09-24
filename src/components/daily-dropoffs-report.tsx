@@ -4,6 +4,7 @@ import { useQuery } from "preact-fetching";
 import { scaleLinear, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import Markdown from "preact-markdown";
+import { ascending } from "d3-array";
 import { ReportFilterContext } from "../contexts/report-filter-context";
 import Table, { TableData } from "./table";
 import { useAgencies } from "../contexts/agencies-context";
@@ -20,17 +21,20 @@ import {
 import { formatAsPercent, formatWithCommas } from "../formats";
 
 function tabulate({
-  rows: results,
+  rows: unsortedRows,
   funnelMode,
-  filterAgency,
   issuerColor,
 }: {
-  rows?: DailyDropoffsRow[];
+  rows: DailyDropoffsRow[];
   funnelMode: FunnelMode;
-  filterAgency?: string;
   issuerColor: (issuer: string) => string;
 }): TableData {
-  const filteredRows = (results || []).filter((d) => !filterAgency || d.agency === filterAgency);
+  const rows = unsortedRows.sort(
+    (
+      { agency: agencyA, friendly_name: friendlyNameA },
+      { agency: agencyB, friendly_name: friendlyNameB }
+    ) => ascending(agencyA, agencyB) || ascending(friendlyNameA, friendlyNameB)
+  );
 
   const header = [
     "Agency",
@@ -48,7 +52,7 @@ function tabulate({
       "white" as unknown as number,
     ]);
 
-  const body = filteredRows.map((row) => {
+  const body = rows.map((row) => {
     const { agency, issuer, friendly_name: friendlyName } = row;
 
     return [
@@ -98,6 +102,8 @@ function DailyDropffsReport(): VNode {
   useResizeListener(() => setWidth(ref.current?.offsetWidth));
   useAgencies(data);
 
+  const filteredData = (data || []).filter((d) => !agency || d.agency === agency);
+
   return (
     <div ref={ref}>
       <Accordion title="How is this measured?">
@@ -119,13 +125,13 @@ The data model table can't accurately capture:
         />
       </Accordion>
       <DailyDropoffsLineChart
-        data={data || []}
+        data={filteredData}
         width={width}
         color={issuerColor}
         funnelMode={funnelMode}
       />
       <Table
-        data={tabulate({ rows: data, filterAgency: agency, issuerColor, funnelMode })}
+        data={tabulate({ rows: filteredData, issuerColor, funnelMode })}
         numberFormatter={formatWithCommas}
       />
     </div>
