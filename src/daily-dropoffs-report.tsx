@@ -378,7 +378,7 @@ function DailyDropffsReport(): VNode {
 
   return (
     <div ref={ref}>
-      <Accordion id="how-is-it-measured" title="How is this measured?">
+      <Accordion title="How is this measured?">
         <Markdown
           markdown={`
 **Definitions**:

@@ -1,12 +1,14 @@
 import { ComponentChildren, VNode } from "preact";
+import useInstanceId from "./hooks/use-instance-id";
 
 interface AccordionProps {
-  id: string;
   title: string | VNode;
   children?: ComponentChildren;
 }
 
-function Accordion({ id, title, children }: AccordionProps): VNode {
+function Accordion({ title, children }: AccordionProps): VNode {
+  const id = useInstanceId();
+
   return (
     <div className="usa-accordion usa-accordion--bordered margin-top-2 margin-bottom-2">
       <h3 className="usa-accordion__heading">
