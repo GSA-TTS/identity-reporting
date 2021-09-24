@@ -17,3 +17,10 @@
     text-anchor: start;
   }
 }
+
+/**
+ * Default usa-form is limited to 20rem aka one column
+ */
+.usa-form-full-width {
+  @include u-width(full);
+}
