@@ -19,21 +19,25 @@ function Table({ data, numberFormatter = String }: TableProps): VNode {
       <table className="usa-table usa-table--compact">
         <thead>
           <tr>
-            {header.map((head) => (
-              <th>{head}</th>
-            ))}
+            {header.map((head) =>
+              typeof head === "object" && head.type === "th" ? head : <th>{head}</th>
+            )}
           </tr>
         </thead>
         <tbody>
           {body.map((row) => (
             <tr>
-              {row.map((d) =>
-                typeof d === "number" ? (
-                  <td className="table-number text-tabular text-right">{numberFormatter(d)}</td>
-                ) : (
-                  <td>{d}</td>
-                )
-              )}
+              {row.map((d) => {
+                if (typeof d === "object" && d.type === "td") {
+                  return d;
+                }
+                if (typeof d === "number") {
+                  return (
+                    <td className="table-number text-tabular text-right">{numberFormatter(d)}</td>
+                  );
+                }
+                return <td>{d}</td>;
+              })}
             </tr>
           ))}
         </tbody>

@@ -43,6 +43,16 @@ function Header({ path }: HeaderProps): VNode {
                 Daily Auths Report
               </Link>
             </li>
+            <li className="usa-nav__primary-item">
+              <Link
+                href="/daily-dropoffs-report/"
+                className={
+                  path === getFullPath("/daily-dropoffs-report/") ? "usa-current" : undefined
+                }
+              >
+                Daily Dropoffs Report
+              </Link>
+            </li>
           </ul>
         </div>
       </nav>

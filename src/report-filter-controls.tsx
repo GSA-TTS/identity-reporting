@@ -4,11 +4,21 @@ import { utcFormat } from "d3-time-format";
 import { utcWeek, CountableTimeInterval } from "d3-time";
 import { AgenciesContext } from "./context/agencies-context";
 import { ReportFilterContext, DEFAULT_ENV } from "./context/report-filter-context";
+import { FunnelMode } from "./daily-dropoffs-report";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 
-function ReportFilterControls(): VNode {
-  const { start, finish, agency, ial, env, setParameters } = useContext(ReportFilterContext);
+interface ReportFilterControlsProps {
+  showIal: boolean;
+  showFunnelMode: boolean;
+}
+
+function ReportFilterControls({
+  showIal = false,
+  showFunnelMode = false,
+}: ReportFilterControlsProps): VNode {
+  const { start, finish, agency, ial, env, funnelMode, setParameters } =
+    useContext(ReportFilterContext);
   const { agencies } = useContext(AgenciesContext);
 
   const formRef = useRef(null as HTMLFormElement | null);
@@ -67,34 +77,68 @@ function ReportFilterControls(): VNode {
             Next Week &rarr;
           </button>
         </div>
-        <div>
-          <div className="usa-radio">
-            <input
-              type="radio"
-              id="ial-1"
-              name="ial"
-              value="1"
-              checked={ial === 1}
-              className="usa-radio__input"
-            />
-            <label htmlFor="ial-1" className="usa-radio__label">
-              IAL 1
-            </label>
-          </div>
-          <div className="usa-radio">
-            <input
-              type="radio"
-              id="ial-2"
-              name="ial"
-              value="2"
-              checked={ial === 2}
-              className="usa-radio__input"
-            />
-            <label htmlFor="ial-2" className="usa-radio__label">
-              IAL2
-            </label>
-          </div>
-        </div>
+        {showIal && (
+          <fieldset className="usa-fieldset">
+            <legend className="usa-legend">IAL</legend>
+            <div className="usa-radio">
+              <input
+                type="radio"
+                id="ial-1"
+                name="ial"
+                value="1"
+                checked={ial === 1}
+                className="usa-radio__input"
+              />
+              <label htmlFor="ial-1" className="usa-radio__label">
+                IAL 1
+              </label>
+            </div>
+            <div className="usa-radio">
+              <input
+                type="radio"
+                id="ial-2"
+                name="ial"
+                value="2"
+                checked={ial === 2}
+                className="usa-radio__input"
+              />
+              <label htmlFor="ial-2" className="usa-radio__label">
+                IAL2
+              </label>
+            </div>
+          </fieldset>
+        )}
+        {showFunnelMode && (
+          <fieldset className="usa-fieldset">
+            <legend className="usa-legend">Funnel Mode</legend>
+            <div className="usa-radio">
+              <input
+                type="radio"
+                id="funnel-mode-overall"
+                name="funnelMode"
+                value={FunnelMode.OVERALL}
+                checked={funnelMode === FunnelMode.OVERALL}
+                className="usa-radio__input"
+              />
+              <label htmlFor="funnel-mode-overall" className="usa-radio__label">
+                Overall
+              </label>
+            </div>
+            <div className="usa-radio">
+              <input
+                type="radio"
+                id="funnel-mode-blanket"
+                name="funnelMode"
+                value={FunnelMode.BLANKET}
+                checked={funnelMode === FunnelMode.BLANKET}
+                className="usa-radio__input"
+              />
+              <label htmlFor="funnel-mode-blanket" className="usa-radio__label">
+                Blanket
+              </label>
+            </div>
+          </fieldset>
+        )}
         <div>
           <label>
             Agency
@@ -122,3 +166,4 @@ function ReportFilterControls(): VNode {
 }
 
 export default ReportFilterControls;
+export { ReportFilterControlsProps };

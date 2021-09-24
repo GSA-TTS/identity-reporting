@@ -10,3 +10,10 @@
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
+
+.x-axis.rotate-labels {
+  text {
+    transform: rotate(90deg) translate(1em, -1.2em);
+    text-anchor: start;
+  }
+}

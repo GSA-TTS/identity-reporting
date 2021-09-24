@@ -1,10 +1,19 @@
 import { VNode } from "preact";
+import DailyAuthsReport from "../daily-auths-report";
+import DailyDropffsReport from "../daily-dropoffs-report";
 import { Router } from "../router";
 import HomeRoute from "./home-route";
-import ReportRoute from "./report-route";
+import createReportRoute from "./report-route";
 
 export const ROUTES = {
-  "/daily-auths-report/": ReportRoute,
+  "/daily-auths-report/": createReportRoute(DailyAuthsReport, {
+    title: "Daily Auths Report",
+    filterOpts: { showIal: true, showFunnelMode: false },
+  }),
+  "/daily-dropoffs-report/": createReportRoute(DailyDropffsReport, {
+    title: "Daily Dropoffs Report",
+    filterOpts: { showIal: false, showFunnelMode: true },
+  }),
   "/": HomeRoute,
 };
 

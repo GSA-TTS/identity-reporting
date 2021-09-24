@@ -1,16 +1,19 @@
 import { VNode } from "preact";
-import { useContext, useEffect, useRef, useState } from "preact/hooks";
+import { useContext, useRef, useState } from "preact/hooks";
 import { utcDays, utcDay } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import { format } from "d3-format";
 import { useQuery } from "preact-fetching";
 import { utcFormat } from "d3-time-format";
 import { group, ascending, rollup } from "d3-array";
+import Markdown from "preact-markdown";
 import { ReportFilterContext } from "./context/report-filter-context";
 import Table, { TableData } from "./table";
 import { path as reportPath } from "./report";
 import PlotComponent from "./plot";
-import { AgenciesContext } from "./context/agencies-context";
+import { useAgencies } from "./context/agencies-context";
+import Accordion from "./accordion";
+import useResizeListener from "./hooks/resize-listener";
 
 interface Result {
   count: number;
@@ -249,59 +252,26 @@ function plot({
 function DailyAuthsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
-  const { setAgencies } = useContext(AgenciesContext);
   const { start, finish, agency, ial, env, setParameters } = useContext(ReportFilterContext);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
   );
 
-  useEffect(() => {
-    if (!data) {
-      return;
-    }
-
-    const allAgencies = Array.from(new Set(data.map((d) => d.agency)))
-      .filter((x) => !!x)
-      .sort();
-
-    setAgencies(allAgencies);
-  }, [data]);
-
-  useEffect(() => {
-    const listener = () => setWidth(ref.current?.offsetWidth);
-
-    listener();
-
-    window.addEventListener("resize", listener);
-    return () => window.removeEventListener("resize", listener);
-  });
+  useAgencies(data);
+  useResizeListener(ref, () => setWidth(ref.current?.offsetWidth));
 
   return (
     <div ref={ref}>
-      <div className="usa-accordion usa-accordion--bordered margin-top-2 margin-bottom-2">
-        <h3 className="usa-accordion__heading">
-          <button
-            className="usa-accordion__button"
-            aria-controls="how-is-it-measured"
-            aria-expanded="false"
-            type="button"
-          >
-            How is this measured?
-          </button>
-        </h3>
-        <div className="usa-prose usa-accordion__content" id="how-is-it-measured" hidden>
-          <p>
-            <strong>Timing: </strong>
-            All data is collected, grouped, and displayed in the UTC timezone.
-          </p>
-          <p>
-            <strong>Counting: </strong>
-            This report displays the total number of authentications, so one user authenticating
-            twice will count twice. It does not de-duplicate users or provide unique auths.
-          </p>
-        </div>
-      </div>
+      <Accordion title="How is this measured?">
+        <Markdown
+          markdown={`
+**Timing**: All data is collected, grouped, and displayed in the UTC timezone.
+
+**Counting**: This report displays the total number of authentications, so one user authenticating
+twice will count twice. It does not de-duplicate users or provide unique auths.`}
+        />
+      </Accordion>
       <PlotComponent
         plotter={() => plot({ data, ial, agency, start, finish, width })}
         inputs={[data, ial, agency, start.valueOf(), finish.valueOf(), width]}

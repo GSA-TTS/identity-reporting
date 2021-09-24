@@ -1,5 +1,5 @@
 import { createContext, VNode, ComponentChildren } from "preact";
-import { StateUpdater, useState } from "preact/hooks";
+import { StateUpdater, useContext, useEffect, useState } from "preact/hooks";
 
 interface AgenciesContextValues {
   agencies: string[];
@@ -20,4 +20,19 @@ function AgenciesContextProvider({ children }: { children: ComponentChildren }):
   );
 }
 
-export { AgenciesContextProvider, AgenciesContext };
+function useAgencies(data: { agency: string }[] | undefined): void {
+  const { setAgencies } = useContext(AgenciesContext);
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+
+    const allAgencies = Array.from(new Set(data.map((d) => d.agency)))
+      .filter((x) => !!x)
+      .sort();
+
+    setAgencies(allAgencies);
+  }, [data]);
+}
+
+export { AgenciesContextProvider, AgenciesContext, useAgencies };

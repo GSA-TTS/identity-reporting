@@ -1,4 +1,5 @@
 import { createContext, VNode, ComponentChildren } from "preact";
+import { DEFAULT_FUNNEL_MODE, FunnelMode } from "../daily-dropoffs-report";
 import { route } from "../router";
 
 const DEFAULT_IAL = 1;
@@ -10,6 +11,7 @@ interface ReportFilterContextValues {
   ial: 1 | 2;
   agency?: string;
   env: string;
+  funnelMode: FunnelMode;
   setParameters: (params: Record<string, string>) => void;
 }
 
@@ -35,6 +37,7 @@ const ReportFilterContext = createContext({
   ial: DEFAULT_IAL,
   env: DEFAULT_ENV,
   setParameters: defaultSetParameters,
+  funnelMode: DEFAULT_FUNNEL_MODE,
 } as ReportFilterContextValues);
 
 type ReportFilterContextProviderProps = Omit<ReportFilterContextValues, "setParameters">;
