@@ -5,7 +5,7 @@ import { TableRow } from "./table";
 import { yearMonthDayParse } from "../formats";
 import { tabulate, tabulateSumByAgency } from "./daily-auths-report";
 
-describe("DailyAuthsReportData", () => {
+describe("DailyAuthsReport", () => {
   const results = [
     {
       date: yearMonthDayParse("2021-01-01"),
