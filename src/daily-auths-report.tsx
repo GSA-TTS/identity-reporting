@@ -1,5 +1,5 @@
 import { VNode } from "preact";
-import { useContext, useEffect, useRef, useState } from "preact/hooks";
+import { useContext, useRef, useState } from "preact/hooks";
 import { utcDays, utcDay } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import { format } from "d3-format";
@@ -11,8 +11,9 @@ import { ReportFilterContext } from "./context/report-filter-context";
 import Table, { TableData } from "./table";
 import { path as reportPath } from "./report";
 import PlotComponent from "./plot";
-import { AgenciesContext } from "./context/agencies-context";
+import { useAgencies } from "./context/agencies-context";
 import Accordion from "./accordion";
+import useResizeListener from "./resize-listener";
 
 interface Result {
   count: number;
@@ -251,33 +252,14 @@ function plot({
 function DailyAuthsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
-  const { setAgencies } = useContext(AgenciesContext);
   const { start, finish, agency, ial, env, setParameters } = useContext(ReportFilterContext);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
   );
 
-  useEffect(() => {
-    if (!data) {
-      return;
-    }
-
-    const allAgencies = Array.from(new Set(data.map((d) => d.agency)))
-      .filter((x) => !!x)
-      .sort();
-
-    setAgencies(allAgencies);
-  }, [data]);
-
-  useEffect(() => {
-    const listener = () => setWidth(ref.current?.offsetWidth);
-
-    listener();
-
-    window.addEventListener("resize", listener);
-    return () => window.removeEventListener("resize", listener);
-  });
+  useAgencies(data);
+  useResizeListener(ref, () => setWidth(ref.current?.offsetWidth));
 
   return (
     <div ref={ref}>

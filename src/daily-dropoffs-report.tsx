@@ -16,6 +16,7 @@ import { ReportFilterContext } from "./context/report-filter-context";
 import Table, { TableData } from "./table";
 import { AgenciesContext } from "./context/agencies-context";
 import Accordion from "./accordion";
+import useResizeListener from "./resize-listener";
 
 enum FunnelMode {
   /**
@@ -373,14 +374,7 @@ function DailyDropffsReport(): VNode {
     setAgencies(allAgencies);
   }, [data]);
 
-  useEffect(() => {
-    const listener = () => setWidth(ref.current?.offsetWidth);
-
-    listener();
-
-    window.addEventListener("resize", listener);
-    return () => window.removeEventListener("resize", listener);
-  });
+  useResizeListener(ref, () => setWidth(ref.current?.offsetWidth));
 
   return (
     <div ref={ref}>

@@ -8,7 +8,7 @@ import ReportFilterContextProvider, {
 } from "../context/report-filter-context";
 import ReportFilterControls, { ReportFilterControlsProps } from "../report-filter-controls";
 import Page from "../page";
-import { DEFAULT_FUNNEL_MODE } from "../daily-dropoffs-report";
+import { DEFAULT_FUNNEL_MODE, FunnelMode } from "../daily-dropoffs-report";
 
 const yearMonthDayParse = utcParse("%Y-%m-%d");
 
@@ -19,7 +19,7 @@ export interface ReportRouteProps {
   ial?: string;
   agency?: string;
   env?: string;
-  funnelMode?: string;
+  funnelMode?: FunnelMode;
 }
 
 function createReportRoute(
