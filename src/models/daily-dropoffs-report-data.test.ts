@@ -8,7 +8,7 @@ import {
   loadData,
   toStepCounts,
   FunnelMode,
-} from "./daily-dropoffs-report";
+} from "./daily-dropoffs-report-data";
 
 describe("DailyDropoffsReport", () => {
   describe("#aggregate", () => {

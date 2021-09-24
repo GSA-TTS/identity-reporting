@@ -1,19 +1,11 @@
-import { VNode } from "preact";
 import { expect } from "chai";
-import { utcParse } from "d3-time-format";
-import fetchMock from "fetch-mock";
-import {
-  tabulate,
-  tabulateSumByAgency,
-  loadData,
-  formatSIDropTrailingZeroes,
-  ProcessedResult,
-} from "./daily-auths-report";
+import { VNode } from "preact";
+import { ProcessedResult } from "src/models/daily-auths-report-data";
 import { TableRow } from "./table";
+import { yearMonthDayParse } from "../formats";
+import { tabulate, tabulateSumByAgency } from "./daily-auths-report";
 
-describe("DailyAuthsReport", () => {
-  const yearMonthDayParse = utcParse("%Y-%m-%d") as (s: string) => Date;
-
+describe("models/DailyAuthsReport", () => {
   const results = [
     {
       date: yearMonthDayParse("2021-01-01"),
@@ -119,46 +111,6 @@ describe("DailyAuthsReport", () => {
         ["agency1", "1", 1100, 111, 1211],
         ["agency2", "1", 555, 0, 555],
       ]);
-    });
-  });
-
-  describe("#loadData", () => {
-    it("combines data across separate fetch requests", () => {
-      const fetch = fetchMock
-        .sandbox()
-        .get("/local/daily-auths-report/2021/2021-01-01.daily-auths-report.json", {
-          start: "2020-01-01",
-          results: [{ count: 1 }],
-        })
-        .get("/local/daily-auths-report/2021/2021-01-02.daily-auths-report.json", {
-          start: "2020-01-02",
-          results: [{ count: 10 }],
-        });
-
-      return loadData(
-        yearMonthDayParse("2021-01-01"),
-        yearMonthDayParse("2021-01-03"),
-        "local",
-        fetch
-      ).then((processed) => {
-        expect(processed).to.have.lengthOf(2);
-        processed.forEach((result) => {
-          expect(result).to.have.property("date");
-          expect(result.agency, "sets a default agency if missing").to.not.be.undefined;
-        });
-      });
-    });
-
-    after(() => fetchMock.restore());
-  });
-
-  describe("#formatSIDropTrailingZeroes", () => {
-    it("formats with an SI prefix", () => {
-      expect(formatSIDropTrailingZeroes(1_230_000)).to.eq("1.2M");
-    });
-
-    it("drops trailing zeroes", () => {
-      expect(formatSIDropTrailingZeroes(1_000.0)).to.eq("1k");
     });
   });
 });
