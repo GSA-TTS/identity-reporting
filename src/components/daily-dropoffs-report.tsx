@@ -5,7 +5,7 @@ import { scaleLinear, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import Markdown from "preact-markdown";
 import { ascending } from "d3-array";
-import { ReportFilterContext } from "../contexts/report-filter-context";
+import { FunnelMode, ReportFilterContext } from "../contexts/report-filter-context";
 import Table, { TableData } from "./table";
 import { useAgencies } from "../contexts/agencies-context";
 import Accordion from "./accordion";
@@ -13,7 +13,6 @@ import useResizeListener from "../hooks/resize-listener";
 import DailyDropoffsLineChart from "./daily-dropoffs-line-chart";
 import {
   DailyDropoffsRow,
-  FunnelMode,
   funnelSteps,
   loadData,
   toStepCounts,
@@ -91,7 +90,7 @@ function tabulate({
 function DailyDropffsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
-  const { start, finish, agency, env, funnelMode } = useContext(ReportFilterContext);
+  const { start, finish, agency, env, funnelMode, scale } = useContext(ReportFilterContext);
 
   const { data } = useQuery(`dropoffs/${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
@@ -129,6 +128,7 @@ The data model table can't accurately capture:
         width={width}
         color={issuerColor}
         funnelMode={funnelMode}
+        scale={scale}
       />
       <Table
         data={tabulate({ rows: filteredData, issuerColor, funnelMode })}

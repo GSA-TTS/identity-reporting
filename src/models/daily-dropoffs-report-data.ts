@@ -1,20 +1,8 @@
 import { group, ascending } from "d3-array";
 import { csvParse, autoType } from "d3-dsv";
 import { utcDays } from "d3-time";
+import { FunnelMode } from "../contexts/report-filter-context";
 import { path as reportPath } from "../reports/path";
-
-enum FunnelMode {
-  /**
-   * Starts funnel at the welcome screen
-   */
-  OVERALL = "overall",
-  /**
-   * Starts funnel at the image submission screen
-   */
-  BLANKET = "blanket",
-}
-
-const DEFAULT_FUNNEL_MODE = FunnelMode.OVERALL;
 
 enum Step {
   WELCOME = "welcome",
@@ -157,8 +145,6 @@ function loadData(
 }
 
 export {
-  FunnelMode,
-  DEFAULT_FUNNEL_MODE,
   DailyDropoffsRow,
   Step,
   StepCount,

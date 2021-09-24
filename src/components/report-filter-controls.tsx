@@ -3,21 +3,30 @@ import { useRef, useContext } from "preact/hooks";
 import { utcFormat } from "d3-time-format";
 import { utcWeek, CountableTimeInterval } from "d3-time";
 import { AgenciesContext } from "../contexts/agencies-context";
-import { ReportFilterContext, DEFAULT_ENV } from "../contexts/report-filter-context";
-import { FunnelMode } from "../models/daily-dropoffs-report-data";
+import {
+  ReportFilterContext,
+  DEFAULT_ENV,
+  Scale,
+  FunnelMode,
+} from "../contexts/report-filter-context";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 
-interface ReportFilterControlsProps {
-  showIal: boolean;
-  showFunnelMode: boolean;
+/**
+ * Controls on the form that can be opted into
+ */
+enum Control {
+  IAL = "ial",
+  FUNNEL_MODE = "funnel_mode",
+  SCALE = "scale",
 }
 
-function ReportFilterControls({
-  showIal = false,
-  showFunnelMode = false,
-}: ReportFilterControlsProps): VNode {
-  const { start, finish, agency, ial, env, funnelMode, setParameters } =
+interface ReportFilterControlsProps {
+  controls?: Control[];
+}
+
+function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
+  const { start, finish, agency, ial, env, funnelMode, scale, setParameters } =
     useContext(ReportFilterContext);
   const { agencies } = useContext(AgenciesContext);
 
@@ -77,7 +86,7 @@ function ReportFilterControls({
             Next Week &rarr;
           </button>
         </div>
-        {showIal && (
+        {controls?.includes(Control.IAL) && (
           <fieldset className="usa-fieldset">
             <legend className="usa-legend">IAL</legend>
             <div className="usa-radio">
@@ -108,7 +117,7 @@ function ReportFilterControls({
             </div>
           </fieldset>
         )}
-        {showFunnelMode && (
+        {controls?.includes(Control.FUNNEL_MODE) && (
           <fieldset className="usa-fieldset">
             <legend className="usa-legend">Funnel Mode</legend>
             <div className="usa-radio">
@@ -135,6 +144,37 @@ function ReportFilterControls({
               />
               <label htmlFor="funnel-mode-blanket" className="usa-radio__label">
                 Blanket
+              </label>
+            </div>
+          </fieldset>
+        )}
+        {controls?.includes(Control.SCALE) && (
+          <fieldset className="usa-fieldset">
+            <legend className="usa-legend">Scale</legend>
+            <div className="usa-radio">
+              <input
+                type="radio"
+                id="scale-count"
+                name="scale"
+                value={Scale.COUNT}
+                checked={scale === Scale.COUNT}
+                className="usa-radio__input"
+              />
+              <label htmlFor="scale-count" className="usa-radio__label">
+                Count
+              </label>
+            </div>
+            <div className="usa-radio">
+              <input
+                type="radio"
+                id="scale-percent"
+                name="scale"
+                value={Scale.PERCENT}
+                checked={scale === Scale.PERCENT}
+                className="usa-radio__input"
+              />
+              <label htmlFor="scale-percent" className="usa-radio__label">
+                Percent
               </label>
             </div>
           </fieldset>
@@ -166,4 +206,4 @@ function ReportFilterControls({
 }
 
 export default ReportFilterControls;
-export { ReportFilterControlsProps };
+export { ReportFilterControlsProps, Control };
