@@ -14,7 +14,7 @@ import Markdown from "preact-markdown";
 import { path as reportPath } from "./report";
 import { ReportFilterContext } from "./context/report-filter-context";
 import Table, { TableData } from "./table";
-import { AgenciesContext } from "./context/agencies-context";
+import { useAgencies } from "./context/agencies-context";
 import Accordion from "./accordion";
 import useResizeListener from "./hooks/resize-listener";
 
@@ -353,7 +353,6 @@ function LineChart({
 function DailyDropffsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
-  const { setAgencies } = useContext(AgenciesContext);
   const { start, finish, agency, env, funnelMode } = useContext(ReportFilterContext);
 
   const { data } = useQuery(`dropoffs/${start.valueOf()}-${finish.valueOf()}`, () =>
@@ -362,18 +361,7 @@ function DailyDropffsReport(): VNode {
 
   const issuerColor = scaleOrdinal(schemeCategory10);
 
-  useEffect(() => {
-    if (!data) {
-      return;
-    }
-
-    const allAgencies = Array.from(new Set(data.map((d) => d.agency)))
-      .filter((x) => !!x)
-      .sort();
-
-    setAgencies(allAgencies);
-  }, [data]);
-
+  useAgencies(data);
   useResizeListener(ref, () => setWidth(ref.current?.offsetWidth));
 
   return (
