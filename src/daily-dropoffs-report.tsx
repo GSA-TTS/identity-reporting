@@ -16,7 +16,7 @@ import { ReportFilterContext } from "./context/report-filter-context";
 import Table, { TableData } from "./table";
 import { AgenciesContext } from "./context/agencies-context";
 import Accordion from "./accordion";
-import useResizeListener from "./resize-listener";
+import useResizeListener from "./hooks/resize-listener";
 
 enum FunnelMode {
   /**

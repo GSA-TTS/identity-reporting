@@ -13,7 +13,7 @@ import { path as reportPath } from "./report";
 import PlotComponent from "./plot";
 import { useAgencies } from "./context/agencies-context";
 import Accordion from "./accordion";
-import useResizeListener from "./resize-listener";
+import useResizeListener from "./hooks/resize-listener";
 
 interface Result {
   count: number;
