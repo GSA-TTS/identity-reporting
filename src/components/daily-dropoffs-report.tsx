@@ -1,12 +1,12 @@
 import { VNode } from "preact";
-import { useContext, useEffect, useRef, useState } from "preact/hooks";
+import { useContext, useRef, useState } from "preact/hooks";
 import { useQuery } from "preact-fetching";
 import { scaleLinear, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import Markdown from "preact-markdown";
 import { ReportFilterContext } from "../contexts/report-filter-context";
 import Table, { TableData } from "./table";
-import { AgenciesContext } from "../contexts/agencies-context";
+import { useAgencies } from "../contexts/agencies-context";
 import Accordion from "./accordion";
 import useResizeListener from "../hooks/resize-listener";
 import DailyDropoffsLineChart from "./daily-dropoffs-line-chart";
@@ -87,7 +87,6 @@ function tabulate({
 function DailyDropffsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
-  const { setAgencies } = useContext(AgenciesContext);
   const { start, finish, agency, env, funnelMode } = useContext(ReportFilterContext);
 
   const { data } = useQuery(`dropoffs/${start.valueOf()}-${finish.valueOf()}`, () =>
@@ -96,19 +95,8 @@ function DailyDropffsReport(): VNode {
 
   const issuerColor = scaleOrdinal(schemeCategory10);
 
-  useEffect(() => {
-    if (!data) {
-      return;
-    }
-
-    const allAgencies = Array.from(new Set(data.map((d) => d.agency)))
-      .filter((x) => !!x)
-      .sort();
-
-    setAgencies(allAgencies);
-  }, [data]);
-
   useResizeListener(ref, () => setWidth(ref.current?.offsetWidth));
+  useAgencies(data);
 
   return (
     <div ref={ref}>
