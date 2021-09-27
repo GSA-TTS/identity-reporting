@@ -2,7 +2,7 @@ import { max } from "d3-array";
 import { axisLeft, axisBottom } from "d3-axis";
 import { scalePoint, scaleLinear } from "d3-scale";
 import { VNode } from "preact";
-import { useRef, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
 import { line as d3Line } from "d3-shape";
 import { formatWithCommas, formatAsPercent } from "../formats";
 import {
@@ -28,7 +28,6 @@ function DailyDropoffsLineChart({
   width?: number;
   height?: number;
 }): VNode {
-  const ref = useRef(null as SVGSVGElement | null);
   const [highlightedIssuer, setHighlightedIssuer] = useState(undefined as string | undefined);
   const highlightedRow = data.find(({ issuer }) => issuer === highlightedIssuer);
 
@@ -57,12 +56,7 @@ function DailyDropoffsLineChart({
     .y((d) => y((d as unknown as StepCount).count) as number) as (s: StepCount[]) => string;
 
   return (
-    <svg
-      ref={ref}
-      height={height}
-      width={width}
-      onPointerLeave={() => setHighlightedIssuer(undefined)}
-    >
+    <svg height={height} width={width} onPointerLeave={() => setHighlightedIssuer(undefined)}>
       <Axis axis={axisLeft(y)} transform={`translate(${margin.left}, ${margin.top})`} />
       <Axis
         axis={axisBottom(x).tickFormat(stepToTitle as (s: string) => string)}
