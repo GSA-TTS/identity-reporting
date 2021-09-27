@@ -89,7 +89,7 @@ function DailyDropoffsLineChart({
                     <tspan x={x(step)}>{formatWithCommas(count)}</tspan>
                     {idx > 0 && (
                       <tspan x={x(step)} dy="1.2em">
-                        (${formatAsPercent(percentOfFirst)})
+                        ({formatAsPercent(percentOfFirst)})
                       </tspan>
                     )}
                   </text>
