@@ -197,7 +197,7 @@ function DailyAuthsReport(): VNode {
   );
 
   useAgencies(data);
-  useResizeListener(ref, () => setWidth(ref.current?.offsetWidth));
+  useResizeListener(() => setWidth(ref.current?.offsetWidth));
 
   return (
     <div ref={ref}>

@@ -1,6 +1,6 @@
-import { useEffect, Ref } from "preact/hooks";
+import { useEffect } from "preact/hooks";
 
-function useResizeListener(ref: Ref<HTMLElement | null>, listener: () => void): void {
+function useResizeListener(listener: () => void): void {
   useEffect(() => {
     listener();
 
