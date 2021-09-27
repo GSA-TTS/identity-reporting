@@ -4,7 +4,8 @@ import { useQuery } from "preact-fetching";
 import { scaleLinear, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import Markdown from "preact-markdown";
-import { ReportFilterContext } from "../contexts/report-filter-context";
+import { ascending } from "d3-array";
+import { FunnelMode, ReportFilterContext } from "../contexts/report-filter-context";
 import Table, { TableData } from "./table";
 import { useAgencies } from "../contexts/agencies-context";
 import Accordion from "./accordion";
@@ -12,7 +13,6 @@ import useResizeListener from "../hooks/resize-listener";
 import DailyDropoffsLineChart from "./daily-dropoffs-line-chart";
 import {
   DailyDropoffsRow,
-  FunnelMode,
   funnelSteps,
   loadData,
   toStepCounts,
@@ -20,17 +20,20 @@ import {
 import { formatAsPercent, formatWithCommas } from "../formats";
 
 function tabulate({
-  rows: results,
+  rows: unsortedRows,
   funnelMode,
-  filterAgency,
   issuerColor,
 }: {
-  rows?: DailyDropoffsRow[];
+  rows: DailyDropoffsRow[];
   funnelMode: FunnelMode;
-  filterAgency?: string;
   issuerColor: (issuer: string) => string;
 }): TableData {
-  const filteredRows = (results || []).filter((d) => !filterAgency || d.agency === filterAgency);
+  const rows = unsortedRows.sort(
+    (
+      { agency: agencyA, friendly_name: friendlyNameA },
+      { agency: agencyB, friendly_name: friendlyNameB }
+    ) => ascending(agencyA, agencyB) || ascending(friendlyNameA, friendlyNameB)
+  );
 
   const header = [
     "Agency",
@@ -48,7 +51,7 @@ function tabulate({
       "white" as unknown as number,
     ]);
 
-  const body = filteredRows.map((row) => {
+  const body = rows.map((row) => {
     const { agency, issuer, friendly_name: friendlyName } = row;
 
     return [
@@ -87,7 +90,7 @@ function tabulate({
 function DailyDropffsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
-  const { start, finish, agency, env, funnelMode } = useContext(ReportFilterContext);
+  const { start, finish, agency, env, funnelMode, scale } = useContext(ReportFilterContext);
 
   const { data } = useQuery(`dropoffs/${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
@@ -97,6 +100,8 @@ function DailyDropffsReport(): VNode {
 
   useResizeListener(() => setWidth(ref.current?.offsetWidth));
   useAgencies(data);
+
+  const filteredData = (data || []).filter((d) => !agency || d.agency === agency);
 
   return (
     <div ref={ref}>
@@ -119,13 +124,14 @@ The data model table can't accurately capture:
         />
       </Accordion>
       <DailyDropoffsLineChart
-        data={data || []}
+        data={filteredData}
         width={width}
         color={issuerColor}
         funnelMode={funnelMode}
+        scale={scale}
       />
       <Table
-        data={tabulate({ rows: data, filterAgency: agency, issuerColor, funnelMode })}
+        data={tabulate({ rows: filteredData, issuerColor, funnelMode })}
         numberFormatter={formatWithCommas}
       />
     </div>

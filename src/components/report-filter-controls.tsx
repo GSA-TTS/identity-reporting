@@ -3,21 +3,30 @@ import { useRef, useContext } from "preact/hooks";
 import { utcFormat } from "d3-time-format";
 import { utcWeek, CountableTimeInterval } from "d3-time";
 import { AgenciesContext } from "../contexts/agencies-context";
-import { ReportFilterContext, DEFAULT_ENV } from "../contexts/report-filter-context";
-import { FunnelMode } from "../models/daily-dropoffs-report-data";
+import {
+  ReportFilterContext,
+  DEFAULT_ENV,
+  Scale,
+  FunnelMode,
+} from "../contexts/report-filter-context";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 
-interface ReportFilterControlsProps {
-  showIal: boolean;
-  showFunnelMode: boolean;
+/**
+ * Controls on the form that can be opted into
+ */
+enum Control {
+  IAL = "ial",
+  FUNNEL_MODE = "funnel_mode",
+  SCALE = "scale",
 }
 
-function ReportFilterControls({
-  showIal = false,
-  showFunnelMode = false,
-}: ReportFilterControlsProps): VNode {
-  const { start, finish, agency, ial, env, funnelMode, setParameters } =
+interface ReportFilterControlsProps {
+  controls?: Control[];
+}
+
+function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
+  const { start, finish, agency, ial, env, funnelMode, scale, setParameters } =
     useContext(ReportFilterContext);
   const { agencies } = useContext(AgenciesContext);
 
@@ -46,118 +55,172 @@ function ReportFilterControls({
 
   return (
     <>
-      <form ref={formRef} onChange={update} className="usa-form">
-        <div>
-          <label>
-            Start
-            <input
-              type="date"
-              name="start"
-              value={yearMonthDayFormat(start)}
-              className="usa-input"
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Finish
-            <input
-              type="date"
-              name="finish"
-              value={yearMonthDayFormat(finish)}
-              className="usa-input"
-            />
-          </label>
-        </div>
-        <div>
-          <button type="button" className="usa-button" onClick={updateTimeRange(utcWeek, -1)}>
-            &larr; Previous Week
-          </button>
-          <button type="button" className="usa-button" onClick={updateTimeRange(utcWeek, +1)}>
-            Next Week &rarr;
-          </button>
-        </div>
-        {showIal && (
-          <fieldset className="usa-fieldset">
-            <legend className="usa-legend">IAL</legend>
-            <div className="usa-radio">
-              <input
-                type="radio"
-                id="ial-1"
-                name="ial"
-                value="1"
-                checked={ial === 1}
-                className="usa-radio__input"
-              />
-              <label htmlFor="ial-1" className="usa-radio__label">
-                IAL 1
-              </label>
+      <form ref={formRef} onChange={update} className="usa-form-full-width">
+        <div className="grid-container padding-0">
+          <div className="grid-row grid-gap">
+            <div className="tablet:grid-col-6">
+              <fieldset className="usa-fieldset">
+                <legend className="usa-legend">Time Range</legend>
+                <div>
+                  <label className="usa-label">
+                    Start
+                    <input
+                      type="date"
+                      name="start"
+                      value={yearMonthDayFormat(start)}
+                      className="usa-input"
+                    />
+                  </label>
+                </div>
+                <div>
+                  <label className="usa-label">
+                    Finish
+                    <input
+                      type="date"
+                      name="finish"
+                      value={yearMonthDayFormat(finish)}
+                      className="usa-input"
+                    />
+                  </label>
+                </div>
+                <div className="margin-top-2">
+                  <button
+                    type="button"
+                    className="usa-button"
+                    onClick={updateTimeRange(utcWeek, -1)}
+                  >
+                    &larr; Previous Week
+                  </button>
+                  <button
+                    type="button"
+                    className="usa-button"
+                    onClick={updateTimeRange(utcWeek, +1)}
+                  >
+                    Next Week &rarr;
+                  </button>
+                </div>
+              </fieldset>
+              <fieldset className="usa-fieldset">
+                <legend className="usa-legend" id="agency-legend">
+                  Agency
+                </legend>
+                <select name="agency" className="usa-select" aria-labelledby="agency-legend">
+                  <option value="">All</option>
+                  <optgroup label="Agencies">
+                    {agencies.map((a) => (
+                      <option value={a} selected={a === agency}>
+                        {a}
+                      </option>
+                    ))}
+                  </optgroup>
+                </select>
+              </fieldset>
             </div>
-            <div className="usa-radio">
-              <input
-                type="radio"
-                id="ial-2"
-                name="ial"
-                value="2"
-                checked={ial === 2}
-                className="usa-radio__input"
-              />
-              <label htmlFor="ial-2" className="usa-radio__label">
-                IAL2
-              </label>
+            <div className="tablet:grid-col-6">
+              {controls?.includes(Control.IAL) && (
+                <fieldset className="usa-fieldset">
+                  <legend className="usa-legend">IAL</legend>
+                  <div className="usa-radio">
+                    <input
+                      type="radio"
+                      id="ial-1"
+                      name="ial"
+                      value="1"
+                      checked={ial === 1}
+                      className="usa-radio__input"
+                    />
+                    <label htmlFor="ial-1" className="usa-label usa-radio__label">
+                      IAL 1
+                    </label>
+                  </div>
+                  <div className="usa-radio">
+                    <input
+                      type="radio"
+                      id="ial-2"
+                      name="ial"
+                      value="2"
+                      checked={ial === 2}
+                      className="usa-radio__input"
+                    />
+                    <label htmlFor="ial-2" className="usa-label usa-radio__label">
+                      IAL2
+                    </label>
+                  </div>
+                </fieldset>
+              )}
+              {controls?.includes(Control.FUNNEL_MODE) && (
+                <fieldset className="usa-fieldset">
+                  <legend className="usa-legend">Funnel Mode</legend>
+                  <div className="usa-radio">
+                    <input
+                      type="radio"
+                      id="funnel-mode-overall"
+                      name="funnelMode"
+                      value={FunnelMode.OVERALL}
+                      checked={funnelMode === FunnelMode.OVERALL}
+                      className="usa-radio__input"
+                    />
+                    <label htmlFor="funnel-mode-overall" className="usa-label usa-radio__label">
+                      Overall
+                    </label>
+                  </div>
+                  <div className="usa-radio">
+                    <input
+                      type="radio"
+                      id="funnel-mode-blanket"
+                      name="funnelMode"
+                      value={FunnelMode.BLANKET}
+                      checked={funnelMode === FunnelMode.BLANKET}
+                      className="usa-radio__input"
+                    />
+                    <label htmlFor="funnel-mode-blanket" className="usa-label usa-radio__label">
+                      Blanket
+                    </label>
+                  </div>
+                </fieldset>
+              )}
+              {controls?.includes(Control.SCALE) && (
+                <fieldset className="usa-fieldset">
+                  <legend className="usa-legend">Scale</legend>
+                  <div className="usa-radio">
+                    <input
+                      type="radio"
+                      id="scale-count"
+                      name="scale"
+                      value={Scale.COUNT}
+                      checked={scale === Scale.COUNT}
+                      className="usa-radio__input"
+                    />
+                    <label htmlFor="scale-count" className="usa-label usa-radio__label">
+                      Count
+                    </label>
+                  </div>
+                  <div className="usa-radio">
+                    <input
+                      type="radio"
+                      id="scale-percent"
+                      name="scale"
+                      value={Scale.PERCENT}
+                      checked={scale === Scale.PERCENT}
+                      className="usa-radio__input"
+                    />
+                    <label htmlFor="scale-percent" className="usa-label usa-radio__label">
+                      Percent
+                    </label>
+                  </div>
+                </fieldset>
+              )}
             </div>
-          </fieldset>
-        )}
-        {showFunnelMode && (
-          <fieldset className="usa-fieldset">
-            <legend className="usa-legend">Funnel Mode</legend>
-            <div className="usa-radio">
-              <input
-                type="radio"
-                id="funnel-mode-overall"
-                name="funnelMode"
-                value={FunnelMode.OVERALL}
-                checked={funnelMode === FunnelMode.OVERALL}
-                className="usa-radio__input"
-              />
-              <label htmlFor="funnel-mode-overall" className="usa-radio__label">
-                Overall
-              </label>
+          </div>
+          <div className="grid-row margin-top-2">
+            <div className="tablet:grid-col-6">
+              <div>
+                <a href="?" className="usa-button usa-button--outline">
+                  Reset
+                </a>
+              </div>
             </div>
-            <div className="usa-radio">
-              <input
-                type="radio"
-                id="funnel-mode-blanket"
-                name="funnelMode"
-                value={FunnelMode.BLANKET}
-                checked={funnelMode === FunnelMode.BLANKET}
-                className="usa-radio__input"
-              />
-              <label htmlFor="funnel-mode-blanket" className="usa-radio__label">
-                Blanket
-              </label>
-            </div>
-          </fieldset>
-        )}
-        <div>
-          <label>
-            Agency
-            <select name="agency" className="usa-select">
-              <option value="">All</option>
-              <optgroup label="Agencies">
-                {agencies.map((a) => (
-                  <option value={a} selected={a === agency}>
-                    {a}
-                  </option>
-                ))}
-              </optgroup>
-            </select>
-          </label>
-        </div>
-        <div>
-          <a href="?" className="usa-button usa-button--outline">
-            Reset
-          </a>
+          </div>
         </div>
         {env !== DEFAULT_ENV && <input type="hidden" name="env" value={env} />}
       </form>
@@ -166,4 +229,4 @@ function ReportFilterControls({
 }
 
 export default ReportFilterControls;
-export { ReportFilterControlsProps };
+export { ReportFilterControlsProps, Control };

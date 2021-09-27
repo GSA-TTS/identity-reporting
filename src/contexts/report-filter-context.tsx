@@ -1,9 +1,26 @@
 import { createContext, VNode, ComponentChildren } from "preact";
-import { DEFAULT_FUNNEL_MODE, FunnelMode } from "../models/daily-dropoffs-report-data";
 import { route } from "../router";
+
+enum Scale {
+  COUNT = "count",
+  PERCENT = "percent",
+}
+
+enum FunnelMode {
+  /**
+   * Starts funnel at the welcome screen
+   */
+  OVERALL = "overall",
+  /**
+   * Starts funnel at the image submission screen
+   */
+  BLANKET = "blanket",
+}
 
 const DEFAULT_IAL = 1;
 const DEFAULT_ENV = "prod";
+const DEFAULT_SCALE = Scale.COUNT;
+const DEFAULT_FUNNEL_MODE = FunnelMode.OVERALL;
 
 interface ReportFilterContextValues {
   start: Date;
@@ -12,6 +29,7 @@ interface ReportFilterContextValues {
   agency?: string;
   env: string;
   funnelMode: FunnelMode;
+  scale: Scale;
   setParameters: (params: Record<string, string>) => void;
 }
 
@@ -38,6 +56,7 @@ const ReportFilterContext = createContext({
   env: DEFAULT_ENV,
   setParameters: defaultSetParameters,
   funnelMode: DEFAULT_FUNNEL_MODE,
+  scale: DEFAULT_SCALE,
 } as ReportFilterContextValues);
 
 type ReportFilterContextProviderProps = Omit<ReportFilterContextValues, "setParameters">;
@@ -54,4 +73,12 @@ function ReportFilterContextProvider({
 }
 
 export default ReportFilterContextProvider;
-export { ReportFilterContext, DEFAULT_IAL, DEFAULT_ENV };
+export {
+  ReportFilterContext,
+  Scale,
+  FunnelMode,
+  DEFAULT_IAL,
+  DEFAULT_ENV,
+  DEFAULT_SCALE,
+  DEFAULT_FUNNEL_MODE,
+};

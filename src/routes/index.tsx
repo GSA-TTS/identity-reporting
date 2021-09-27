@@ -1,4 +1,5 @@
 import { VNode } from "preact";
+import { Control } from "../components/report-filter-controls";
 import DailyAuthsReport from "../components/daily-auths-report";
 import DailyDropffsReport from "../components/daily-dropoffs-report";
 import { Router } from "../router";
@@ -8,11 +9,11 @@ import createReportRoute from "./report-route";
 export const ROUTES = {
   "/daily-auths-report/": createReportRoute(DailyAuthsReport, {
     title: "Daily Auths Report",
-    filterOpts: { showIal: true, showFunnelMode: false },
+    controls: [Control.IAL],
   }),
   "/daily-dropoffs-report/": createReportRoute(DailyDropffsReport, {
     title: "Daily Dropoffs Report",
-    filterOpts: { showIal: false, showFunnelMode: true },
+    controls: [Control.FUNNEL_MODE, Control.SCALE],
   }),
   "/": HomeRoute,
 };

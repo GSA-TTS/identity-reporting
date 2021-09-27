@@ -7,8 +7,8 @@ import {
   aggregate,
   loadData,
   toStepCounts,
-  FunnelMode,
 } from "./daily-dropoffs-report-data";
+import { FunnelMode } from "../contexts/report-filter-context";
 
 describe("DailyDropoffsReportData", () => {
   describe("#aggregate", () => {
