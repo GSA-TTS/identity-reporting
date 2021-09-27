@@ -1,5 +1,5 @@
 import { utcDays } from "d3-time";
-import { path as reportPath } from "../reports/path";
+import { path as reportPath } from "./api-path";
 
 interface Result {
   count: number;

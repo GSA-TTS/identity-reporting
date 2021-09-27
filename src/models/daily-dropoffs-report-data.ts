@@ -1,7 +1,7 @@
 import { group, ascending } from "d3-array";
 import { csvParse, autoType } from "d3-dsv";
 import { utcDays } from "d3-time";
-import { path as reportPath } from "../reports/path";
+import { path as reportPath } from "./api-path";
 
 enum FunnelMode {
   /**

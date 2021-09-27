@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { path } from "./path";
+import { path } from "./api-path";
 
 describe("Report", () => {
   describe("#path", () => {
