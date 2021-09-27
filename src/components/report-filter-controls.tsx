@@ -62,7 +62,7 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
               <fieldset className="usa-fieldset">
                 <legend className="usa-legend">Time Range</legend>
                 <div>
-                  <label>
+                  <label className="usa-label">
                     Start
                     <input
                       type="date"
@@ -73,7 +73,7 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                   </label>
                 </div>
                 <div>
-                  <label>
+                  <label className="usa-label">
                     Finish
                     <input
                       type="date"
@@ -129,7 +129,7 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                       checked={ial === 1}
                       className="usa-radio__input"
                     />
-                    <label htmlFor="ial-1" className="usa-radio__label">
+                    <label htmlFor="ial-1" className="usa-label usa-radio__label">
                       IAL 1
                     </label>
                   </div>
@@ -142,7 +142,7 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                       checked={ial === 2}
                       className="usa-radio__input"
                     />
-                    <label htmlFor="ial-2" className="usa-radio__label">
+                    <label htmlFor="ial-2" className="usa-label usa-radio__label">
                       IAL2
                     </label>
                   </div>
@@ -160,7 +160,10 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                       checked={funnelMode === FunnelMode.OVERALL}
                       className="usa-radio__input"
                     />
-                    <label htmlFor="funnel-mode-overall" className="usa-radio__label">
+                    <label
+                      htmlFor="funnel-mode-overall"
+                      className="usa-label usa-radio__label"
+                    >
                       Overall
                     </label>
                   </div>
@@ -173,7 +176,10 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                       checked={funnelMode === FunnelMode.BLANKET}
                       className="usa-radio__input"
                     />
-                    <label htmlFor="funnel-mode-blanket" className="usa-radio__label">
+                    <label
+                      htmlFor="funnel-mode-blanket"
+                      className="usa-label usa-radio__label"
+                    >
                       Blanket
                     </label>
                   </div>
@@ -191,7 +197,7 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                       checked={scale === Scale.COUNT}
                       className="usa-radio__input"
                     />
-                    <label htmlFor="scale-count" className="usa-radio__label">
+                    <label htmlFor="scale-count" className="usa-label usa-radio__label">
                       Count
                     </label>
                   </div>
@@ -204,7 +210,10 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                       checked={scale === Scale.PERCENT}
                       className="usa-radio__input"
                     />
-                    <label htmlFor="scale-percent" className="usa-radio__label">
+                    <label
+                      htmlFor="scale-percent"
+                      className="usa-label usa-radio__label"
+                    >
                       Percent
                     </label>
                   </div>
