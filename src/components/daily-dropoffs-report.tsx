@@ -95,7 +95,7 @@ function DailyDropffsReport(): VNode {
 
   const issuerColor = scaleOrdinal(schemeCategory10);
 
-  useResizeListener(ref, () => setWidth(ref.current?.offsetWidth));
+  useResizeListener(() => setWidth(ref.current?.offsetWidth));
   useAgencies(data);
 
   return (
