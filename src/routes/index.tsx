@@ -1,6 +1,6 @@
 import { VNode } from "preact";
-import DailyAuthsReport from "../daily-auths-report";
-import DailyDropffsReport from "../daily-dropoffs-report";
+import DailyAuthsReport from "../components/daily-auths-report";
+import DailyDropffsReport from "../components/daily-dropoffs-report";
 import { Router } from "../router";
 import HomeRoute from "./home-route";
 import createReportRoute from "./report-route";

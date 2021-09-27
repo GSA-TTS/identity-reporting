@@ -8,9 +8,9 @@ import {
   loadData,
   toStepCounts,
   FunnelMode,
-} from "./daily-dropoffs-report";
+} from "./daily-dropoffs-report-data";
 
-describe("DailyDropoffsReport", () => {
+describe("DailyDropoffsReportData", () => {
   describe("#aggregate", () => {
     it("sums up rows by issuer", () => {
       const date = new Date();

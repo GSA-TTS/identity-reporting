@@ -1,14 +1,16 @@
 import { VNode } from "preact";
 import { utcParse } from "d3-time-format";
 import { utcWeek } from "d3-time";
-import { AgenciesContextProvider } from "../context/agencies-context";
+import { AgenciesContextProvider } from "../contexts/agencies-context";
 import ReportFilterContextProvider, {
   DEFAULT_IAL,
   DEFAULT_ENV,
-} from "../context/report-filter-context";
-import ReportFilterControls, { ReportFilterControlsProps } from "../report-filter-controls";
-import Page from "../page";
-import { DEFAULT_FUNNEL_MODE, FunnelMode } from "../daily-dropoffs-report";
+} from "../contexts/report-filter-context";
+import ReportFilterControls, {
+  ReportFilterControlsProps,
+} from "../components/report-filter-controls";
+import Page from "../components/page";
+import { DEFAULT_FUNNEL_MODE, FunnelMode } from "../models/daily-dropoffs-report-data";
 
 const yearMonthDayParse = utcParse("%Y-%m-%d");
 

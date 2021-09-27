@@ -2,9 +2,9 @@ import { VNode } from "preact";
 import { useRef, useContext } from "preact/hooks";
 import { utcFormat } from "d3-time-format";
 import { utcWeek, CountableTimeInterval } from "d3-time";
-import { AgenciesContext } from "./context/agencies-context";
-import { ReportFilterContext, DEFAULT_ENV } from "./context/report-filter-context";
-import { FunnelMode } from "./daily-dropoffs-report";
+import { AgenciesContext } from "../contexts/agencies-context";
+import { ReportFilterContext, DEFAULT_ENV } from "../contexts/report-filter-context";
+import { FunnelMode } from "../models/daily-dropoffs-report-data";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 

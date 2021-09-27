@@ -1,5 +1,5 @@
 import { createContext, VNode, ComponentChildren } from "preact";
-import { DEFAULT_FUNNEL_MODE, FunnelMode } from "../daily-dropoffs-report";
+import { DEFAULT_FUNNEL_MODE, FunnelMode } from "../models/daily-dropoffs-report-data";
 import { route } from "../router";
 
 const DEFAULT_IAL = 1;

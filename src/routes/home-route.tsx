@@ -1,5 +1,5 @@
 import { VNode } from "preact";
-import Page from "../page";
+import Page from "../components/page";
 
 export interface HomeRouteProps {
   path: string;

@@ -1,5 +1,5 @@
 import { ComponentChildren, VNode } from "preact";
-import useInstanceId from "./hooks/use-instance-id";
+import useInstanceId from "../hooks/use-instance-id";
 
 interface AccordionProps {
   title: string | VNode;
