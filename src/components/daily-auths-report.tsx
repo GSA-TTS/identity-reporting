@@ -66,10 +66,11 @@ function plot({
             title: (bin: ProcessedResult[]) => {
               const date = yearMonthDayFormat(bin[0].date);
               const total = formatWithCommas(bin.reduce((sum, d) => sum + d.count, 0));
-              const friendlyName = bin[0].friendly_name;
-              const issuer = bin[0].issuer;
+              const { issuer, friendly_name: friendlyName } = bin[0];
 
-              return [agency && `${friendlyName}:`, total, `(${date})`, issuer].filter(Boolean).join(" ");
+              return [agency && `${friendlyName}:`, total, `(${date})`, issuer]
+                .filter(Boolean)
+                .join(" ");
             },
             filter: (d: ProcessedResult) => d.ial === ial && (!agency || d.agency === agency),
           }
