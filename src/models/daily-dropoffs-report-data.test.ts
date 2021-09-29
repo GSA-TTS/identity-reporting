@@ -167,7 +167,7 @@ issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+
       ]);
     });
 
-    it("starts at the image submit step for BLANKET mode", () => {
+    it("starts at the image submit step for ACTUAL mode", () => {
       expect(toStepCounts(row, FunnelMode.ACTUAL)).to.deep.equal([
         { step: Step.CAP_DOC_SUBMIT, count: 1e7, percentOfFirst: 1, percentOfPrevious: 1 },
         { step: Step.SSN, count: 1e6, percentOfFirst: 0.1, percentOfPrevious: 0.1 },
