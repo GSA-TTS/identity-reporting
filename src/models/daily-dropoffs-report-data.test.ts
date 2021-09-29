@@ -152,7 +152,7 @@ issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+
     };
 
     it("converts a single row into an array of steps with counts and percents", () => {
-      expect(toStepCounts(row, FunnelMode.OVERALL)).to.deep.equal([
+      expect(toStepCounts(row, FunnelMode.BLANKET)).to.deep.equal([
         { step: Step.WELCOME, count: 1e10, percentOfFirst: 1, percentOfPrevious: 1 },
         { step: Step.AGREEMENT, count: 1e9, percentOfFirst: 0.1, percentOfPrevious: 0.1 },
         { step: Step.CAPTURE_DOCUMENT, count: 1e8, percentOfFirst: 0.01, percentOfPrevious: 0.1 },
@@ -167,8 +167,8 @@ issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+
       ]);
     });
 
-    it("starts at the image submit step for BLANKET mode", () => {
-      expect(toStepCounts(row, FunnelMode.BLANKET)).to.deep.equal([
+    it("starts at the image submit step for ACTUAL mode", () => {
+      expect(toStepCounts(row, FunnelMode.ACTUAL)).to.deep.equal([
         { step: Step.CAP_DOC_SUBMIT, count: 1e7, percentOfFirst: 1, percentOfPrevious: 1 },
         { step: Step.SSN, count: 1e6, percentOfFirst: 0.1, percentOfPrevious: 0.1 },
         { step: Step.VERIFY_INFO, count: 1e5, percentOfFirst: 0.01, percentOfPrevious: 0.1 },
