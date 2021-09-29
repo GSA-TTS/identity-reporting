@@ -62,13 +62,14 @@ function plot({
               value: "date",
               thresholds: utcDay,
             },
-            fill: agency ? "friendly_name" : "steelblue",
+            fill: agency ? "issuer" : "steelblue",
             title: (bin: ProcessedResult[]) => {
               const date = yearMonthDayFormat(bin[0].date);
               const total = formatWithCommas(bin.reduce((sum, d) => sum + d.count, 0));
-              const friendlyName = bin[0]?.friendly_name;
+              const friendlyName = bin[0].friendly_name;
+              const issuer = bin[0].issuer;
 
-              return [agency && `${friendlyName}:`, total, `(${date})`].filter(Boolean).join(" ");
+              return [agency && `${friendlyName}:`, total, `(${date})`, issuer].filter(Boolean).join(" ");
             },
             filter: (d: ProcessedResult) => d.ial === ial && (!agency || d.agency === agency),
           }
@@ -108,7 +109,9 @@ function tabulate({ results }: { results: ProcessedResult[] }): TableData {
 
             return [
               agency,
-              <span title={issuer}>{issuerToFriendlyName.get(issuer)}</span>,
+              <td className="max-width-300 truncate-ellipsis" title={issuer}>
+                {issuerToFriendlyName.get(issuer)} <small>({issuer})</small>
+              </td>,
               String(ial),
               ...dayCounts,
               dayCounts.reduce((d, total) => d + total, 0),
