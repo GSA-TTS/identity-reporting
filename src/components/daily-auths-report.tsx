@@ -78,34 +78,22 @@ function plot({
   });
 }
 
-function tabulate({
-  results,
-  filterAgency,
-  filterIal,
-}: {
-  results?: ProcessedResult[];
-  filterAgency?: string;
-  filterIal?: number;
-}): TableData {
-  const filteredResults = (results || []).filter(
-    (d) => (!filterAgency || d.agency === filterAgency) && (!filterIal || d.ial === filterIal)
-  );
-
-  const days = Array.from(new Set(filteredResults.map((d) => d.date.valueOf())))
+function tabulate({ results }: { results: ProcessedResult[] }): TableData {
+  const days = Array.from(new Set(results.map((d) => d.date.valueOf())))
     .sort((a, b) => a - b)
     .map((d) => new Date(d));
 
   const header = ["Agency", "App", "IAL", ...days.map(yearMonthDayFormat), "Total"];
 
   const grouped = group(
-    filteredResults,
+    results,
     (d) => d.agency,
     (d) => d.issuer,
     (d) => d.ial
   );
 
   const issuerToFriendlyName = new Map();
-  filteredResults.forEach((d) => issuerToFriendlyName.set(d.issuer, d.friendly_name));
+  results.forEach((d) => issuerToFriendlyName.set(d.issuer, d.friendly_name));
 
   const body = Array.from(grouped)
     .sort(([agencyA], [agencyB]) => ascending(agencyA, agencyB))
@@ -137,21 +125,17 @@ function tabulate({
 
 function tabulateSumByAgency({
   results,
-  filterIal,
   setParameters,
 }: {
-  results?: ProcessedResult[];
-  filterIal?: number;
+  results: ProcessedResult[];
   setParameters: (params: Record<string, string>) => void;
 }): TableData {
-  const filteredResults = (results || []).filter((d) => !filterIal || d.ial === filterIal);
-
-  const days = Array.from(new Set(filteredResults.map((d) => d.date.valueOf())))
+  const days = Array.from(new Set(results.map((d) => d.date.valueOf())))
     .sort((a, b) => a - b)
     .map((d) => new Date(d));
 
   const rolledup = rollup(
-    filteredResults,
+    results,
     (bin) => bin.reduce((sum, d) => sum + d.count, 0),
     (d) => d.agency,
     (d) => d.ial,
@@ -199,6 +183,10 @@ function DailyAuthsReport(): VNode {
   useAgencies(data);
   useResizeListener(() => setWidth(ref.current?.offsetWidth));
 
+  const filteredData = (data || []).filter(
+    (d) => (!ial || d.ial === ial) && (!agency || d.agency === agency)
+  );
+
   return (
     <div ref={ref}>
       <Accordion title="How is this measured?">
@@ -211,20 +199,20 @@ twice will count twice. It does not de-duplicate users or provide unique auths.`
         />
       </Accordion>
       <PlotComponent
-        plotter={() => plot({ data, ial, agency, start, finish, width })}
+        plotter={() => plot({ data: filteredData, ial, agency, start, finish, width })}
         inputs={[data, ial, agency, start.valueOf(), finish.valueOf(), width]}
       />
       {!agency && (
         <PlotComponent
-          plotter={() => plot({ data, ial, start, finish, width, facetAgency: true })}
+          plotter={() => plot({ data: filteredData, ial, start, finish, width, facetAgency: true })}
           inputs={[data, ial, start.valueOf(), finish.valueOf(), width]}
         />
       )}
       <Table
         data={
           agency
-            ? tabulate({ results: data, filterAgency: agency, filterIal: ial })
-            : tabulateSumByAgency({ results: data, filterIal: ial, setParameters })
+            ? tabulate({ results: filteredData })
+            : tabulateSumByAgency({ results: filteredData, setParameters })
         }
         numberFormatter={formatWithCommas}
       />

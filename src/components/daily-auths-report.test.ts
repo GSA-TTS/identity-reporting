@@ -77,21 +77,6 @@ describe("DailyAuthsReport", () => {
         ["agency2", "issuer3", "1", 555, 0, 555],
       ]);
     });
-
-    it("filters by agency", () => {
-      const table = tabulate({ results, filterAgency: "agency1" });
-
-      expect(simplifyVNodes(table.body)).to.deep.equal([
-        ["agency1", "issuer1", "1", 100, 111, 211],
-        ["agency1", "issuer1", "2", 1, 0, 1],
-        ["agency1", "issuer2", "1", 1000, 0, 1000],
-      ]);
-    });
-    it("filters by ial", () => {
-      const table = tabulate({ results, filterIal: 2 });
-
-      expect(simplifyVNodes(table.body)).to.deep.equal([["agency1", "issuer1", "2", 1, 1]]);
-    });
   });
 
   describe("#tabulateSumByAgency", () => {
@@ -103,12 +88,13 @@ describe("DailyAuthsReport", () => {
     }
 
     it("builds a table by agency, ial and sums across issuers", () => {
-      const table = tabulateSumByAgency({ results, filterIal: 1, setParameters: () => null });
+      const table = tabulateSumByAgency({ results, setParameters: () => null });
 
       expect(table.header).to.deep.eq(["Agency", "IAL", "2021-01-01", "2021-01-02", "Total"]);
-      expect(table.body).to.have.lengthOf(2);
+      expect(table.body).to.have.lengthOf(3);
       expect(simplifyVNodes(table.body)).to.deep.equal([
         ["agency1", "1", 1100, 111, 1211],
+        ["agency1", "2", 1, 0, 1],
         ["agency2", "1", 555, 0, 555],
       ]);
     });
