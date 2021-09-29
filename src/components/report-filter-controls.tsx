@@ -154,19 +154,6 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                   <div className="usa-radio">
                     <input
                       type="radio"
-                      id="funnel-mode-overall"
-                      name="funnelMode"
-                      value={FunnelMode.OVERALL}
-                      checked={funnelMode === FunnelMode.OVERALL}
-                      className="usa-radio__input"
-                    />
-                    <label htmlFor="funnel-mode-overall" className="usa-label usa-radio__label">
-                      Overall
-                    </label>
-                  </div>
-                  <div className="usa-radio">
-                    <input
-                      type="radio"
                       id="funnel-mode-blanket"
                       name="funnelMode"
                       value={FunnelMode.BLANKET}
@@ -176,6 +163,21 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                     <label htmlFor="funnel-mode-blanket" className="usa-label usa-radio__label">
                       Blanket
                     </label>
+                    <span className="margin-left-1">The funnel starts at the welcome step</span>
+                  </div>
+                  <div className="usa-radio">
+                    <input
+                      type="radio"
+                      id="funnel-mode-actual"
+                      name="funnelMode"
+                      value={FunnelMode.ACTUAL}
+                      checked={funnelMode === FunnelMode.ACTUAL}
+                      className="usa-radio__input"
+                    />
+                    <label htmlFor="funnel-mode-actual" className="usa-label usa-radio__label">
+                      Actual
+                    </label>
+                    <span className="margin-left-1">The funnel starts at the image submit step</span>
                   </div>
                 </fieldset>
               )}

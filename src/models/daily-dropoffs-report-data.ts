@@ -64,7 +64,7 @@ function process(str: string): DailyDropoffsRow[] {
 }
 
 function funnelSteps(funnelMode: FunnelMode): StepTitle[] {
-  return funnelMode === FunnelMode.OVERALL ? STEPS : STEPS.slice(3);
+  return funnelMode === FunnelMode.BLANKET ? STEPS : STEPS.slice(3);
 }
 
 interface StepCount {

@@ -8,19 +8,19 @@ enum Scale {
 
 enum FunnelMode {
   /**
-   * Starts funnel at the welcome screen
-   */
-  OVERALL = "overall",
-  /**
-   * Starts funnel at the image submission screen
+   * The funnel starts at the welcome step
    */
   BLANKET = "blanket",
+  /**
+   * The funnel starts at the image submit step
+   */
+  ACTUAL = "actual",
 }
 
 const DEFAULT_IAL = 1;
 const DEFAULT_ENV = "prod";
 const DEFAULT_SCALE = Scale.COUNT;
-const DEFAULT_FUNNEL_MODE = FunnelMode.OVERALL;
+const DEFAULT_FUNNEL_MODE = FunnelMode.BLANKET;
 
 interface ReportFilterContextValues {
   start: Date;

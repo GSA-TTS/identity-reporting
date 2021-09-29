@@ -108,11 +108,6 @@ function DailyDropffsReport(): VNode {
       <Accordion title="How is this measured?">
         <Markdown
           markdown={`
-**Definitions**:
-
-- *Blanket*: The funnel starts at the image submit step
-- *Overall*: The funnel starts at the welcome step
-
 **Timing**: All data is collected, grouped, and displayed in the UTC timezone.
 
 **Known Limitations**:
