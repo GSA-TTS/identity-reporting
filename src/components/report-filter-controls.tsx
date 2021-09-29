@@ -177,7 +177,9 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                     <label htmlFor="funnel-mode-actual" className="usa-label usa-radio__label">
                       Actual
                     </label>
-                    <span className="margin-left-1">The funnel starts at the image submit step</span>
+                    <span className="margin-left-1">
+                      The funnel starts at the image submit step
+                    </span>
                   </div>
                 </fieldset>
               )}
