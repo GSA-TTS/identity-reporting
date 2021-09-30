@@ -127,6 +127,26 @@ issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+
       });
     });
 
+    it("gracefully handles missing days", () => {
+      const fetch = fetchMock
+        .sandbox()
+        .get(
+          "/local/daily-dropoffs-report/2021/2021-01-01.daily-dropoffs-report.csv",
+          `issuer,friendly_name,iaa,agency,start,finish,welcome,agreement,capture_document,cap_doc_submit,ssn,verify_info,verify_submit,phone,encrypt,personal_key,verified
+issuer1,The App,iaa123,The Agency,2021-01-01T00:00:00+01:00,2021-01-01T23:59:59+01:00,3,2,2,2,2,2,2,2,2,2,1`
+        )
+        .get("/local/daily-dropoffs-report/2021/2021-01-02.daily-dropoffs-report.csv", 403);
+
+      return loadData(
+        yearMonthDayParse("2021-01-01"),
+        yearMonthDayParse("2021-01-03"),
+        "local",
+        fetch
+      ).then((combinedRows) => {
+        expect(combinedRows).to.have.lengthOf(1);
+      });
+    });
+
     after(() => fetchMock.restore());
   });
 
