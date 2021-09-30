@@ -24,3 +24,13 @@
 .usa-form--full-width {
   @include u-width(full);
 }
+
+.max-width-300 {
+  max-width: 300px;
+}
+
+.truncate-ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
