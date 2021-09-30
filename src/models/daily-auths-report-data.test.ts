@@ -31,10 +31,6 @@ describe("DailyAuthsReportData", () => {
       });
     });
 
-    after(() => fetchMock.restore());
-  });
-
-  describe("#loadData", () => {
     it("gracefully handles missing days", () => {
       const fetch = fetchMock
         .sandbox()
