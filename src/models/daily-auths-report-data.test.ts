@@ -33,4 +33,30 @@ describe("DailyAuthsReportData", () => {
 
     after(() => fetchMock.restore());
   });
+
+  describe("#loadData", () => {
+    it("gracefully handles missing days", () => {
+      const fetch = fetchMock
+        .sandbox()
+        .get("/local/daily-auths-report/2021/2021-01-01.daily-auths-report.json", {
+          start: "2020-01-01",
+          results: [{ count: 1 }],
+        })
+        .get("/local/daily-auths-report/2021/2021-01-02.daily-auths-report.json", 403);
+
+      return loadData(
+        yearMonthDayParse("2021-01-01"),
+        yearMonthDayParse("2021-01-03"),
+        "local",
+        fetch
+      ).then((processed) => {
+        expect(processed).to.have.lengthOf(1);
+        processed.forEach((result) => {
+          expect(result).to.have.property("date");
+        });
+      });
+    });
+
+    after(() => fetchMock.restore());
+  });
 });
