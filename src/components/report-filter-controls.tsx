@@ -61,43 +61,49 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
             <div className="tablet:grid-col-6">
               <fieldset className="usa-fieldset">
                 <legend className="usa-legend">Time Range</legend>
-                <div>
-                  <label className="usa-label">
-                    Start
-                    <input
-                      type="date"
-                      name="start"
-                      value={yearMonthDayFormat(start)}
-                      className="usa-input"
-                    />
-                  </label>
+                <div className="grid-row grid-gap">
+                  <div className="tablet:grid-col-6">
+                    <label className="usa-label">
+                      Start
+                      <input
+                        type="date"
+                        name="start"
+                        value={yearMonthDayFormat(start)}
+                        className="usa-input"
+                      />
+                    </label>
+                  </div>
+                  <div className="tablet:grid-col-6">
+                    <label className="usa-label">
+                      Finish
+                      <input
+                        type="date"
+                        name="finish"
+                        value={yearMonthDayFormat(finish)}
+                        className="usa-input"
+                      />
+                    </label>
+                  </div>
                 </div>
-                <div>
-                  <label className="usa-label">
-                    Finish
-                    <input
-                      type="date"
-                      name="finish"
-                      value={yearMonthDayFormat(finish)}
-                      className="usa-input"
-                    />
-                  </label>
-                </div>
-                <div className="margin-top-2">
-                  <button
-                    type="button"
-                    className="usa-button"
-                    onClick={updateTimeRange(utcWeek, -1)}
-                  >
-                    &larr; Previous Week
-                  </button>
-                  <button
-                    type="button"
-                    className="usa-button"
-                    onClick={updateTimeRange(utcWeek, +1)}
-                  >
-                    Next Week &rarr;
-                  </button>
+                <div className="margin-top-2 grid-row grid-gap">
+                  <div className="tablet:grid-col-6">
+                    <button
+                      type="button"
+                      className="usa-button usa-button--full-width margin-bottom-1"
+                      onClick={updateTimeRange(utcWeek, -1)}
+                    >
+                      &larr; Previous Week
+                    </button>
+                  </div>
+                  <div className="tablet:grid-col-6">
+                    <button
+                      type="button"
+                      className="usa-button usa-button--full-width"
+                      onClick={updateTimeRange(utcWeek, +1)}
+                    >
+                      Next Week &rarr;
+                    </button>
+                  </div>
                 </div>
               </fieldset>
               <fieldset className="usa-fieldset">
