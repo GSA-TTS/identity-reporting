@@ -62,13 +62,13 @@ function plot({
               value: "date",
               thresholds: utcDay,
             },
-            fill: agency ? "issuer" : "steelblue",
+            fill: "steelblue",
             title: (bin: ProcessedResult[]) => {
               const date = yearMonthDayFormat(bin[0].date);
               const total = formatWithCommas(bin.reduce((sum, d) => sum + d.count, 0));
-              const { issuer, friendly_name: friendlyName } = bin[0];
+              const { agency: binAgency } = bin[0];
 
-              return [agency && `${friendlyName}:`, total, `(${date})`, issuer]
+              return [(agency || facetAgency) && binAgency, total, `(${date})`]
                 .filter(Boolean)
                 .join(" ");
             },
@@ -213,11 +213,7 @@ twice will count twice. It does not de-duplicate users or provide unique auths.`
         />
       )}
       <Table
-        data={
-          agency
-            ? tabulate({ results: filteredData })
-            : tabulateSumByAgency({ results: filteredData, setParameters })
-        }
+        data={tabulateSumByAgency({ results: filteredData, setParameters })}
         numberFormatter={formatWithCommas}
       />
     </div>
