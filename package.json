@@ -6,7 +6,7 @@
   },
   "scripts": {
     "build": "vite build",
-    "postbuild": "npm run generate-routes",
+    "postbuild": "npm run generate-routes && cp robots.txt _site/",
     "dev": "vite",
     "generate-routes": "node -r esbuild-register bin/generate-routes.js",
     "federalist": "npm run build -- --base=${BASEURL:-/}",
