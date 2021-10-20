@@ -11,6 +11,11 @@
   text-align: right;
 }
 
+.usa-table tfoot td {
+  font-weight: bold;
+  background-color: #dedede;
+}
+
 .x-axis.rotate-labels {
   text {
     transform: rotate(90deg) translate(1em, -1.2em);

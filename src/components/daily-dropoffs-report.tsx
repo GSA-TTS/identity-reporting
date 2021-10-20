@@ -51,6 +51,8 @@ function tabulate({
       "white" as unknown as number,
     ]);
 
+  const totals = funnelSteps(funnelMode).map(() => 0);
+
   const body = rows.map((row) => {
     const { agency, issuer, friendly_name: friendlyName } = row;
 
@@ -76,6 +78,8 @@ function tabulate({
           );
         }
 
+        totals[idx] += count;
+
         return cells;
       }),
     ];
@@ -84,6 +88,15 @@ function tabulate({
   return {
     header,
     body,
+    footer: [
+      "Total",
+      "",
+      ...totals
+        .flatMap((total, idx) =>
+          idx > 0 ? [formatWithCommas(total), ""] : formatWithCommas(total)
+        )
+        .map((d) => <td className="table-number text-tabular text-right">{d}</td>),
+    ],
   };
 }
 
