@@ -15,7 +15,13 @@ interface TableProps {
   numberFormatter?: NumberFormatter;
 }
 
-function renderRow(row: TableRow, numberFormatter: NumberFormatter) {
+function Row({
+  row,
+  numberFormatter = String,
+}: {
+  row: TableRow;
+  numberFormatter: NumberFormatter;
+}): VNode {
   return (
     <tr>
       {row.map((d) => {
@@ -43,8 +49,16 @@ function Table({ data, numberFormatter = String }: TableProps): VNode {
             )}
           </tr>
         </thead>
-        <tbody>{body.map((row) => renderRow(row, numberFormatter))}</tbody>
-        {footer && <tfoot>{renderRow(footer, numberFormatter)}</tfoot>}
+        <tbody>
+          {body.map((row) => (
+            <Row row={row} numberFormatter={numberFormatter} />
+          ))}
+        </tbody>
+        {footer && (
+          <tfoot>
+            <Row row={footer} numberFormatter={numberFormatter} />)
+          </tfoot>
+        )}
       </table>
     </div>
   );
