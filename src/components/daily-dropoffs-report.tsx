@@ -51,7 +51,7 @@ function tabulate({
       "white" as unknown as number,
     ]);
 
-  const totals = funnelSteps(funnelMode).map(() => 0);
+  const totals = funnelSteps(funnelMode).fill(0);
 
   const body = rows.map((row) => {
     const { agency, issuer, friendly_name: friendlyName } = row;
