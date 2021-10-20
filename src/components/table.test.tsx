@@ -24,6 +24,24 @@ describe("Table", () => {
     expect(tdValues).to.deep.equal(data.body);
   });
 
+  it("wraps footer elements in <td>", () => {
+    const data = {
+      header: ["name", "color"],
+      body: [
+        ["bob", "red"],
+        ["alice", "blue"],
+      ],
+      footer: ["count", "2"],
+    };
+
+    const { container } = render(<Table data={data} />);
+
+    const tdValues = Array.from(container.querySelectorAll("table tfoot tr td")).map(
+      (td) => td.textContent
+    );
+    expect(tdValues).to.deep.equal(data.footer);
+  });
+
   it("formats numbers as aligned right, using the numberFormatter", () => {
     const data = {
       header: ["num"],
