@@ -56,7 +56,7 @@ function Table({ data, numberFormatter = String }: TableProps): VNode {
         </tbody>
         {footer && (
           <tfoot>
-            <Row row={footer} numberFormatter={numberFormatter} />)
+            <Row row={footer} numberFormatter={numberFormatter} />
           </tfoot>
         )}
       </table>
