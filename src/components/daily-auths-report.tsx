@@ -175,10 +175,38 @@ function tabulateSumByAgency({
   };
 }
 
+function tabulateSum({ results }: { results: ProcessedResult[] }): TableData {
+  const days = Array.from(new Set(results.map((d) => d.date.valueOf())))
+    .sort((a, b) => a - b)
+    .map((d) => new Date(d));
+
+  const rolledup = rollup(
+    results,
+    (bin) => bin.reduce((sum, d) => sum + d.count, 0),
+    (d) => d.ial,
+    (d) => yearMonthDayFormat(d.date)
+  );
+
+  const header = ["Agency", "IAL", ...days.map(yearMonthDayFormat), "Total"];
+
+  const body = Array.from(rolledup)
+    .sort(([ialA], [ialB]) => ascending(ialA, ialB))
+    .map(([ial, ialDays]) => {
+      const dayCounts = days.map((date) => ialDays.get(yearMonthDayFormat(date)) || 0);
+
+      return ["(all)", String(ial), ...dayCounts, dayCounts.reduce((d, total) => d + total, 0)];
+    });
+
+  return {
+    header,
+    body,
+  };
+}
+
 function DailyAuthsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
-  const { start, finish, agency, ial, env, setParameters } = useContext(ReportFilterContext);
+  const { start, finish, agency, ial, env } = useContext(ReportFilterContext);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
@@ -206,19 +234,10 @@ twice will count twice. It does not de-duplicate users or provide unique auths.`
         plotter={() => plot({ data: filteredData, ial, agency, start, finish, width })}
         inputs={[data, ial, agency, start.valueOf(), finish.valueOf(), width]}
       />
-      {!agency && (
-        <PlotComponent
-          plotter={() => plot({ data: filteredData, ial, start, finish, width, facetAgency: true })}
-          inputs={[data, ial, start.valueOf(), finish.valueOf(), width]}
-        />
-      )}
-      <Table
-        data={tabulateSumByAgency({ results: filteredData, setParameters })}
-        numberFormatter={formatWithCommas}
-      />
+      <Table data={tabulateSum({ results: filteredData })} numberFormatter={formatWithCommas} />
     </div>
   );
 }
 
 export default DailyAuthsReport;
-export { tabulate, tabulateSumByAgency };
+export { tabulate, tabulateSum, tabulateSumByAgency };

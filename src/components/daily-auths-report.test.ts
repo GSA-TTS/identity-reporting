@@ -3,7 +3,7 @@ import { VNode } from "preact";
 import { ProcessedResult } from "../models/daily-auths-report-data";
 import { TableRow } from "./table";
 import { yearMonthDayParse } from "../formats";
-import { tabulate, tabulateSumByAgency } from "./daily-auths-report";
+import { tabulate, tabulateSumByAgency, tabulateSum } from "./daily-auths-report";
 
 describe("DailyAuthsReport", () => {
   const results = [
@@ -96,6 +96,19 @@ describe("DailyAuthsReport", () => {
         ["agency1", "1", 1100, 111, 1211],
         ["agency1", "2", 1, 0, 1],
         ["agency2", "1", 555, 0, 555],
+      ]);
+    });
+  });
+
+  describe("#tabulateSum", () => {
+    it("builds a table by agency, ial and sums across issuers", () => {
+      const table = tabulateSum({ results });
+
+      expect(table.header).to.deep.eq(["Agency", "IAL", "2021-01-01", "2021-01-02", "Total"]);
+      expect(table.body).to.have.lengthOf(2);
+      expect(table.body).to.deep.equal([
+        ["(all)", "1", 1655, 111, 1766],
+        ["(all)", "2", 1, 0, 1],
       ]);
     });
   });
