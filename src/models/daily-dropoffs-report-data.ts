@@ -99,7 +99,7 @@ function toStepCounts(row: DailyDropoffsRow, funnelMode: FunnelMode): StepCount[
 }
 
 /**
- * Sums up counts by day
+ * Sums up counts by issuer
  */
 function aggregate(rows: DailyDropoffsRow[]): DailyDropoffsRow[] {
   return Array.from(group(rows, (d) => d.issuer))
@@ -130,6 +130,35 @@ function aggregate(rows: DailyDropoffsRow[]): DailyDropoffsRow[] {
     });
 }
 
+
+function aggregateAll(rows: DailyDropoffsRow[]): DailyDropoffsRow[] {
+  const totals: Map<Step, number> = new Map();
+
+  rows.forEach((row) => {
+    Object.values(Step).forEach((name) => {
+      const step = name as Step;
+      totals.set(step,
+        (totals.get(step) || 0) + (row[step] || 0)
+      )
+    })
+  });
+
+  const totalValues = Object.fromEntries(totals) as Record<Step, number>;
+
+  const totalRow = {
+    issuer: '',
+    friendly_name: '',
+    iaa: '',
+    agency: '(all)',
+    start: rows[0]?.start || new Date(),
+    finish: rows[0]?.finish || new Date(),
+    ...totalValues,
+  } as DailyDropoffsRow;
+
+  return [totalRow];
+}
+
+
 function loadData(
   start: Date,
   finish: Date,
@@ -151,6 +180,7 @@ export {
   stepToTitle,
   loadData,
   aggregate,
+  aggregateAll,
   funnelSteps,
   toStepCounts,
 };

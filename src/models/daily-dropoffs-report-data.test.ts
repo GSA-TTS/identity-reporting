@@ -7,6 +7,7 @@ import {
   aggregate,
   loadData,
   toStepCounts,
+  aggregateAll,
 } from "./daily-dropoffs-report-data";
 import { FunnelMode } from "../contexts/report-filter-context";
 
@@ -94,6 +95,72 @@ describe("DailyDropoffsReportData", () => {
       ]);
     });
   });
+
+  describe("#aggregateAll", () => {
+    it("sums up rows across issuers", () => {
+      const date = new Date();
+
+      const rows = [
+        {
+          issuer: "issuer1",
+          friendly_name: "app1",
+          agency: "agency1",
+          iaa: "iaa123",
+          start: date,
+          finish: date,
+          [Step.WELCOME]: 1,
+          [Step.AGREEMENT]: 0,
+          [Step.VERIFIED]: 1,
+        } as DailyDropoffsRow,
+        {
+          issuer: "issuer1",
+          friendly_name: "app1",
+          agency: "agency1",
+          iaa: "iaa123",
+          start: date,
+          finish: date,
+          [Step.WELCOME]: 1,
+          [Step.AGREEMENT]: 1,
+          [Step.VERIFIED]: 1,
+        } as DailyDropoffsRow,
+        {
+          issuer: "issuer2",
+          friendly_name: "app2",
+          agency: "agency2",
+          iaa: "iaa123",
+          start: date,
+          finish: date,
+          [Step.WELCOME]: 1,
+          [Step.AGREEMENT]: 0,
+          [Step.VERIFIED]: 0,
+        } as DailyDropoffsRow,
+      ];
+
+      const aggregated = aggregateAll(rows);
+      expect(aggregated).to.deep.equal([
+        {
+          issuer: "",
+          friendly_name: "",
+          agency: "(all)",
+          iaa: "",
+          start: date,
+          finish: date,
+          [Step.WELCOME]: 3,
+          [Step.AGREEMENT]: 1,
+          [Step.CAPTURE_DOCUMENT]: 0,
+          [Step.CAP_DOC_SUBMIT]: 0,
+          [Step.SSN]: 0,
+          [Step.VERIFY_INFO]: 0,
+          [Step.VERIFY_SUBMIT]: 0,
+          [Step.PHONE]: 0,
+          [Step.ENCRYPT]: 0,
+          [Step.PERSONAL_KEY]: 0,
+          [Step.VERIFIED]: 2,
+        },
+      ]);
+    });
+  });
+
 
   describe("#loadData", () => {
     const yearMonthDayParse = utcParse("%Y-%m-%d") as (s: string) => Date;
