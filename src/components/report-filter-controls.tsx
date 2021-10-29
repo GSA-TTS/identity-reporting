@@ -2,7 +2,6 @@ import { VNode } from "preact";
 import { useRef, useContext } from "preact/hooks";
 import { utcFormat } from "d3-time-format";
 import { utcWeek, CountableTimeInterval } from "d3-time";
-import { AgenciesContext } from "../contexts/agencies-context";
 import {
   ReportFilterContext,
   DEFAULT_ENV,
@@ -26,9 +25,8 @@ interface ReportFilterControlsProps {
 }
 
 function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
-  const { start, finish, agency, ial, env, funnelMode, scale, setParameters } =
+  const { start, finish, ial, env, funnelMode, scale, setParameters } =
     useContext(ReportFilterContext);
-  const { agencies } = useContext(AgenciesContext);
 
   const formRef = useRef(null as HTMLFormElement | null);
 
@@ -105,21 +103,6 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                     </button>
                   </div>
                 </div>
-              </fieldset>
-              <fieldset className="usa-fieldset">
-                <legend className="usa-legend" id="agency-legend">
-                  Agency
-                </legend>
-                <select name="agency" className="usa-select" aria-labelledby="agency-legend">
-                  <option value="">All</option>
-                  <optgroup label="Agencies">
-                    {agencies.map((a) => (
-                      <option value={a} selected={a === agency}>
-                        {a}
-                      </option>
-                    ))}
-                  </optgroup>
-                </select>
               </fieldset>
             </div>
             <div className="tablet:grid-col-6">

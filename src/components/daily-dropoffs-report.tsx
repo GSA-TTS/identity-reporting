@@ -16,6 +16,7 @@ import {
   funnelSteps,
   loadData,
   toStepCounts,
+  aggregateAll,
 } from "../models/daily-dropoffs-report-data";
 import { formatAsPercent, formatWithCommas } from "../formats";
 
@@ -114,7 +115,7 @@ function DailyDropffsReport(): VNode {
   useResizeListener(() => setWidth(ref.current?.offsetWidth));
   useAgencies(data);
 
-  const filteredData = (data || []).filter((d) => !agency || d.agency === agency);
+  const filteredData = aggregateAll(data || []).filter((d) => !agency || d.agency === agency);
 
   return (
     <div ref={ref}>
