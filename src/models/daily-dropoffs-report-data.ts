@@ -130,26 +130,23 @@ function aggregate(rows: DailyDropoffsRow[]): DailyDropoffsRow[] {
     });
 }
 
-
 function aggregateAll(rows: DailyDropoffsRow[]): DailyDropoffsRow[] {
   const totals: Map<Step, number> = new Map();
 
   rows.forEach((row) => {
     Object.values(Step).forEach((name) => {
       const step = name as Step;
-      totals.set(step,
-        (totals.get(step) || 0) + (row[step] || 0)
-      )
-    })
+      totals.set(step, (totals.get(step) || 0) + (row[step] || 0));
+    });
   });
 
   const totalValues = Object.fromEntries(totals) as Record<Step, number>;
 
   const totalRow = {
-    issuer: '',
-    friendly_name: '',
-    iaa: '',
-    agency: '(all)',
+    issuer: "",
+    friendly_name: "",
+    iaa: "",
+    agency: "(all)",
     start: rows[0]?.start || new Date(),
     finish: rows[0]?.finish || new Date(),
     ...totalValues,
@@ -157,7 +154,6 @@ function aggregateAll(rows: DailyDropoffsRow[]): DailyDropoffsRow[] {
 
   return [totalRow];
 }
-
 
 function loadData(
   start: Date,

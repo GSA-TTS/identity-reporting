@@ -161,7 +161,6 @@ describe("DailyDropoffsReportData", () => {
     });
   });
 
-
   describe("#loadData", () => {
     const yearMonthDayParse = utcParse("%Y-%m-%d") as (s: string) => Date;
 
