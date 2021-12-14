@@ -159,10 +159,17 @@ function loadData(
   fetch = window.fetch
 ): Promise<DailyDropoffsRow[]> {
   return Promise.all(
-    utcDays(start, finish, 1).map((date) => {
-      const path = reportPath({ reportName: "daily-dropoffs-report", date, env, extension: "csv" });
-      return fetch(path).then((response) => response.text());
-    })
+    utcDays(start, finish, 1)
+      .concat(finish)
+      .map((date) => {
+        const path = reportPath({
+          reportName: "daily-dropoffs-report",
+          date,
+          env,
+          extension: "csv",
+        });
+        return fetch(path).then((response) => response.text());
+      })
   ).then((reports) => aggregate(reports.flatMap((r) => process(r))));
 }
 

@@ -49,12 +49,14 @@ function loadData(
   fetch = window.fetch
 ): Promise<ProcessedResult[]> {
   return Promise.all(
-    utcDays(start, finish, 1).map((date) => {
-      const path = reportPath({ reportName: "daily-auths-report", date, env });
-      return fetch(path).then((response) =>
-        response.status === 200 ? response.json() : { results: [] }
-      );
-    })
+    utcDays(start, finish, 1)
+      .concat(finish)
+      .map((date) => {
+        const path = reportPath({ reportName: "daily-auths-report", date, env });
+        return fetch(path).then((response) =>
+          response.status === 200 ? response.json() : { results: [] }
+        );
+      })
   ).then((reports) => reports.flatMap((r) => process(r)));
 }
 
