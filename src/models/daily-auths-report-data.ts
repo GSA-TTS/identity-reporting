@@ -48,6 +48,8 @@ function loadData(
   env: string,
   fetch = window.fetch
 ): Promise<ProcessedResult[]> {
+  // Set the "finish" to the ending of the day
+  finish.setUTCHours(23, 59, 59, 999);
   return Promise.all(
     utcDays(start, finish, 1).map((date) => {
       const path = reportPath({ reportName: "daily-auths-report", date, env });
