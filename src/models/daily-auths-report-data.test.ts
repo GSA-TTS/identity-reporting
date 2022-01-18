@@ -42,7 +42,8 @@ describe("DailyAuthsReportData", () => {
           start: "2020-01-01",
           results: [{ count: 1 }],
         })
-        .get("/local/daily-auths-report/2021/2021-01-02.daily-auths-report.json", 403);
+        .get("/local/daily-auths-report/2021/2021-01-02.daily-auths-report.json", 403)
+        .get("/local/daily-auths-report/2021/2021-01-03.daily-auths-report.json", 403);
 
       return loadData(
         yearMonthDayParse("2021-01-01"),

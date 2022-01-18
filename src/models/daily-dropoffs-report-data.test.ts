@@ -176,6 +176,11 @@ issuer1,The App,iaa123,The Agency,2021-01-01T00:00:00+01:00,2021-01-01T23:59:59+
           "/local/daily-dropoffs-report/2021/2021-01-02.daily-dropoffs-report.csv",
           `issuer,friendly_name,iaa,agency,start,finish,welcome,agreement,capture_document,cap_doc_submit,ssn,verify_info,verify_submit,phone,encrypt,personal_key,verified
 issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+01:00,2,1,1,1,1,1,1,1,1,1,0`
+        )
+        .get(
+          "/local/daily-dropoffs-report/2021/2021-01-03.daily-dropoffs-report.csv",
+          `issuer,friendly_name,iaa,agency,start,finish,welcome,agreement,capture_document,cap_doc_submit,ssn,verify_info,verify_submit,phone,encrypt,personal_key,verified
+issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+01:00,2,1,1,1,1,1,1,1,1,1,0`
         );
 
       return loadData(
@@ -188,7 +193,7 @@ issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+
         const row = combinedRows[0];
         expect(row.issuer).to.equal("issuer1");
         expect(row.friendly_name).to.equal("The App");
-        expect(row.welcome).to.equal(5);
+        expect(row.welcome).to.equal(7);
         expect(row.verified).to.equal(1);
       });
     });
@@ -201,7 +206,8 @@ issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+
           `issuer,friendly_name,iaa,agency,start,finish,welcome,agreement,capture_document,cap_doc_submit,ssn,verify_info,verify_submit,phone,encrypt,personal_key,verified
 issuer1,The App,iaa123,The Agency,2021-01-01T00:00:00+01:00,2021-01-01T23:59:59+01:00,3,2,2,2,2,2,2,2,2,2,1`
         )
-        .get("/local/daily-dropoffs-report/2021/2021-01-02.daily-dropoffs-report.csv", 403);
+        .get("/local/daily-dropoffs-report/2021/2021-01-02.daily-dropoffs-report.csv", 403)
+        .get("/local/daily-dropoffs-report/2021/2021-01-03.daily-dropoffs-report.csv", 403);
 
       return loadData(
         yearMonthDayParse("2021-01-01"),
