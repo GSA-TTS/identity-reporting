@@ -1,4 +1,4 @@
-import { utcDays, timeDay } from "d3-time";
+import { utcDays, utcDay } from "d3-time";
 import { path as reportPath } from "./api-path";
 
 interface Result {
@@ -49,7 +49,7 @@ function loadData(
   fetch = window.fetch
 ): Promise<ProcessedResult[]> {
   return Promise.all(
-    utcDays(start, timeDay.ceil(finish), 1).map((date) => {
+    utcDays(start, utcDay.offset(finish, 1), 1).map((date) => {
       const path = reportPath({ reportName: "daily-auths-report", date, env });
       return fetch(path).then((response) =>
         response.status === 200 ? response.json() : { results: [] }

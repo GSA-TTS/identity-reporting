@@ -1,6 +1,6 @@
 import { group, ascending } from "d3-array";
 import { csvParse, autoType } from "d3-dsv";
-import { utcDays, timeDay } from "d3-time";
+import { utcDays, utcDay } from "d3-time";
 import { path as reportPath } from "./api-path";
 import { FunnelMode } from "../contexts/report-filter-context";
 
@@ -159,7 +159,7 @@ function loadData(
   fetch = window.fetch
 ): Promise<DailyDropoffsRow[]> {
   return Promise.all(
-    utcDays(start, timeDay.ceil(finish), 1).map((date) => {
+    utcDays(start, utcDay.offset(finish, 1), 1).map((date) => {
       const path = reportPath({ reportName: "daily-dropoffs-report", date, env, extension: "csv" });
       return fetch(path).then((response) => response.text());
     })
