@@ -1,6 +1,6 @@
 import { VNode } from "preact";
 import { utcParse } from "d3-time-format";
-import { utcWeek } from "d3-time";
+import { utcWeek, utcDay } from "d3-time";
 import { AgenciesContextProvider } from "../contexts/agencies-context";
 import ReportFilterContextProvider, {
   DEFAULT_IAL,
@@ -46,7 +46,7 @@ function createReportRoute(
     funnelMode: funnelModeParam,
     scale: scaleParam,
   }: ReportRouteProps): VNode => {
-    const endOfPreviousWeek = utcWeek.floor(new Date());
+    const endOfPreviousWeek = utcDay.offset(utcWeek.floor(new Date()), -1);
     const startOfPreviousWeek = utcWeek.floor(new Date(endOfPreviousWeek.valueOf() - 1));
 
     const start = (startParam && yearMonthDayParse(startParam)) || startOfPreviousWeek;

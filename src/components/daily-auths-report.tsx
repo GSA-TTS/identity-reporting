@@ -38,7 +38,7 @@ function plot({
       tickFormat: formatSIDropTrailingZeroes,
     },
     x: {
-      domain: [start, finish],
+      domain: [start, utcDay.offset(finish, 1)],
     },
     facet: facetAgency
       ? {
