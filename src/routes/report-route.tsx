@@ -24,6 +24,16 @@ export interface ReportRouteProps {
   env?: string;
   funnelMode?: FunnelMode;
   scale?: Scale;
+
+  /**
+   * Whether or not reports should break out the data by agency
+   */
+  breakout?: string;
+
+  /**
+   * Whether or not to show extra controls
+   */
+  extra?: string;
 }
 
 function createReportRoute(
@@ -45,6 +55,8 @@ function createReportRoute(
     env: envParam,
     funnelMode: funnelModeParam,
     scale: scaleParam,
+    breakout: breakoutParam,
+    extra: extraParam,
   }: ReportRouteProps): VNode => {
     const endOfPreviousWeek = utcDay.offset(utcWeek.floor(new Date()), -1);
     const startOfPreviousWeek = utcWeek.floor(new Date(endOfPreviousWeek.valueOf() - 1));
@@ -55,6 +67,14 @@ function createReportRoute(
     const env = envParam || DEFAULT_ENV;
     const funnelMode = funnelModeParam || DEFAULT_FUNNEL_MODE;
     const scale = scaleParam || DEFAULT_SCALE;
+    const extra = extraParam === "true";
+    const breakout = breakoutParam ? breakoutParam === "on" : extra;
+
+    const reportControls = controls || [];
+    if (extra) {
+      reportControls.push(Control.AGENCY);
+      reportControls.push(Control.BREAKOUT);
+    }
 
     return (
       <Page path={path} title={title}>
@@ -67,6 +87,7 @@ function createReportRoute(
             env={env}
             funnelMode={funnelMode}
             scale={scale}
+            breakout={breakout}
           >
             <ReportFilterControls controls={controls} />
             <Report />

@@ -8,6 +8,7 @@ import {
   Scale,
   FunnelMode,
 } from "../contexts/report-filter-context";
+import { AgenciesContext } from "../contexts/agencies-context";
 
 const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 
@@ -18,6 +19,8 @@ enum Control {
   IAL = "ial",
   FUNNEL_MODE = "funnel_mode",
   SCALE = "scale",
+  AGENCY = "agency",
+  BREAKOUT = "breakout",
 }
 
 interface ReportFilterControlsProps {
@@ -25,9 +28,9 @@ interface ReportFilterControlsProps {
 }
 
 function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
-  const { start, finish, ial, env, funnelMode, scale, setParameters } =
+  const { start, finish, agency, ial, env, funnelMode, scale, breakout, setParameters } =
     useContext(ReportFilterContext);
-
+  const { agencies } = useContext(AgenciesContext);
   const formRef = useRef(null as HTMLFormElement | null);
 
   function update(event: Event, overrideFormData: Record<string, string> = {}) {
@@ -104,6 +107,23 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                   </div>
                 </div>
               </fieldset>
+              {(controls?.includes(Control.AGENCY) || agency) && (
+                <fieldset className="usa-fieldset">
+                  <legend className="usa-legend" id="agency-legend">
+                    Agency
+                  </legend>
+                  <select name="agency" className="usa-select" aria-labelledby="agency-legend">
+                    <option value="">All</option>
+                    <optgroup label="Agencies">
+                      {agencies.map((a) => (
+                        <option value={a} selected={a === agency}>
+                          {a}
+                        </option>
+                      ))}
+                    </optgroup>
+                  </select>
+                </fieldset>
+              )}
             </div>
             <div className="tablet:grid-col-6">
               {controls?.includes(Control.IAL) && (
@@ -203,6 +223,37 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                     />
                     <label htmlFor="scale-percent" className="usa-label usa-radio__label">
                       Percent
+                    </label>
+                  </div>
+                </fieldset>
+              )}
+              {controls?.includes(Control.BREAKOUT) && (
+                <fieldset className="usa-fieldset">
+                  <legend className="usa-legend">Breakout by Agency</legend>
+                  <div className="usa-radio">
+                    <input
+                      type="radio"
+                      id="breakout-on"
+                      name="breakout"
+                      value="on"
+                      checked={breakout}
+                      className="usa-radio__input"
+                    />
+                    <label htmlFor="breakout-on" className="usa-label usa-radio__label">
+                      Enabled
+                    </label>
+                  </div>
+                  <div className="usa-radio">
+                    <input
+                      type="radio"
+                      id="breakout-off"
+                      name="breakout"
+                      value="off"
+                      checked={!breakout}
+                      className="usa-radio__input"
+                    />
+                    <label htmlFor="breakout-off" className="usa-label usa-radio__label">
+                      Disabled
                     </label>
                   </div>
                 </fieldset>

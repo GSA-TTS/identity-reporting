@@ -104,18 +104,22 @@ function tabulate({
 function DailyDropffsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
-  const { start, finish, agency, env, funnelMode, scale } = useContext(ReportFilterContext);
+  const { breakout, start, finish, agency, env, funnelMode, scale } =
+    useContext(ReportFilterContext);
 
-  const { data } = useQuery(`dropoffs/${start.valueOf()}-${finish.valueOf()}`, () =>
+  const { data: dataOrNull } = useQuery(`dropoffs/${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
   );
+  const data = dataOrNull || [];
 
   const issuerColor = scaleOrdinal(schemeCategory10);
 
   useResizeListener(() => setWidth(ref.current?.offsetWidth));
   useAgencies(data);
 
-  const filteredData = aggregateAll(data || []).filter((d) => !agency || d.agency === agency);
+  const filteredData = (breakout ? data : aggregateAll(data)).filter(
+    (d) => !agency || d.agency === agency
+  );
 
   return (
     <div ref={ref}>
