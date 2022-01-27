@@ -89,7 +89,7 @@ function createReportRoute(
             scale={scale}
             breakout={breakout}
           >
-            <ReportFilterControls controls={controls} />
+            <ReportFilterControls controls={reportControls} />
             <Report />
           </ReportFilterContextProvider>
         </AgenciesContextProvider>
