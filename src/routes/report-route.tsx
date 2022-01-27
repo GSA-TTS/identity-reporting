@@ -20,10 +20,25 @@ export interface ReportRouteProps {
   start?: string;
   finish?: string;
   ial?: string;
+  /**
+   * If present, which agency to filter results down to
+   * If absent, show all agencies
+   */
   agency?: string;
   env?: string;
   funnelMode?: FunnelMode;
   scale?: Scale;
+
+  /**
+   * When "on" the report should show per-agency data
+   * When "off" the report should sum up data across all agencies
+   */
+  byAgency?: "on" | "off";
+
+  /**
+   * Whether or not to show extra controls
+   */
+  extra?: string;
 }
 
 function createReportRoute(
@@ -45,6 +60,8 @@ function createReportRoute(
     env: envParam,
     funnelMode: funnelModeParam,
     scale: scaleParam,
+    byAgency: byAgencyParam,
+    extra: extraParam,
   }: ReportRouteProps): VNode => {
     const endOfPreviousWeek = utcDay.offset(utcWeek.floor(new Date()), -1);
     const startOfPreviousWeek = utcWeek.floor(new Date(endOfPreviousWeek.valueOf() - 1));
@@ -55,6 +72,14 @@ function createReportRoute(
     const env = envParam || DEFAULT_ENV;
     const funnelMode = funnelModeParam || DEFAULT_FUNNEL_MODE;
     const scale = scaleParam || DEFAULT_SCALE;
+    const extra = extraParam === "true";
+    const byAgency = byAgencyParam ? byAgencyParam === "on" : extra;
+
+    const reportControls = controls || [];
+    if (extra) {
+      reportControls.push(Control.AGENCY);
+      reportControls.push(Control.BY_AGENCY);
+    }
 
     return (
       <Page path={path} title={title}>
@@ -67,8 +92,10 @@ function createReportRoute(
             env={env}
             funnelMode={funnelMode}
             scale={scale}
+            byAgency={byAgency}
+            extra={extra}
           >
-            <ReportFilterControls controls={controls} />
+            <ReportFilterControls controls={reportControls} />
             <Report />
           </ReportFilterContextProvider>
         </AgenciesContextProvider>

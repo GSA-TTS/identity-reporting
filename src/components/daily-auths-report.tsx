@@ -62,7 +62,7 @@ function plot({
               value: "date",
               thresholds: utcDay,
             },
-            fill: "steelblue",
+            fill: agency ? "issuer" : "steelblue",
             title: (bin: ProcessedResult[]) => {
               const date = yearMonthDayFormat(bin[0].date);
               const total = formatWithCommas(bin.reduce((sum, d) => sum + d.count, 0));
@@ -206,7 +206,8 @@ function tabulateSum({ results }: { results: ProcessedResult[] }): TableData {
 function DailyAuthsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
-  const { start, finish, agency, ial, env } = useContext(ReportFilterContext);
+  const { byAgency, start, finish, agency, ial, env, setParameters } =
+    useContext(ReportFilterContext);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
@@ -234,7 +235,27 @@ twice will count twice. It does not de-duplicate users or provide unique auths.`
         plotter={() => plot({ data: filteredData, ial, agency, start, finish, width })}
         inputs={[data, ial, agency, start.valueOf(), finish.valueOf(), width]}
       />
-      <Table data={tabulateSum({ results: filteredData })} numberFormatter={formatWithCommas} />
+      {byAgency && agency && (
+        <Table data={tabulate({ results: filteredData })} numberFormatter={formatWithCommas} />
+      )}
+      {byAgency && !agency && (
+        <>
+          <PlotComponent
+            plotter={() =>
+              plot({ data: filteredData, ial, start, finish, width, facetAgency: true })
+            }
+            inputs={[data, ial, start.valueOf(), finish.valueOf(), width]}
+          />
+
+          <Table
+            data={tabulateSumByAgency({ results: filteredData, setParameters })}
+            numberFormatter={formatWithCommas}
+          />
+        </>
+      )}
+      {!byAgency && (
+        <Table data={tabulateSum({ results: filteredData })} numberFormatter={formatWithCommas} />
+      )}
     </div>
   );
 }
