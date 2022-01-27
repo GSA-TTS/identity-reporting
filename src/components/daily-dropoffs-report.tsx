@@ -107,19 +107,17 @@ function DailyDropffsReport(): VNode {
   const { breakout, start, finish, agency, env, funnelMode, scale } =
     useContext(ReportFilterContext);
 
-  const { data: dataOrNull } = useQuery(`dropoffs/${start.valueOf()}-${finish.valueOf()}`, () =>
+  const { data } = useQuery(`dropoffs/${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
   );
-  const data = dataOrNull || [];
 
   const issuerColor = scaleOrdinal(schemeCategory10);
 
   useResizeListener(() => setWidth(ref.current?.offsetWidth));
-  if (data.length) {
-    useAgencies(data);
-  }
+  useAgencies(data);
 
-  const filteredData = (breakout ? data : aggregateAll(data)).filter(
+  const nonNullData = data || [];
+  const filteredData = (breakout ? nonNullData : aggregateAll(nonNullData)).filter(
     (d) => !agency || d.agency === agency
   );
 
