@@ -115,7 +115,9 @@ function DailyDropffsReport(): VNode {
   const issuerColor = scaleOrdinal(schemeCategory10);
 
   useResizeListener(() => setWidth(ref.current?.offsetWidth));
-  useAgencies(data);
+  if (data.length) {
+    useAgencies(data);
+  }
 
   const filteredData = (breakout ? data : aggregateAll(data)).filter(
     (d) => !agency || d.agency === agency
