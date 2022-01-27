@@ -31,6 +31,7 @@ interface ReportFilterContextValues {
   funnelMode: FunnelMode;
   scale: Scale;
   breakout: boolean;
+  extra: boolean;
   setParameters: (params: Record<string, string>) => void;
 }
 
@@ -59,6 +60,7 @@ const ReportFilterContext = createContext({
   funnelMode: DEFAULT_FUNNEL_MODE,
   scale: DEFAULT_SCALE,
   breakout: false,
+  extra: false,
 } as ReportFilterContextValues);
 
 type ReportFilterContextProviderProps = Omit<ReportFilterContextValues, "setParameters">;

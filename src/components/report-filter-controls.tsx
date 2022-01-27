@@ -28,7 +28,7 @@ interface ReportFilterControlsProps {
 }
 
 function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
-  const { start, finish, agency, ial, env, funnelMode, scale, breakout, setParameters } =
+  const { start, finish, agency, ial, env, funnelMode, scale, breakout, extra, setParameters } =
     useContext(ReportFilterContext);
   const { agencies } = useContext(AgenciesContext);
   const formRef = useRef(null as HTMLFormElement | null);
@@ -271,6 +271,7 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
           </div>
         </div>
         {env !== DEFAULT_ENV && <input type="hidden" name="env" value={env} />}
+        {extra && <input type="hidden" name="extra" value="true" />}
       </form>
     </>
   );

@@ -88,6 +88,7 @@ function createReportRoute(
             funnelMode={funnelMode}
             scale={scale}
             breakout={breakout}
+            extra={extra}
           >
             <ReportFilterControls controls={reportControls} />
             <Report />
