@@ -30,7 +30,7 @@
     "d3-shape": "^3.0.1",
     "d3-time": "^3.0.0",
     "d3-time-format": "^4.0.0",
-    "identity-style-guide": "^6.0.0",
+    "identity-style-guide": "^6.3.0",
     "preact": "^10.5.14",
     "preact-fetching": "^0.1.0",
     "preact-markdown": "^2.0.0",
