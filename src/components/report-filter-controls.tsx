@@ -20,7 +20,7 @@ enum Control {
   FUNNEL_MODE = "funnel_mode",
   SCALE = "scale",
   AGENCY = "agency",
-  BREAKOUT = "breakout",
+  BY_AGENCY = "by_agency",
 }
 
 interface ReportFilterControlsProps {
@@ -28,7 +28,7 @@ interface ReportFilterControlsProps {
 }
 
 function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
-  const { start, finish, agency, ial, env, funnelMode, scale, breakout, extra, setParameters } =
+  const { start, finish, agency, ial, env, funnelMode, scale, byAgency, extra, setParameters } =
     useContext(ReportFilterContext);
   const { agencies } = useContext(AgenciesContext);
   const formRef = useRef(null as HTMLFormElement | null);
@@ -227,32 +227,32 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                   </div>
                 </fieldset>
               )}
-              {controls?.includes(Control.BREAKOUT) && (
+              {controls?.includes(Control.BY_AGENCY) && (
                 <fieldset className="usa-fieldset">
-                  <legend className="usa-legend">Breakout by Agency</legend>
+                  <legend className="usa-legend">Break out by Agency</legend>
                   <div className="usa-radio">
                     <input
                       type="radio"
-                      id="breakout-on"
-                      name="breakout"
+                      id="byagency-on"
+                      name="byAgency"
                       value="on"
-                      checked={breakout}
+                      checked={byAgency}
                       className="usa-radio__input"
                     />
-                    <label htmlFor="breakout-on" className="usa-label usa-radio__label">
+                    <label htmlFor="byagency-on" className="usa-label usa-radio__label">
                       Enabled
                     </label>
                   </div>
                   <div className="usa-radio">
                     <input
                       type="radio"
-                      id="breakout-off"
-                      name="breakout"
+                      id="byagency-off"
+                      name="byAgency"
                       value="off"
-                      checked={!breakout}
+                      checked={!byAgency}
                       className="usa-radio__input"
                     />
-                    <label htmlFor="breakout-off" className="usa-label usa-radio__label">
+                    <label htmlFor="byagency-off" className="usa-label usa-radio__label">
                       Disabled
                     </label>
                   </div>

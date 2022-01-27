@@ -206,7 +206,7 @@ function tabulateSum({ results }: { results: ProcessedResult[] }): TableData {
 function DailyAuthsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
-  const { breakout, start, finish, agency, ial, env, setParameters } =
+  const { byAgency, start, finish, agency, ial, env, setParameters } =
     useContext(ReportFilterContext);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
@@ -235,10 +235,10 @@ twice will count twice. It does not de-duplicate users or provide unique auths.`
         plotter={() => plot({ data: filteredData, ial, agency, start, finish, width })}
         inputs={[data, ial, agency, start.valueOf(), finish.valueOf(), width]}
       />
-      {breakout && agency && (
+      {byAgency && agency && (
         <Table data={tabulate({ results: filteredData })} numberFormatter={formatWithCommas} />
       )}
-      {breakout && !agency && (
+      {byAgency && !agency && (
         <>
           <PlotComponent
             plotter={() =>
@@ -253,7 +253,7 @@ twice will count twice. It does not de-duplicate users or provide unique auths.`
           />
         </>
       )}
-      {!breakout && (
+      {!byAgency && (
         <Table data={tabulateSum({ results: filteredData })} numberFormatter={formatWithCommas} />
       )}
     </div>

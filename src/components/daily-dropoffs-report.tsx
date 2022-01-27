@@ -104,7 +104,7 @@ function tabulate({
 function DailyDropffsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
-  const { breakout, start, finish, agency, env, funnelMode, scale } =
+  const { byAgency, start, finish, agency, env, funnelMode, scale } =
     useContext(ReportFilterContext);
 
   const { data } = useQuery(`dropoffs/${start.valueOf()}-${finish.valueOf()}`, () =>
@@ -117,7 +117,7 @@ function DailyDropffsReport(): VNode {
   useAgencies(data);
 
   const nonNullData = data || [];
-  const filteredData = (breakout ? nonNullData : aggregateAll(nonNullData)).filter(
+  const filteredData = (byAgency ? nonNullData : aggregateAll(nonNullData)).filter(
     (d) => !agency || d.agency === agency
   );
 
