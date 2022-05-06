@@ -80,12 +80,23 @@ function plot({
   });
 }
 
+function ialLabel(ial: 1 | 2): string {
+  switch (ial) {
+    case 1:
+      return "Authentication";
+    case 2:
+      return "Proofing";
+    default:
+      throw new Error(`unknown level ${ial}`);
+  }
+}
+
 function tabulate({ results }: { results: ProcessedResult[] }): TableData {
   const days = Array.from(new Set(results.map((d) => d.date.valueOf())))
     .sort((a, b) => a - b)
     .map((d) => new Date(d));
 
-  const header = ["Agency", "App", "IAL", ...days.map(yearMonthDayFormat), "Total"];
+  const header = ["Agency", "App", "Identity", ...days.map(yearMonthDayFormat), "Total"];
 
   const grouped = group(
     results,
@@ -113,7 +124,7 @@ function tabulate({ results }: { results: ProcessedResult[] }): TableData {
               <td className="max-width-300 truncate-ellipsis" title={issuer}>
                 {issuerToFriendlyName.get(issuer)} <small>({issuer})</small>
               </td>,
-              String(ial),
+              ialLabel(ial),
               ...dayCounts,
               dayCounts.reduce((d, total) => d + total, 0),
             ];
@@ -146,7 +157,7 @@ function tabulateSumByAgency({
     (d) => yearMonthDayFormat(d.date)
   );
 
-  const header = ["Agency", "IAL", ...days.map(yearMonthDayFormat), "Total"];
+  const header = ["Agency", "Identity", ...days.map(yearMonthDayFormat), "Total"];
 
   const body = Array.from(rolledup)
     .sort(([agencyA], [agencyB]) => ascending(agencyA, agencyB))
@@ -162,7 +173,7 @@ function tabulateSumByAgency({
           >
             {agency}
           </button>,
-          String(ial),
+          ialLabel(ial),
           ...dayCounts,
           dayCounts.reduce((d, total) => d + total, 0),
         ];
@@ -187,14 +198,14 @@ function tabulateSum({ results }: { results: ProcessedResult[] }): TableData {
     (d) => yearMonthDayFormat(d.date)
   );
 
-  const header = ["Agency", "IAL", ...days.map(yearMonthDayFormat), "Total"];
+  const header = ["Agency", "Identity", ...days.map(yearMonthDayFormat), "Total"];
 
   const body = Array.from(rolledup)
     .sort(([ialA], [ialB]) => ascending(ialA, ialB))
     .map(([ial, ialDays]) => {
       const dayCounts = days.map((date) => ialDays.get(yearMonthDayFormat(date)) || 0);
 
-      return ["(all)", String(ial), ...dayCounts, dayCounts.reduce((d, total) => d + total, 0)];
+      return ["(all)", ialLabel(ial), ...dayCounts, dayCounts.reduce((d, total) => d + total, 0)];
     });
 
   return {

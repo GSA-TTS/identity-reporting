@@ -64,17 +64,17 @@ describe("DailyAuthsReport", () => {
       expect(table.header).to.deep.eq([
         "Agency",
         "App",
-        "IAL",
+        "Identity",
         "2021-01-01",
         "2021-01-02",
         "Total",
       ]);
       expect(table.body).to.have.lengthOf(4);
       expect(simplifyVNodes(table.body)).to.deep.equal([
-        ["agency1", "issuer1", "1", 100, 111, 211],
-        ["agency1", "issuer1", "2", 1, 0, 1],
-        ["agency1", "issuer2", "1", 1000, 0, 1000],
-        ["agency2", "issuer3", "1", 555, 0, 555],
+        ["agency1", "issuer1", "Authentication", 100, 111, 211],
+        ["agency1", "issuer1", "Proofing", 1, 0, 1],
+        ["agency1", "issuer2", "Authentication", 1000, 0, 1000],
+        ["agency2", "issuer3", "Authentication", 555, 0, 555],
       ]);
     });
   });
@@ -90,12 +90,12 @@ describe("DailyAuthsReport", () => {
     it("builds a table by agency, ial and sums across issuers", () => {
       const table = tabulateSumByAgency({ results, setParameters: () => null });
 
-      expect(table.header).to.deep.eq(["Agency", "IAL", "2021-01-01", "2021-01-02", "Total"]);
+      expect(table.header).to.deep.eq(["Agency", "Identity", "2021-01-01", "2021-01-02", "Total"]);
       expect(table.body).to.have.lengthOf(3);
       expect(simplifyVNodes(table.body)).to.deep.equal([
-        ["agency1", "1", 1100, 111, 1211],
-        ["agency1", "2", 1, 0, 1],
-        ["agency2", "1", 555, 0, 555],
+        ["agency1", "Authentication", 1100, 111, 1211],
+        ["agency1", "Proofing", 1, 0, 1],
+        ["agency2", "Authentication", 555, 0, 555],
       ]);
     });
   });
@@ -104,11 +104,11 @@ describe("DailyAuthsReport", () => {
     it("builds a table by agency, ial and sums across issuers", () => {
       const table = tabulateSum({ results });
 
-      expect(table.header).to.deep.eq(["Agency", "IAL", "2021-01-01", "2021-01-02", "Total"]);
+      expect(table.header).to.deep.eq(["Agency", "Identity", "2021-01-01", "2021-01-02", "Total"]);
       expect(table.body).to.have.lengthOf(2);
       expect(table.body).to.deep.equal([
-        ["(all)", "1", 1655, 111, 1766],
-        ["(all)", "2", 1, 0, 1],
+        ["(all)", "Authentication", 1655, 111, 1766],
+        ["(all)", "Proofing", 1, 0, 1],
       ]);
     });
   });
