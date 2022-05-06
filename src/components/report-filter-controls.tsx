@@ -128,7 +128,7 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
             <div className="tablet:grid-col-6">
               {controls?.includes(Control.IAL) && (
                 <fieldset className="usa-fieldset">
-                  <legend className="usa-legend">IAL</legend>
+                  <legend className="usa-legend">Identity</legend>
                   <div className="usa-radio">
                     <input
                       type="radio"
@@ -139,7 +139,7 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                       className="usa-radio__input"
                     />
                     <label htmlFor="ial-1" className="usa-label usa-radio__label">
-                      IAL 1
+                      Authentication
                     </label>
                   </div>
                   <div className="usa-radio">
@@ -152,7 +152,7 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                       className="usa-radio__input"
                     />
                     <label htmlFor="ial-2" className="usa-label usa-radio__label">
-                      IAL2
+                      Proofing
                     </label>
                   </div>
                 </fieldset>
