@@ -5,7 +5,6 @@ import * as Plot from "@observablehq/plot";
 import { useQuery } from "preact-fetching";
 import Markdown from "preact-markdown";
 import { ascending, group, rollup } from "d3-array";
-import kebabCase from "lodash.kebabcase";
 import { ReportFilterContext } from "../contexts/report-filter-context";
 import Table, { TableData } from "./table";
 import PlotComponent from "./plot";
@@ -14,6 +13,10 @@ import Accordion from "./accordion";
 import useResizeListener from "../hooks/resize-listener";
 import { ProcessedResult, loadData } from "../models/daily-auths-report-data";
 import { formatSIDropTrailingZeroes, formatWithCommas, yearMonthDayFormat } from "../formats";
+
+function kebabCase(str: string): string {
+  return str.replace(/(.)([A-Z])/g, "$1-$2").toLowerCase();
+}
 
 function plot({
   start,
