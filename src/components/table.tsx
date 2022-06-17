@@ -2,7 +2,6 @@ import { VNode, render } from "preact";
 import { csvFormatValue } from "d3-dsv";
 import Icon from "./icon";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type TableCell = string | number | VNode<any>;
 export type TableRow = TableCell[];
 
