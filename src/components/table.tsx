@@ -50,7 +50,7 @@ function Row({
 const doc = document.implementation.createHTMLDocument("");
 
 function textContent(v: VNode): string {
-  render(v, doc.body);
+  render(v, doc.body, true);
   return doc.body.textContent || "";
 }
 
