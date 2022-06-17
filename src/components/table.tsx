@@ -16,6 +16,10 @@ type NumberFormatter = (n: number) => string;
 interface TableProps {
   data: TableData;
   numberFormatter?: NumberFormatter;
+  /**
+   * Name for the CSV download of this table
+   */
+  filename?: string;
 }
 
 function Row({
@@ -78,7 +82,7 @@ function toCSV(data: TableData): string {
   return rows.map((row) => row.map((c) => csvFormatValue(c)).join(",")).join("\n");
 }
 
-function Table({ data, numberFormatter = String }: TableProps): VNode {
+function Table({ data, filename, numberFormatter = String }: TableProps): VNode {
   const { header, body, footer } = data;
   return (
     <>
@@ -106,7 +110,7 @@ function Table({ data, numberFormatter = String }: TableProps): VNode {
 
       <a
         className="usa-button usa-button--outline"
-        download="report.csv"
+        download={filename || "report.csv"}
         href={`data:text/csv;charset=utf-8,${encodeURIComponent(toCSV(data))}`}
       >
         <Icon icon="file_download" />

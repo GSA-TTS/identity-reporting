@@ -18,7 +18,7 @@ import {
   toStepCounts,
   aggregateAll,
 } from "../models/daily-dropoffs-report-data";
-import { formatAsPercent, formatWithCommas } from "../formats";
+import { formatAsPercent, formatWithCommas, yearMonthDayFormat } from "../formats";
 
 function tabulate({
   rows: unsortedRows,
@@ -154,6 +154,7 @@ The data model table can't accurately capture:
       <Table
         data={tabulate({ rows: filteredData, issuerColor, funnelMode })}
         numberFormatter={formatWithCommas}
+        filename={`daily-dropoffs-report-${yearMonthDayFormat(start)}-to-${yearMonthDayFormat(finish)}.csv`}
       />
     </div>
   );
