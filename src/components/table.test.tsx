@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { render } from "@testing-library/preact";
+import { csvParse } from "d3-dsv";
 import Table, { TableData } from "./table";
 
 describe("Table", () => {
@@ -89,5 +90,28 @@ describe("Table", () => {
     const td = tds[0];
     expect(td.getAttribute("colspan")).to.eq("2");
     expect(td.getAttribute("data-something")).to.equal("hello");
+  });
+
+  it("includes a link to download as CSV", () => {
+    const data: TableData = {
+      header: [
+        <th colSpan={2} data-csv={["customHeader1", "customHeader2"]}>
+          header
+        </th>,
+        "header2",
+      ],
+      body: [[<td colSpan={2}>cell</td>, 1]],
+    };
+    const { container } = render(<Table data={data} />);
+
+    const as = container.querySelectorAll("a[download]");
+    expect(as.length).to.eq(1);
+    const a = as[0];
+
+    const href = a.getAttribute("href");
+    expect(href?.startsWith("data:text/csv;charset=utf-8,")).to.eq(true);
+
+    const parsed = csvParse(decodeURIComponent(href?.split(",")[1] || ""));
+    expect(parsed).to.deep.equal([{ customHeader1: "cell", customHeader2: "", header2: "1" }]);
   });
 });
