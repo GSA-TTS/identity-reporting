@@ -25,7 +25,7 @@ describe("DailyAuthsReportData", () => {
         yearMonthDayParse("2021-01-01"),
         yearMonthDayParse("2021-01-03"),
         "local",
-        fetch
+        fetch as typeof window.fetch
       ).then((processed) => {
         expect(processed).to.have.lengthOf(3);
         processed.forEach((result) => {
@@ -49,7 +49,7 @@ describe("DailyAuthsReportData", () => {
         yearMonthDayParse("2021-01-01"),
         yearMonthDayParse("2021-01-03"),
         "local",
-        fetch
+        fetch as typeof window.fetch
       ).then((processed) => {
         expect(processed).to.have.lengthOf(1);
         processed.forEach((result) => {

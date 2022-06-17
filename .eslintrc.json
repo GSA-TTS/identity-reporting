@@ -1,11 +1,8 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@18f/eslint-plugin-identity", "@typescript-eslint"],
-  "extends": [
-    "plugin:@18f/eslint-plugin-identity/recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
+  "extends": ["plugin:@18f/eslint-plugin-identity/recommended"],
+  "plugins": ["@18f/eslint-plugin-identity"],
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2021

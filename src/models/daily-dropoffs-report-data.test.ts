@@ -187,7 +187,7 @@ issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+
         yearMonthDayParse("2021-01-01"),
         yearMonthDayParse("2021-01-03"),
         "local",
-        fetch
+        fetch as typeof window.fetch
       ).then((combinedRows) => {
         expect(combinedRows).to.have.lengthOf(1);
         const row = combinedRows[0];
@@ -213,7 +213,7 @@ issuer1,The App,iaa123,The Agency,2021-01-01T00:00:00+01:00,2021-01-01T23:59:59+
         yearMonthDayParse("2021-01-01"),
         yearMonthDayParse("2021-01-03"),
         "local",
-        fetch
+        fetch as typeof window.fetch
       ).then((combinedRows) => {
         expect(combinedRows).to.have.lengthOf(1);
       });

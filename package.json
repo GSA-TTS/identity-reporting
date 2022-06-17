@@ -37,7 +37,7 @@
     "preact-router": "^3.2.1"
   },
   "devDependencies": {
-    "@18f/eslint-plugin-identity": "^1.0.0",
+    "@18f/eslint-plugin-identity": "^2.0.0",
     "@testing-library/preact": "^2.0.1",
     "@testing-library/preact-hooks": "^1.1.0",
     "@types/chai": "^4.2.21",
@@ -54,12 +54,17 @@
     "@types/fetch-mock": "^7.3.5",
     "@types/jsdom": "^16.2.13",
     "@types/mocha": "^9.0.0",
-    "@typescript-eslint/eslint-plugin": "^4.29.3",
-    "@typescript-eslint/parser": "^4.29.3",
+    "@typescript-eslint/eslint-plugin": "^5.28.0",
+    "@typescript-eslint/parser": "^5.28.0",
     "chai": "^4.3.4",
     "esbuild-register": "^3.0.0",
-    "eslint": "^7.32.0",
-    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint": "^8.17.0",
+    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-mocha": "^10.0.5",
+    "eslint-plugin-react": "^7.30.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "fetch-mock": "^9.11.0",
     "global-jsdom": "^8.2.0",
     "jsdom": "^17.0.0",
@@ -68,7 +73,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "2.3.2",
     "sass": "^1.39.0",
-    "typescript": "^4.3.5",
+    "typescript": "^4.7.4",
     "vite": "^2.4.4"
   }
 }
