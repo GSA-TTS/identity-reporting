@@ -50,7 +50,11 @@ describe("DailyAuthsReport", () => {
   ] as ProcessedResult[];
 
   describe("#tabulate", () => {
-    function simplifyVNodes(body: TableRow[]): (string | number)[][] {
+    function simplifyHeaderVNodes(header: TableRow): TableRow {
+      const [agency, issuer, ...rest] = header;
+      return [agency, (issuer as VNode<any>).props.children, ...rest];
+    }
+    function simplifyBodyVNodes(body: TableRow[]): (string | number)[][] {
       return body.map(([agency, issuerSpan, ...rest]) => [
         agency,
         (issuerSpan as VNode<{ title: string }>).props.title,
@@ -61,7 +65,7 @@ describe("DailyAuthsReport", () => {
     it("builds a table by agency, issuer, ial", () => {
       const table = tabulate({ results });
 
-      expect(table.header).to.deep.eq([
+      expect(simplifyHeaderVNodes(table.header)).to.deep.eq([
         "Agency",
         "App",
         "Identity",
@@ -70,7 +74,7 @@ describe("DailyAuthsReport", () => {
         "Total",
       ]);
       expect(table.body).to.have.lengthOf(4);
-      expect(simplifyVNodes(table.body)).to.deep.equal([
+      expect(simplifyBodyVNodes(table.body)).to.deep.equal([
         ["agency1", "issuer1", "Authentication", 100, 111, 211],
         ["agency1", "issuer1", "Proofing", 1, 0, 1],
         ["agency1", "issuer2", "Authentication", 1000, 0, 1000],

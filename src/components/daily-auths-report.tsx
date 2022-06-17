@@ -96,7 +96,13 @@ function tabulate({ results }: { results: ProcessedResult[] }): TableData {
     .sort((a, b) => a - b)
     .map((d) => new Date(d));
 
-  const header = ["Agency", "App", "Identity", ...days.map(yearMonthDayFormat), "Total"];
+  const header = [
+    "Agency",
+    <span data-csv={["Issuer", "Friendly Name"]}>App</span>,
+    "Identity",
+    ...days.map(yearMonthDayFormat),
+    "Total",
+  ];
 
   const grouped = group(
     results,
@@ -121,7 +127,11 @@ function tabulate({ results }: { results: ProcessedResult[] }): TableData {
 
             return [
               agency,
-              <td className="max-width-300 truncate-ellipsis" title={issuer}>
+              <td
+                className="max-width-300 truncate-ellipsis"
+                title={issuer}
+                data-csv={[issuer, issuerToFriendlyName.get(issuer)]}
+              >
                 {issuerToFriendlyName.get(issuer)} <small>({issuer})</small>
               </td>,
               ialLabel(ial),
