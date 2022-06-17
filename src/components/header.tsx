@@ -1,7 +1,9 @@
 import { VNode } from "preact";
-import logoURL from "../../node_modules/identity-style-guide/dist/assets/img/login-gov-logo.svg";
-import closeURL from "../../node_modules/identity-style-guide/dist/assets/img/close.svg";
 import { getFullPath, Link } from "../router";
+// eslint-disable-next-line import/no-relative-packages
+import logoURL from "../../node_modules/identity-style-guide/dist/assets/img/login-gov-logo.svg";
+// eslint-disable-next-line import/no-relative-packages
+import closeURL from "../../node_modules/identity-style-guide/dist/assets/img/close.svg";
 
 interface HeaderProps {
   path: string;

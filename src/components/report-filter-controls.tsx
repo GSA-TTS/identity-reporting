@@ -55,7 +55,6 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
   }
 
   return (
-    <>
       <form ref={formRef} onChange={update} className="usa-form-full-width">
         <div className="grid-container padding-0">
           <div className="grid-row grid-gap">
@@ -273,7 +272,6 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
         {env !== DEFAULT_ENV && <input type="hidden" name="env" value={env} />}
         {extra && <input type="hidden" name="extra" value="true" />}
       </form>
-    </>
   );
 }
 
