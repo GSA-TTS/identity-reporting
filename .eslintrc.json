@@ -1,11 +1,7 @@
 {
   "root": true,
-  "parser": "@typescript-eslint/parser",
-  "plugins": ["@18f/eslint-plugin-identity", "@typescript-eslint"],
-  "extends": [
-    "plugin:@18f/eslint-plugin-identity/recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
+  "extends": ["plugin:@18f/eslint-plugin-identity/recommended"],
+  "plugins": ["@18f/eslint-plugin-identity"],
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2021
@@ -15,23 +11,14 @@
     "browser": true
   },
   "rules": {
-    "@typescript-eslint/explicit-module-boundary-types": "error",
-    "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-non-null-assertion": "error",
-    "@typescript-eslint/no-shadow": "error",
-    "@typescript-eslint/no-unused-vars": "error",
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/*.test.*", "./*"] }],
     "jsx-a11y/label-has-associated-control": ["error", { "assert": "either" }],
-    "no-shadow": "off",
-    "no-unused-vars": "off",
-    "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }],
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/*.test.*", "./*"] }],
     "react/no-unknown-property": [
       "error",
       { "ignore": ["font-size", "stroke-width", "text-anchor"] }
     ]
   },
   "settings": {
-    "import/resolver": "eslint-import-resolver-typescript",
     "react": {
       "pragma": "h",
       "fragment": "Fragment",

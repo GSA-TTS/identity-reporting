@@ -2,7 +2,7 @@ import { VNode, render } from "preact";
 import { csvFormatValue } from "d3-dsv";
 import Icon from "./icon";
 
-export type TableCell = string | number | VNode;
+export type TableCell = string | number | VNode<any>;
 export type TableRow = TableCell[];
 
 export interface TableData {
@@ -63,11 +63,11 @@ interface CSVProps {
 function toCSVValues(cell: TableCell): string[] {
   if (typeof cell === "object") {
     if ("data-csv" in cell.props) {
-      return (cell.props as unknown as CSVProps)["data-csv"];
+      return (cell.props as CSVProps)["data-csv"];
     }
 
     const text = textContent(cell);
-    const colspan = (cell.props as unknown as CSVProps).colSpan || 1;
+    const colspan = (cell.props as CSVProps).colSpan || 1;
 
     const empties = Array(colspan - 1).fill("");
 
