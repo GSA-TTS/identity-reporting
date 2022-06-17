@@ -60,7 +60,7 @@ function toCSVValues(cell: TableCell): string[] {
     const text = textContent(cell);
     const colspan = (cell.props as unknown as CSVProps).colSpan || 1;
 
-    const empties = Array.from(Array(colspan - 1).keys()).map(() => "");
+    const empties = Array(colspan - 1).fill("");
 
     return [text, ...empties];
   }
