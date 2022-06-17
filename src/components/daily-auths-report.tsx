@@ -13,10 +13,7 @@ import Accordion from "./accordion";
 import useResizeListener from "../hooks/resize-listener";
 import { ProcessedResult, loadData } from "../models/daily-auths-report-data";
 import { formatSIDropTrailingZeroes, formatWithCommas, yearMonthDayFormat } from "../formats";
-
-function kebabCase(str: string): string {
-  return str.replace(/(.)([A-Z])/g, "$1-$2").toLowerCase();
-}
+import { kebabCase } from "../strings";
 
 function plot({
   start,
