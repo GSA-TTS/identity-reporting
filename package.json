@@ -51,7 +51,6 @@
     "@types/d3-shape": "^3.0.2",
     "@types/d3-time": "^3.0.0",
     "@types/d3-time-format": "^4.0.0",
-    "@types/fetch-mock": "^7.3.5",
     "@types/jsdom": "^16.2.13",
     "@types/mocha": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.28.0",
