@@ -44,8 +44,12 @@ function Row({
   );
 }
 
+/**
+ * Used in textContent, created once to save some overhead
+ */
+const doc = document.implementation.createHTMLDocument("");
+
 function textContent(v: VNode): string {
-  const doc = document.implementation.createHTMLDocument("");
   render(v, doc.body);
   return doc.body.textContent || "";
 }
