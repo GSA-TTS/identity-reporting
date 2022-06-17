@@ -52,11 +52,7 @@ describe("DailyAuthsReport", () => {
   describe("#tabulate", () => {
     function simplifyHeaderVNodes(header: TableRow): TableRow {
       const [agency, issuer, ...rest] = header;
-      return [
-        agency,
-        (issuer as VNode<any>).props.children,
-        ...rest
-      ]
+      return [agency, (issuer as VNode<any>).props.children, ...rest];
     }
     function simplifyBodyVNodes(body: TableRow[]): (string | number)[][] {
       return body.map(([agency, issuerSpan, ...rest]) => [
