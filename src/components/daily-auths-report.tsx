@@ -63,12 +63,11 @@ function plot({
               thresholds: utcDay,
             },
             fill: agency ? "issuer" : "steelblue",
-            title: (bin: ProcessedResult[]) => {
-              const date = yearMonthDayFormat(bin[0].date);
-              const total = formatWithCommas(bin.reduce((sum, d) => sum + d.count, 0));
-              const { agency: binAgency } = bin[0];
+            title: ({ date, count, agency: binAgency }: ProcessedResult) => {
+              const formattedDate = yearMonthDayFormat(date);
+              const total = formatWithCommas(count);
 
-              return [(agency || facetAgency) && binAgency, total, `(${date})`]
+              return [(agency || facetAgency) && binAgency, total, `(${formattedDate})`]
                 .filter(Boolean)
                 .join(" ");
             },
