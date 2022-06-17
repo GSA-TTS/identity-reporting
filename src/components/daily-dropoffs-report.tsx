@@ -154,7 +154,9 @@ The data model table can't accurately capture:
       <Table
         data={tabulate({ rows: filteredData, issuerColor, funnelMode })}
         numberFormatter={formatWithCommas}
-        filename={`daily-dropoffs-report-${yearMonthDayFormat(start)}-to-${yearMonthDayFormat(finish)}.csv`}
+        filename={`daily-dropoffs-report-${yearMonthDayFormat(start)}-to-${yearMonthDayFormat(
+          finish
+        )}.csv`}
       />
     </div>
   );
