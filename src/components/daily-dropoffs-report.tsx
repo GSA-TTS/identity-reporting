@@ -18,7 +18,7 @@ import {
   toStepCounts,
   aggregateAll,
 } from "../models/daily-dropoffs-report-data";
-import { formatAsPercent, formatWithCommas } from "../formats";
+import { formatAsPercent, formatWithCommas, yearMonthDayFormat } from "../formats";
 
 function tabulate({
   rows: unsortedRows,
@@ -38,7 +38,7 @@ function tabulate({
 
   const header = [
     "Agency",
-    "App",
+    <span data-csv={["Issuer", "Friendly Name"]}>App</span>,
     ...funnelSteps(funnelMode).map(({ title }, idx) => (
       <th colSpan={idx === 0 ? 1 : 2}>{title}</th>
     )),
@@ -59,21 +59,29 @@ function tabulate({
 
     return [
       agency,
-      <span title={issuer}>
+      <span title={issuer} data-csv={[issuer, friendlyName]}>
         <span style={`color: ${issuerColor(issuer)}`}>⬤ </span>
         {friendlyName}
       </span>,
       ...toStepCounts(row, funnelMode).flatMap(({ count, percentOfFirst }, idx) => {
         const backgroundColor = `background-color: ${color(percentOfFirst)};`;
         const cells = [
-          <td className="table-number text-tabular text-right" style={backgroundColor}>
+          <td
+            data-csv={count}
+            className="table-number text-tabular text-right"
+            style={backgroundColor}
+          >
             {formatWithCommas(count)}
           </td>,
         ];
 
         if (idx > 0) {
           cells.push(
-            <td className="table-number text-tabular text-right" style={backgroundColor}>
+            <td
+              data-csv={percentOfFirst}
+              className="table-number text-tabular text-right"
+              style={backgroundColor}
+            >
               {formatAsPercent(percentOfFirst)}
             </td>
           );
@@ -146,6 +154,9 @@ The data model table can't accurately capture:
       <Table
         data={tabulate({ rows: filteredData, issuerColor, funnelMode })}
         numberFormatter={formatWithCommas}
+        filename={`daily-dropoffs-report-${yearMonthDayFormat(start)}-to-${yearMonthDayFormat(
+          finish
+        )}.csv`}
       />
     </div>
   );

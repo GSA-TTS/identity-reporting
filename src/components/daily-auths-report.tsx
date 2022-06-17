@@ -14,6 +14,10 @@ import useResizeListener from "../hooks/resize-listener";
 import { ProcessedResult, loadData } from "../models/daily-auths-report-data";
 import { formatSIDropTrailingZeroes, formatWithCommas, yearMonthDayFormat } from "../formats";
 
+function kebabCase(str: string): string {
+  return str.replace(/(.)([A-Z])/g, "$1-$2").toLowerCase();
+}
+
 function plot({
   start,
   finish,
@@ -246,7 +250,13 @@ twice will count twice. It does not de-duplicate users or provide unique auths.`
         inputs={[data, ial, agency, start.valueOf(), finish.valueOf(), width]}
       />
       {byAgency && agency && (
-        <Table data={tabulate({ results: filteredData })} numberFormatter={formatWithCommas} />
+        <Table
+          data={tabulate({ results: filteredData })}
+          numberFormatter={formatWithCommas}
+          filename={`daily-dropoffs-report-${kebabCase(agency)}-${yearMonthDayFormat(
+            start
+          )}-to-${yearMonthDayFormat(finish)}.csv`}
+        />
       )}
       {byAgency && !agency && (
         <>
@@ -260,11 +270,20 @@ twice will count twice. It does not de-duplicate users or provide unique auths.`
           <Table
             data={tabulateSumByAgency({ results: filteredData, setParameters })}
             numberFormatter={formatWithCommas}
+            filename={`daily-auths-report-agencies-${yearMonthDayFormat(
+              start
+            )}-to-${yearMonthDayFormat(finish)}.csv`}
           />
         </>
       )}
       {!byAgency && (
-        <Table data={tabulateSum({ results: filteredData })} numberFormatter={formatWithCommas} />
+        <Table
+          data={tabulateSum({ results: filteredData })}
+          numberFormatter={formatWithCommas}
+          filename={`daily-dropoffs-report-${yearMonthDayFormat(start)}-to-${yearMonthDayFormat(
+            finish
+          )}.csv`}
+        />
       )}
     </div>
   );
