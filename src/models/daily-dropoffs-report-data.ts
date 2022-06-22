@@ -163,7 +163,7 @@ function loadData(
       const path = reportPath({ reportName: "daily-dropoffs-report", date, env, extension: "csv" });
       return fetch(path).then((response) => response.text());
     })
-  ).then((reports) => aggregate(reports.flatMap((r) => process(r))));
+  ).then((reports) => reports.flatMap((r) => process(r)));
 }
 
 export {
