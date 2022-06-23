@@ -11,6 +11,7 @@ import {
   FunnelMode,
   ReportFilterContext,
   Scale,
+  TimeBucket,
 } from "../contexts/report-filter-context";
 import {
   DailyDropoffsRow,
@@ -56,7 +57,7 @@ function flatten({
 export default function ProofingOverTimeReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
   const [width, setWidth] = useState(undefined as number | undefined);
-  const { start, finish, agency, env, funnelMode, scale, byAgency } =
+  const { start, finish, agency, env, funnelMode, scale, byAgency, timeBucket } =
     useContext(ReportFilterContext);
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
@@ -99,7 +100,7 @@ twice will count twice. It does not de-duplicate users or provide unique auths.`
                   {
                     x: "date",
                     y: scale === Scale.PERCENT ? "percentOfFirst" : "count",
-                    thresholds: utcWeek,
+                    thresholds: timeBucket === TimeBucket.DAY ? utcDay : utcWeek,
                     z: byAgency ? "agency" : undefined,
                     stroke: byAgency ? "agency" : undefined,
                     title: byAgency ? "agency" : undefined,
@@ -119,6 +120,7 @@ twice will count twice. It does not de-duplicate users or provide unique auths.`
           width,
           funnelMode,
           scale,
+          timeBucket,
         ]}
       />
     </div>

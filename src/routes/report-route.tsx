@@ -9,6 +9,7 @@ import ReportFilterContextProvider, {
   DEFAULT_SCALE,
   DEFAULT_FUNNEL_MODE,
   FunnelMode,
+  TimeBucket,
 } from "../contexts/report-filter-context";
 import ReportFilterControls, { Control } from "../components/report-filter-controls";
 import Page from "../components/page";
@@ -28,6 +29,7 @@ export interface ReportRouteProps {
   env?: string;
   funnelMode?: FunnelMode;
   scale?: Scale;
+  timeBucket?: TimeBucket;
 
   /**
    * When "on" the report should show per-agency data
@@ -66,6 +68,7 @@ function createReportRoute(
     scale: scaleParam,
     byAgency: byAgencyParam,
     extra: extraParam,
+    timeBucket,
   }: ReportRouteProps): VNode => {
     const endOfPreviousWeek = utcDay.offset(utcWeek.floor(new Date()), -1);
     const startOfPreviousWeek = utcWeek.offset(
@@ -101,6 +104,7 @@ function createReportRoute(
             scale={scale}
             byAgency={byAgency}
             extra={extra}
+            timeBucket={timeBucket}
           >
             <ReportFilterControls controls={reportControls} />
             <Report />

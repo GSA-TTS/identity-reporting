@@ -19,7 +19,7 @@ export const ROUTES = {
   }),
   "/proofing-over-time/": createReportRoute(ProofingOverTimeReport, {
     title: "Proofing Over Time Report",
-    controls: [Control.FUNNEL_MODE, Control.SCALE],
+    controls: [Control.FUNNEL_MODE, Control.SCALE, Control.TIME_BUCKET],
     defaultTimeRangeWeekOffset: -3,
     defaultScale: Scale.PERCENT,
   }),
