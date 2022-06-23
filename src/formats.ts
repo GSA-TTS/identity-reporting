@@ -6,8 +6,9 @@ export const yearMonthDayFormat = utcFormat("%Y-%m-%d");
 export const formatWithCommas = format(",");
 
 const formatSIPrefix = format(".2s");
+const formatDecimal = format(".2");
 export const formatSIDropTrailingZeroes = (d: number): string =>
-  formatSIPrefix(d).replace(/\.0+/, "");
+  d >= 1 ? formatSIPrefix(d).replace(/\.0+/, "") : formatDecimal(d);
 
 export const formatAsPercent = format(".0%");
 

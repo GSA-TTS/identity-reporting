@@ -109,6 +109,7 @@ The data model table can't accurately capture:
             y: {
               tickFormat,
               domain: scale === Scale.PERCENT ? [0, 1] : undefined,
+              label: "↑ Verified",
             },
             color: {
               legend: true,
@@ -159,9 +160,9 @@ The data model table can't accurately capture:
                         timeBucket === TimeBucket.WEEK
                           ? mean([thresholds.floor(finish), thresholds.ceil(finish)])
                           : finish,
+                      dx: timeBucket === TimeBucket.DAY ? 15 : undefined,
                       z: lineDeterminer,
                       fill: lineDeterminer,
-                      dx: timeBucket === TimeBucket.DAY ? 15 : undefined,
                       thresholds,
                       textAnchor: "start",
                       filter,
