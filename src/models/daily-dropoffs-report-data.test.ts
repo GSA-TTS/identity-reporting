@@ -10,6 +10,7 @@ import {
   aggregateAll,
 } from "./daily-dropoffs-report-data";
 import { FunnelMode } from "../contexts/report-filter-context";
+import { yearMonthDayFormat } from "../formats";
 
 describe("DailyDropoffsReportData", () => {
   describe("#aggregate", () => {
@@ -164,23 +165,23 @@ describe("DailyDropoffsReportData", () => {
   describe("#loadData", () => {
     const yearMonthDayParse = utcParse("%Y-%m-%d") as (s: string) => Date;
 
-    it("combines data across separate fetch requests", () => {
+    it("concatenates data across separate fetch requests", () => {
       const fetch = fetchMock
         .sandbox()
         .get(
           "/local/daily-dropoffs-report/2021/2021-01-01.daily-dropoffs-report.csv",
           `issuer,friendly_name,iaa,agency,start,finish,welcome,agreement,capture_document,cap_doc_submit,ssn,verify_info,verify_submit,phone,encrypt,personal_key,verified
-issuer1,The App,iaa123,The Agency,2021-01-01T00:00:00+01:00,2021-01-01T23:59:59+01:00,3,2,2,2,2,2,2,2,2,2,1`
+issuer1,The App,iaa123,The Agency,2021-01-01T00:00:00+00:00,2021-01-01T23:59:59+00:00,3,2,2,2,2,2,2,2,2,2,1`
         )
         .get(
           "/local/daily-dropoffs-report/2021/2021-01-02.daily-dropoffs-report.csv",
           `issuer,friendly_name,iaa,agency,start,finish,welcome,agreement,capture_document,cap_doc_submit,ssn,verify_info,verify_submit,phone,encrypt,personal_key,verified
-issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+01:00,2,1,1,1,1,1,1,1,1,1,0`
+issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+00:00,2021-01-02T23:59:59+00:00,2,1,1,1,1,1,1,1,1,1,0`
         )
         .get(
           "/local/daily-dropoffs-report/2021/2021-01-03.daily-dropoffs-report.csv",
           `issuer,friendly_name,iaa,agency,start,finish,welcome,agreement,capture_document,cap_doc_submit,ssn,verify_info,verify_submit,phone,encrypt,personal_key,verified
-issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+01:00,2,1,1,1,1,1,1,1,1,1,0`
+issuer1,The App,iaa123,The Agency,2021-01-03T00:00:00+00:00,2021-01-03T23:59:59+00:00,2,1,1,1,1,1,1,1,1,1,0`
         );
 
       return loadData(
@@ -188,13 +189,28 @@ issuer1,The App,iaa123,The Agency,2021-01-02T00:00:00+01:00,2021-01-02T23:59:59+
         yearMonthDayParse("2021-01-03"),
         "local",
         fetch as typeof window.fetch
-      ).then((combinedRows) => {
-        expect(combinedRows).to.have.lengthOf(1);
-        const row = combinedRows[0];
-        expect(row.issuer).to.equal("issuer1");
-        expect(row.friendly_name).to.equal("The App");
-        expect(row.welcome).to.equal(7);
-        expect(row.verified).to.equal(1);
+      ).then((concatenatedRows) => {
+        expect(concatenatedRows).to.have.lengthOf(3);
+
+        const [row0, row1, row2] = concatenatedRows;
+
+        expect(row0.issuer).to.equal("issuer1");
+        expect(row0.friendly_name).to.equal("The App");
+        expect(row0.welcome).to.equal(3);
+        expect(row0.verified).to.equal(1);
+        expect(yearMonthDayFormat(row0.start)).to.eq("2021-01-01");
+
+        expect(row1.issuer).to.equal("issuer1");
+        expect(row1.friendly_name).to.equal("The App");
+        expect(row1.welcome).to.equal(2);
+        expect(row1.verified).to.equal(0);
+        expect(yearMonthDayFormat(row1.start)).to.eq("2021-01-02");
+
+        expect(row2.issuer).to.equal("issuer1");
+        expect(row2.friendly_name).to.equal("The App");
+        expect(row2.welcome).to.equal(2);
+        expect(row2.verified).to.equal(0);
+        expect(yearMonthDayFormat(row2.start)).to.eq("2021-01-03");
       });
     });
 
