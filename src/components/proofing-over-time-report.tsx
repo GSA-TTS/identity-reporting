@@ -4,6 +4,7 @@ import { useContext, useRef, useState } from "preact/hooks";
 import * as Plot from "@observablehq/plot";
 import { useQuery } from "preact-fetching";
 import { utcWeek, utcDay } from "d3-time";
+import { mean } from "d3-array";
 import useResizeListener from "../hooks/resize-listener";
 import Accordion from "./accordion";
 import PlotComponent from "./plot";
@@ -40,15 +41,13 @@ function flatten({
   const results = data.flatMap((row) => {
     const { start, agency: rowAgency, issuer, friendly_name: friendlyName } = row;
 
-    return toStepCounts(row, funnelMode).map((stepCount) => {
-      return {
-        date: start,
-        issuer,
-        friendlyName,
-        agency: rowAgency,
-        ...stepCount,
-      };
-    });
+    return toStepCounts(row, funnelMode).map((stepCount) => ({
+      date: start,
+      issuer,
+      friendlyName,
+      agency: rowAgency,
+      ...stepCount,
+    }));
   });
 
   return results;
@@ -69,27 +68,52 @@ export default function ProofingOverTimeReport(): VNode {
 
   const flatSteps = flatten({ data: data || [], funnelMode });
 
+  const lineDeterminer = (() => {
+    if (byAgency) {
+      if (agency) {
+        return "friendlyName";
+      }
+      return "agency";
+    }
+  })();
+
+  const filter = (d: StepCountEntry) =>
+    d.step === Step.VERIFIED && (!agency || d.agency === agency);
+  const thresholds = timeBucket === TimeBucket.DAY ? utcDay : utcWeek;
+  const y = scale === Scale.PERCENT ? "percentOfFirst" : "count";
+  const tickFormat = scale === Scale.PERCENT ? formatAsPercent : formatSIDropTrailingZeroes;
+
+  const showAverages = (!byAgency || agency) && scale === Scale.PERCENT;
+
   return (
     <div ref={ref}>
       <Accordion title="How is this measured?">
         <Markdown
           markdown={`
+**Measurement**: This report shows unique users who started proofing who reached the "verified"
+step, meaning they completed proofing. As a percent, the value is the percent of users, starting
+at either the "welcome" or "image submit" step (depending on the Funnel Mode setting).
+
 **Timing**: All data is collected, grouped, and displayed in the UTC timezone.
 
-**Counting**: This report displays the total number of authentications, so one user authenticating
-twice will count twice. It does not de-duplicate users or provide unique auths.`}
+**Known Limitations**:
+
+The data model table can't accurately capture:
+- Users who become verified on a different day than the day they start proofing (such as verify by mail)
+- Users who attempt proofing at one partner app, and reattempt with a different partner app.`}
         />
       </Accordion>
       <PlotComponent
         plotter={() =>
           Plot.plot({
             y: {
-              tickFormat: scale === Scale.PERCENT ? formatAsPercent : formatSIDropTrailingZeroes,
+              tickFormat,
               domain: scale === Scale.PERCENT ? [0, 1] : undefined,
             },
             color: {
               legend: true,
             },
+            marginRight: 50,
             width,
             marks: [
               Plot.ruleY([0]),
@@ -99,17 +123,52 @@ twice will count twice. It does not de-duplicate users or provide unique auths.`
                   { y: scale === Scale.PERCENT ? "mean" : "sum" },
                   {
                     x: "date",
-                    y: scale === Scale.PERCENT ? "percentOfFirst" : "count",
-                    thresholds: timeBucket === TimeBucket.DAY ? utcDay : utcWeek,
-                    z: byAgency ? "agency" : undefined,
-                    stroke: byAgency ? "agency" : undefined,
-                    title: byAgency ? "agency" : undefined,
-                    filter: (d: StepCountEntry) =>
-                      d.step === Step.VERIFIED && (!agency || d.agency === agency),
+                    y,
+                    thresholds,
+                    z: lineDeterminer,
+                    stroke: lineDeterminer,
+                    title: lineDeterminer,
+                    filter,
                   }
                 )
               ),
-            ],
+              showAverages &&
+                Plot.ruleY(
+                  flatSteps,
+                  Plot.binY(
+                    { y: "mean" },
+                    {
+                      z: lineDeterminer,
+                      stroke: lineDeterminer,
+                      strokeDasharray: "3,2",
+                      thresholds,
+                      y,
+                      filter,
+                    }
+                  )
+                ),
+              showAverages &&
+                Plot.text(
+                  flatSteps,
+                  Plot.binY(
+                    { y: "mean" },
+                    {
+                      y,
+                      text: (bin: StepCountEntry[]) => tickFormat(mean(bin, (d) => d[y]) || 0),
+                      x:
+                        timeBucket === TimeBucket.WEEK
+                          ? mean([thresholds.floor(finish), thresholds.ceil(finish)])
+                          : finish,
+                      z: lineDeterminer,
+                      fill: lineDeterminer,
+                      dx: timeBucket === TimeBucket.DAY ? 15 : undefined,
+                      thresholds,
+                      textAnchor: "start",
+                      filter,
+                    }
+                  )
+                ),
+            ].filter(Boolean),
           })
         }
         inputs={[
