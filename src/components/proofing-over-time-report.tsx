@@ -23,6 +23,7 @@ import {
 } from "../models/daily-dropoffs-report-data";
 import { formatAsPercent, formatSIDropTrailingZeroes } from "../formats";
 import { useAgencies } from "../contexts/agencies-context";
+import { loadReleases } from "../github";
 
 interface StepCountEntry extends StepCount {
   date: Date;
@@ -61,6 +62,14 @@ export default function ProofingOverTimeReport(): VNode {
 
   const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
+  );
+
+  const { data: releases } = useQuery("identity-idp-releases", () =>
+    loadReleases({ owner: "18f", repo: "identity-idp" })
+  );
+
+  const filteredReleases = (releases || []).filter(
+    ({ createdAt }) => start <= createdAt && createdAt <= finish
   );
 
   useResizeListener(() => setWidth(ref.current?.offsetWidth));
@@ -118,6 +127,8 @@ The data model table can't accurately capture:
             width,
             marks: [
               Plot.ruleY([0]),
+              Plot.ruleX(filteredReleases, { x: "createdAt", title: "name" }),
+              Plot.text(filteredReleases, { x: "createdAt", y: 1, text: "name" }),
               Plot.lineY(
                 flatSteps,
                 Plot.binX(
@@ -174,6 +185,7 @@ The data model table can't accurately capture:
         }
         inputs={[
           flatSteps,
+          filteredReleases,
           agency,
           start.valueOf(),
           finish.valueOf(),
