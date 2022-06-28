@@ -9,6 +9,7 @@ import ReportFilterContextProvider, {
   DEFAULT_SCALE,
   DEFAULT_FUNNEL_MODE,
   FunnelMode,
+  TimeBucket,
 } from "../contexts/report-filter-context";
 import ReportFilterControls, { Control } from "../components/report-filter-controls";
 import Page from "../components/page";
@@ -28,6 +29,7 @@ export interface ReportRouteProps {
   env?: string;
   funnelMode?: FunnelMode;
   scale?: Scale;
+  timeBucket?: TimeBucket;
 
   /**
    * When "on" the report should show per-agency data
@@ -46,9 +48,13 @@ function createReportRoute(
   {
     title,
     controls,
+    defaultScale,
+    defaultTimeRangeWeekOffset = 0,
   }: {
     title: string;
     controls?: Control[];
+    defaultTimeRangeWeekOffset?: number;
+    defaultScale?: Scale;
   }
 ): (props: ReportRouteProps) => VNode {
   return ({
@@ -62,16 +68,20 @@ function createReportRoute(
     scale: scaleParam,
     byAgency: byAgencyParam,
     extra: extraParam,
+    timeBucket,
   }: ReportRouteProps): VNode => {
     const endOfPreviousWeek = utcDay.offset(utcWeek.floor(new Date()), -1);
-    const startOfPreviousWeek = utcWeek.floor(new Date(endOfPreviousWeek.valueOf() - 1));
+    const startOfPreviousWeek = utcWeek.offset(
+      utcWeek.floor(new Date(endOfPreviousWeek.valueOf() - 1)),
+      defaultTimeRangeWeekOffset
+    );
 
     const start = (startParam && yearMonthDayParse(startParam)) || startOfPreviousWeek;
     const finish = (finishParam && yearMonthDayParse(finishParam)) || endOfPreviousWeek;
     const ial = (parseInt(ialParam || "", 10) || DEFAULT_IAL) as 1 | 2;
     const env = envParam || DEFAULT_ENV;
     const funnelMode = funnelModeParam || DEFAULT_FUNNEL_MODE;
-    const scale = scaleParam || DEFAULT_SCALE;
+    const scale = scaleParam || defaultScale || DEFAULT_SCALE;
     const extra = extraParam === "true";
     const byAgency = byAgencyParam ? byAgencyParam === "on" : extra;
 
@@ -94,6 +104,7 @@ function createReportRoute(
             scale={scale}
             byAgency={byAgency}
             extra={extra}
+            timeBucket={timeBucket}
           >
             <ReportFilterControls controls={reportControls} />
             <Report />

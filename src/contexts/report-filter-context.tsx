@@ -17,10 +17,16 @@ enum FunnelMode {
   ACTUAL = "actual",
 }
 
+enum TimeBucket {
+  DAY = "day",
+  WEEK = "week",
+}
+
 const DEFAULT_IAL = 1;
 const DEFAULT_ENV = "prod";
 const DEFAULT_SCALE = Scale.COUNT;
 const DEFAULT_FUNNEL_MODE = FunnelMode.BLANKET;
+const DEFAULT_TIME_BUCKET = undefined;
 
 interface ReportFilterContextValues {
   start: Date;
@@ -32,6 +38,7 @@ interface ReportFilterContextValues {
   scale: Scale;
   byAgency: boolean;
   extra: boolean;
+  timeBucket?: string
   setParameters: (params: Record<string, string>) => void;
 }
 
@@ -61,6 +68,7 @@ const ReportFilterContext = createContext({
   scale: DEFAULT_SCALE,
   byAgency: false,
   extra: false,
+  timeBucket: DEFAULT_TIME_BUCKET,
 } as ReportFilterContextValues);
 
 type ReportFilterContextProviderProps = Omit<ReportFilterContextValues, "setParameters">;
@@ -81,6 +89,7 @@ export {
   ReportFilterContext,
   Scale,
   FunnelMode,
+  TimeBucket,
   DEFAULT_IAL,
   DEFAULT_ENV,
   DEFAULT_SCALE,

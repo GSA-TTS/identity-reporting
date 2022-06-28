@@ -7,6 +7,7 @@ import {
   DEFAULT_ENV,
   Scale,
   FunnelMode,
+  TimeBucket,
 } from "../contexts/report-filter-context";
 import { AgenciesContext } from "../contexts/agencies-context";
 
@@ -21,6 +22,7 @@ enum Control {
   SCALE = "scale",
   AGENCY = "agency",
   BY_AGENCY = "by_agency",
+  TIME_BUCKET = "time_bucket",
 }
 
 interface ReportFilterControlsProps {
@@ -28,8 +30,19 @@ interface ReportFilterControlsProps {
 }
 
 function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
-  const { start, finish, agency, ial, env, funnelMode, scale, byAgency, extra, setParameters } =
-    useContext(ReportFilterContext);
+  const {
+    start,
+    finish,
+    agency,
+    ial,
+    env,
+    funnelMode,
+    scale,
+    byAgency,
+    extra,
+    timeBucket,
+    setParameters,
+  } = useContext(ReportFilterContext);
   const { agencies } = useContext(AgenciesContext);
   const formRef = useRef(null as HTMLFormElement | null);
 
@@ -106,6 +119,37 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                   </div>
                 </div>
               </fieldset>
+              {controls?.includes(Control.TIME_BUCKET) && (
+                <fieldset className="usa-fieldset">
+                  <legend className="usa-legend">Time Bucket</legend>
+                  <div className="usa-radio">
+                    <input
+                      type="radio"
+                      id="time-bucket-day"
+                      name="timeBucket"
+                      value="day"
+                      checked={timeBucket === TimeBucket.DAY}
+                      className="usa-radio__input"
+                    />
+                    <label htmlFor="time-bucket-day" className="usa-label usa-radio__label">
+                      Day
+                    </label>
+                  </div>
+                  <div className="usa-radio">
+                    <input
+                      type="radio"
+                      id="time-bucket-week"
+                      name="timeBucket"
+                      value="week"
+                      checked={!timeBucket || timeBucket === TimeBucket.WEEK}
+                      className="usa-radio__input"
+                    />
+                    <label htmlFor="time-bucket-week" className="usa-label usa-radio__label">
+                      Week
+                    </label>
+                  </div>
+                </fieldset>
+              )}
               {(controls?.includes(Control.AGENCY) || agency) && (
                 <fieldset className="usa-fieldset">
                   <legend className="usa-legend" id="agency-legend">
