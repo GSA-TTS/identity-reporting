@@ -38,7 +38,7 @@ interface ReportFilterContextValues {
   scale: Scale;
   byAgency: boolean;
   extra: boolean;
-  timeBucket?: string
+  timeBucket?: TimeBucket
   setParameters: (params: Record<string, string>) => void;
 }
 
