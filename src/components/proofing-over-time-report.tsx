@@ -195,12 +195,7 @@ function tabulateByIssuer({
   const interval = timeBucket === TimeBucket.WEEK ? utcWeek : utcDay;
   const dates = bucketDates(data, interval);
 
-  const friendlyNameToIssuer = new Map<string, string>();
-  data.forEach((row) => {
-    if (!friendlyNameToIssuer.has(row.friendly_name)) {
-      friendlyNameToIssuer.set(row.friendly_name, row.issuer);
-    }
-  });
+  const friendlyNameToIssuer = new Map(data.map((row) => [row.friendly_name, row.issuer]));
 
   const totalByAgencyByIssuerByDate = rollup(
     data,
