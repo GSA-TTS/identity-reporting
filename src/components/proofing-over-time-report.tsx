@@ -96,7 +96,7 @@ function countAndPercent({ total, verified }: VerifiedTotal): [VNode, VNode] {
   const fraction = verified / total || 0;
 
   return [
-    <span data-csv={total}>{formatWithCommas(total)}</span>,
+    <span data-csv={verified}>{formatWithCommas(verified)}</span>,
     <span data-csv={fraction}>{formatAsPercent(fraction)}</span>,
   ];
 }
