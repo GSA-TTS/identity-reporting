@@ -5,6 +5,8 @@ import logoURL from "../../node_modules/identity-style-guide/dist/assets/img/log
 // eslint-disable-next-line import/no-relative-packages
 import closeURL from "../../node_modules/identity-style-guide/dist/assets/img/close.svg";
 
+import { ROUTES } from "../routes/index";
+
 interface HeaderProps {
   path: string;
 }
@@ -32,39 +34,16 @@ function Header({ path }: HeaderProps): VNode {
             <img src={closeURL} alt="Close" />
           </button>
           <ul className="usa-nav__primary usa-accordion">
-            <li className="usa-nav__primary-item">
-              <Link href="/" className={path === getFullPath("/") ? "usa-current" : undefined}>
-                Home
-              </Link>
-            </li>
-            <li className="usa-nav__primary-item">
-              <Link
-                href="/daily-auths-report/"
-                className={path === getFullPath("/daily-auths-report/") ? "usa-current" : undefined}
-              >
-                Daily Auths Report
-              </Link>
-            </li>
-            <li className="usa-nav__primary-item">
-              <Link
-                href="/daily-dropoffs-report/"
-                className={
-                  path === getFullPath("/daily-dropoffs-report/") ? "usa-current" : undefined
-                }
-              >
-                Daily Dropoffs Report
-              </Link>
-            </li>
-            <li className="usa-nav__primary-item">
-              <Link
-                href="/proofing-over-time/"
-                className={
-                  path === getFullPath("/proofing-over-time/") ? "usa-current" : undefined
-                }
-              >
-                Proofing Over Time Report
-              </Link>
-            </li>
+            {Object.entries(ROUTES).map(([routePath, route]) => (
+              <li className="usa-nav__primary-item">
+                <Link
+                  href={routePath}
+                  className={path === getFullPath(routePath) ? "usa-current" : undefined}
+                >
+                  {route.title}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
       </nav>

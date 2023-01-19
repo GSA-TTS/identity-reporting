@@ -16,6 +16,11 @@ import Page from "../components/page";
 
 const yearMonthDayParse = utcParse("%Y-%m-%d");
 
+export interface ReportRoute {
+  title: string;
+  component: (props: ReportRouteProps) => VNode;
+}
+
 export interface ReportRouteProps {
   path: string;
   start?: string;
@@ -56,62 +61,65 @@ function createReportRoute(
     defaultTimeRangeWeekOffset?: number;
     defaultScale?: Scale;
   }
-): (props: ReportRouteProps) => VNode {
-  return ({
-    path,
-    start: startParam,
-    finish: finishParam,
-    ial: ialParam,
-    agency,
-    env: envParam,
-    funnelMode: funnelModeParam,
-    scale: scaleParam,
-    byAgency: byAgencyParam,
-    extra: extraParam,
-    timeBucket,
-  }: ReportRouteProps): VNode => {
-    const endOfPreviousWeek = utcDay.offset(utcWeek.floor(new Date()), -1);
-    const startOfPreviousWeek = utcWeek.offset(
-      utcWeek.floor(new Date(endOfPreviousWeek.valueOf() - 1)),
-      defaultTimeRangeWeekOffset
-    );
+): ReportRoute {
+  return {
+    title,
+    component: ({
+      path,
+      start: startParam,
+      finish: finishParam,
+      ial: ialParam,
+      agency,
+      env: envParam,
+      funnelMode: funnelModeParam,
+      scale: scaleParam,
+      byAgency: byAgencyParam,
+      extra: extraParam,
+      timeBucket,
+    }: ReportRouteProps): VNode => {
+      const endOfPreviousWeek = utcDay.offset(utcWeek.floor(new Date()), -1);
+      const startOfPreviousWeek = utcWeek.offset(
+        utcWeek.floor(new Date(endOfPreviousWeek.valueOf() - 1)),
+        defaultTimeRangeWeekOffset
+      );
 
-    const start = (startParam && yearMonthDayParse(startParam)) || startOfPreviousWeek;
-    const finish = (finishParam && yearMonthDayParse(finishParam)) || endOfPreviousWeek;
-    const ial = (parseInt(ialParam || "", 10) || DEFAULT_IAL) as 1 | 2;
-    const env = envParam || DEFAULT_ENV;
-    const funnelMode = funnelModeParam || DEFAULT_FUNNEL_MODE;
-    const scale = scaleParam || defaultScale || DEFAULT_SCALE;
-    const extra = extraParam === "true";
-    const byAgency = byAgencyParam ? byAgencyParam === "on" : extra;
+      const start = (startParam && yearMonthDayParse(startParam)) || startOfPreviousWeek;
+      const finish = (finishParam && yearMonthDayParse(finishParam)) || endOfPreviousWeek;
+      const ial = (parseInt(ialParam || "", 10) || DEFAULT_IAL) as 1 | 2;
+      const env = envParam || DEFAULT_ENV;
+      const funnelMode = funnelModeParam || DEFAULT_FUNNEL_MODE;
+      const scale = scaleParam || defaultScale || DEFAULT_SCALE;
+      const extra = extraParam === "true";
+      const byAgency = byAgencyParam ? byAgencyParam === "on" : extra;
 
-    const reportControls = controls || [];
-    if (extra) {
-      reportControls.push(Control.AGENCY);
-      reportControls.push(Control.BY_AGENCY);
-    }
+      const reportControls = controls || [];
+      if (extra) {
+        reportControls.push(Control.AGENCY);
+        reportControls.push(Control.BY_AGENCY);
+      }
 
-    return (
-      <Page path={path} title={title}>
-        <AgenciesContextProvider>
-          <ReportFilterContextProvider
-            start={start}
-            finish={finish}
-            ial={ial}
-            agency={agency}
-            env={env}
-            funnelMode={funnelMode}
-            scale={scale}
-            byAgency={byAgency}
-            extra={extra}
-            timeBucket={timeBucket}
-          >
-            <ReportFilterControls controls={reportControls} />
-            <Report />
-          </ReportFilterContextProvider>
-        </AgenciesContextProvider>
-      </Page>
-    );
+      return (
+        <Page path={path} title={title}>
+          <AgenciesContextProvider>
+            <ReportFilterContextProvider
+              start={start}
+              finish={finish}
+              ial={ial}
+              agency={agency}
+              env={env}
+              funnelMode={funnelMode}
+              scale={scale}
+              byAgency={byAgency}
+              extra={extra}
+              timeBucket={timeBucket}
+            >
+              <ReportFilterControls controls={reportControls} />
+              <Report />
+            </ReportFilterContextProvider>
+          </AgenciesContextProvider>
+        </Page>
+      );
+    },
   };
 }
 
