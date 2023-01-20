@@ -12,9 +12,7 @@ import ALL_ROUTES from "./all";
 /**
  * Requires that all keys in ALL_ROUTES have a matching key in this object
  */
-type ReportRoutes = {
-  [Property in keyof typeof ALL_ROUTES]: ReportRoute;
-}
+type ReportRoutes = Record<keyof typeof ALL_ROUTES, ReportRoute>;
 
 const reportRoutes: ReportRoutes = {
   "/daily-auths-report/": createReportRoute(DailyAuthsReport, {
