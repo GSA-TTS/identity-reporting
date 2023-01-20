@@ -20,7 +20,7 @@ const yearMonthDayParse = utcParse("%Y-%m-%d");
 export type ReportRoute = (props: ReportRouteProps) => VNode;
 
 interface ReportRouteProps {
-  path: string;
+  path: keyof typeof ALL_ROUTES;
   start?: string;
   finish?: string;
   ial?: string;
@@ -92,7 +92,7 @@ function createReportRoute(
       reportControls.push(Control.BY_AGENCY);
     }
 
-    const title = (ALL_ROUTES as Record<string, string>)[path];
+    const title = ALL_ROUTES[path];
 
     return (
       <Page path={path} title={title}>

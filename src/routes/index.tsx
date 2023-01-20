@@ -33,7 +33,7 @@ export function Routes(): VNode {
   return (
     <Router>
       {Object.entries(reportRoutes).map(([path, Component]) => (
-        <Component path={path} />
+        <Component path={path as keyof ReportRoutes} />
       ))}
     </Router>
   );
