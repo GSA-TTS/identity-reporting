@@ -12,7 +12,6 @@ import ReportFilterContextProvider, {
   TimeBucket,
 } from "../contexts/report-filter-context";
 import ReportFilterControls, { Control } from "../components/report-filter-controls";
-import Page from "../components/page";
 
 const yearMonthDayParse = utcParse("%Y-%m-%d");
 
@@ -22,7 +21,6 @@ export interface ReportRoute {
 }
 
 export interface ReportRouteProps {
-  path: string;
   start?: string;
   finish?: string;
   ial?: string;
@@ -65,7 +63,6 @@ function createReportRoute(
   return {
     title,
     component: ({
-      path,
       start: startParam,
       finish: finishParam,
       ial: ialParam,
@@ -99,25 +96,23 @@ function createReportRoute(
       }
 
       return (
-        <Page path={path} title={title}>
-          <AgenciesContextProvider>
-            <ReportFilterContextProvider
-              start={start}
-              finish={finish}
-              ial={ial}
-              agency={agency}
-              env={env}
-              funnelMode={funnelMode}
-              scale={scale}
-              byAgency={byAgency}
-              extra={extra}
-              timeBucket={timeBucket}
-            >
-              <ReportFilterControls controls={reportControls} />
-              <Report />
-            </ReportFilterContextProvider>
-          </AgenciesContextProvider>
-        </Page>
+        <AgenciesContextProvider>
+          <ReportFilterContextProvider
+            start={start}
+            finish={finish}
+            ial={ial}
+            agency={agency}
+            env={env}
+            funnelMode={funnelMode}
+            scale={scale}
+            byAgency={byAgency}
+            extra={extra}
+            timeBucket={timeBucket}
+          >
+            <ReportFilterControls controls={reportControls} />
+            <Report />
+          </ReportFilterContextProvider>
+        </AgenciesContextProvider>
       );
     },
   };

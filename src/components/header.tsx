@@ -5,13 +5,12 @@ import logoURL from "../../node_modules/identity-style-guide/dist/assets/img/log
 // eslint-disable-next-line import/no-relative-packages
 import closeURL from "../../node_modules/identity-style-guide/dist/assets/img/close.svg";
 
-import { ROUTES } from "../routes/index";
-
 interface HeaderProps {
   path: string;
+  routes: Record<string, { title: string }>;
 }
 
-function Header({ path }: HeaderProps): VNode {
+function Header({ path, routes }: HeaderProps): VNode {
   return (
     <header className="usa-header usa-header--extended">
       <div className="usa-navbar">
@@ -34,7 +33,7 @@ function Header({ path }: HeaderProps): VNode {
             <img src={closeURL} alt="Close" />
           </button>
           <ul className="usa-nav__primary usa-accordion">
-            {Object.entries(ROUTES).map(([routePath, route]) => (
+            {Object.entries(routes).map(([routePath, route]) => (
               <li className="usa-nav__primary-item">
                 <Link
                   href={routePath}
