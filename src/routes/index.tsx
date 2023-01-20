@@ -5,10 +5,15 @@ import DailyDropffsReport from "../components/daily-dropoffs-report";
 import ProofingOverTimeReport from "../components/proofing-over-time-report";
 import { Router } from "../router";
 import HomeRoute from "./home-route";
-import createReportRoute from "./report-route";
+import createReportRoute, { ReportRoute } from "./report-route";
 import { Scale } from "../contexts/report-filter-context";
+import ALL_ROUTES from "./all";
 
-export const ROUTES = {
+type ReportRoutes = {
+  [Property in keyof typeof ALL_ROUTES]: ReportRoute;
+}
+
+const reportRoutes: ReportRoutes = {
   "/daily-auths-report/": createReportRoute(DailyAuthsReport, {
     title: "Daily Auths Report",
     controls: [Control.IAL],
@@ -29,7 +34,7 @@ export const ROUTES = {
 export function Routes(): VNode {
   return (
     <Router>
-      {Object.entries(ROUTES).map(([path, Component]) => (
+      {Object.entries(reportRoutes).map(([path, Component]) => (
         <Component path={path} />
       ))}
     </Router>

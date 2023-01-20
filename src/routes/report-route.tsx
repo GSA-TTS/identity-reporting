@@ -16,7 +16,9 @@ import Page from "../components/page";
 
 const yearMonthDayParse = utcParse("%Y-%m-%d");
 
-export interface ReportRouteProps {
+export type ReportRoute = (props: ReportRouteProps) => VNode;
+
+interface ReportRouteProps {
   path: string;
   start?: string;
   finish?: string;
@@ -56,7 +58,7 @@ function createReportRoute(
     defaultTimeRangeWeekOffset?: number;
     defaultScale?: Scale;
   }
-): (props: ReportRouteProps) => VNode {
+): ReportRoute {
   return ({
     path,
     start: startParam,
