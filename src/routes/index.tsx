@@ -4,14 +4,13 @@ import DailyAuthsReport from "../components/daily-auths-report";
 import DailyDropffsReport from "../components/daily-dropoffs-report";
 import ProofingOverTimeReport from "../components/proofing-over-time-report";
 import { Router } from "../router";
-import HomeRoute from "./home-route";
 import createReportRoute, { ReportRoute } from "./report-route";
 import { Scale } from "../contexts/report-filter-context";
 import Page from "../components/page";
 import Header from "../components/header";
 
 const ROUTES: Record<string, ReportRoute> = {
-  "/": { title: "Home", component: HomeRoute },
+  "/": { title: "Home", component: () => <div /> },
   "/daily-auths-report/": createReportRoute(DailyAuthsReport, {
     title: "Daily Auths Report",
     controls: [Control.IAL],
@@ -32,12 +31,12 @@ export function Routes(): VNode {
   return (
     <Router>
       {Object.entries(ROUTES).map(([path, { title, component: Component }]) => (
-        <>
+        <div path={path}>
           <Header path={path} routes={ROUTES} />
           <Page title={title}>
             <Component />
           </Page>
-        </>
+        </div>
       ))}
     </Router>
   );
