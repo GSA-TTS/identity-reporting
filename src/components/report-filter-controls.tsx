@@ -23,6 +23,7 @@ enum Control {
   AGENCY = "agency",
   BY_AGENCY = "by_agency",
   TIME_BUCKET = "time_bucket",
+  CUMULATIVE = "cumulative",
 }
 
 interface ReportFilterControlsProps {
@@ -41,6 +42,7 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
     byAgency,
     extra,
     timeBucket,
+    cumulative,
     setParameters,
   } = useContext(ReportFilterContext);
   const { agencies } = useContext(AgenciesContext);
@@ -68,6 +70,7 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
   }
 
   return (
+    <div>
       <form ref={formRef} onChange={update} className="usa-form-full-width">
         <div className="grid-container padding-0">
           <div className="grid-row grid-gap">
@@ -301,6 +304,37 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
                   </div>
                 </fieldset>
               )}
+              {controls?.includes(Control.CUMULATIVE) && (
+                <fieldset className="usa-fieldset">
+                  <legend className="usa-legend">Cumulative</legend>
+                  <div className="usa-radio">
+                    <input
+                      type="radio"
+                      id="cumulative-on"
+                      name="cumulative"
+                      value="on"
+                      checked={cumulative}
+                      className="usa-radio__input"
+                    />
+                    <label htmlFor="cumulative-on" className="usa-label usa-radio__label">
+                      Enabled
+                    </label>
+                  </div>
+                  <div className="usa-radio">
+                    <input
+                      type="radio"
+                      id="cumulative-off"
+                      name="cumulative"
+                      value="off"
+                      checked={!cumulative}
+                      className="usa-radio__input"
+                    />
+                    <label htmlFor="cumulative-off" className="usa-label usa-radio__label">
+                      Disabled
+                    </label>
+                  </div>
+                </fieldset>
+              )}
             </div>
           </div>
           <div className="grid-row margin-top-2">
@@ -316,6 +350,7 @@ function ReportFilterControls({ controls }: ReportFilterControlsProps): VNode {
         {env !== DEFAULT_ENV && <input type="hidden" name="env" value={env} />}
         {extra && <input type="hidden" name="extra" value="true" />}
       </form>
+    </div>
   );
 }
 
