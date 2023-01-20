@@ -13,6 +13,7 @@ import ReportFilterContextProvider, {
 } from "../contexts/report-filter-context";
 import ReportFilterControls, { Control } from "../components/report-filter-controls";
 import Page from "../components/page";
+import ALL_ROUTES from "./all";
 
 const yearMonthDayParse = utcParse("%Y-%m-%d");
 
@@ -48,12 +49,10 @@ interface ReportRouteProps {
 function createReportRoute(
   Report: () => VNode,
   {
-    title,
     controls,
     defaultScale,
     defaultTimeRangeWeekOffset = 0,
   }: {
-    title: string;
     controls?: Control[];
     defaultTimeRangeWeekOffset?: number;
     defaultScale?: Scale;
@@ -92,6 +91,8 @@ function createReportRoute(
       reportControls.push(Control.AGENCY);
       reportControls.push(Control.BY_AGENCY);
     }
+
+    const title = (ALL_ROUTES as Record<string, string>)[path];
 
     return (
       <Page path={path} title={title}>

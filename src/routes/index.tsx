@@ -18,15 +18,12 @@ type ReportRoutes = {
 
 const reportRoutes: ReportRoutes = {
   "/daily-auths-report/": createReportRoute(DailyAuthsReport, {
-    title: "Daily Auths Report",
     controls: [Control.IAL],
   }),
   "/daily-dropoffs-report/": createReportRoute(DailyDropffsReport, {
-    title: "Daily Dropoffs Report",
     controls: [Control.FUNNEL_MODE, Control.SCALE],
   }),
   "/proofing-over-time/": createReportRoute(ProofingOverTimeReport, {
-    title: "Proofing Over Time Report",
     controls: [Control.FUNNEL_MODE, Control.SCALE, Control.TIME_BUCKET],
     defaultTimeRangeWeekOffset: -3,
     defaultScale: Scale.PERCENT,
