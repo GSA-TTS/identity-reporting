@@ -1,5 +1,6 @@
 /**
  * POJO map of path <-> title, must be importable by node
+ * This is the one true list of all routes in this app
  */
 const ALL_ROUTES = {
   "/": "Home",

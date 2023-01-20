@@ -9,6 +9,9 @@ import createReportRoute, { ReportRoute } from "./report-route";
 import { Scale } from "../contexts/report-filter-context";
 import ALL_ROUTES from "./all";
 
+/**
+ * Requires that all keys in ALL_ROUTES have a matching key in this object
+ */
 type ReportRoutes = {
   [Property in keyof typeof ALL_ROUTES]: ReportRoute;
 }
