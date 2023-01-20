@@ -99,7 +99,7 @@ function DailyRegistrationsReport(): VNode {
     }
   });
 
-  const windowedData = (data || []).filter(({ date }) => start < date && date < finish);
+  const windowedData = (data || []).filter(({ date }) => start <= date && date <= finish);
 
   return (
     <div ref={ref}>
