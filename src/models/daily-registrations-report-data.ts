@@ -69,15 +69,15 @@ function toRenderableData(results: ProcessedResult[]): ProcessedRenderableData[]
       fullyRegisteredUsers,
       fullyRegisteredUsersCumulative,
     }) => [
-        { date, value: totalUsers, type: DataType.TOTAL_USERS },
-        { date, value: totalUsersCumulative, type: DataType.TOTAL_USERS_CUMULATIVE },
-        { date, value: fullyRegisteredUsers, type: DataType.FULLY_REGISTERED_USERS },
-        {
-          date,
-          value: fullyRegisteredUsersCumulative,
-          type: DataType.FULLY_REGISTERED_USERS_CUMULATIVE,
-        },
-      ]
+      { date, value: totalUsers, type: DataType.TOTAL_USERS },
+      { date, value: totalUsersCumulative, type: DataType.TOTAL_USERS_CUMULATIVE },
+      { date, value: fullyRegisteredUsers, type: DataType.FULLY_REGISTERED_USERS },
+      {
+        date,
+        value: fullyRegisteredUsersCumulative,
+        type: DataType.FULLY_REGISTERED_USERS_CUMULATIVE,
+      },
+    ]
   );
 }
 

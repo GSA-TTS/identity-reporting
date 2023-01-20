@@ -115,3 +115,4 @@ function DailyRegistrationsReport(): VNode {
 }
 
 export default DailyRegistrationsReport;
+export { tabulate };
