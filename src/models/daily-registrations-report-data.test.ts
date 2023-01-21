@@ -5,17 +5,17 @@ import { DataType, loadData, toRenderableData } from "./daily-registrations-repo
 
 describe("DailyRegistrationsReportData", () => {
   describe("#loadData", () => {
-    const fetch = fetchMock
-      .sandbox()
-      .get("/local/daily-registrations-report/2021/2021-01-02.daily-registrations-report.json", {
-        finish: "2020-01-03",
-        results: [
-          { date: "2020-01-01", total_users: 2, fully_registered_users: 1 },
-          { date: "2020-01-02", total_users: 20, fully_registered_users: 10 },
-        ],
-      });
-
     it("loads data and processes it", () => {
+      const fetch = fetchMock
+        .sandbox()
+        .get("/local/daily-registrations-report/2021/2021-01-02.daily-registrations-report.json", {
+          finish: "2020-01-03",
+          results: [
+            { date: "2020-01-01", total_users: 2, fully_registered_users: 1 },
+            { date: "2020-01-02", total_users: 20, fully_registered_users: 10 },
+          ],
+        });
+
       return loadData(yearMonthDayParse("2021-01-02"), "local", fetch as typeof window.fetch).then(
         (processed) => {
           expect(processed).to.have.lengthOf(2);
