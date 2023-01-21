@@ -7,6 +7,7 @@ const ALL_ROUTES = {
   "/daily-auths-report/": "Daily Auths Report",
   "/daily-dropoffs-report/": "Daily Dropoffs Report",
   "/proofing-over-time/": "Proofing Over Time Report",
+  "/daily-registrations-report/": "Daily Registrations Report",
 };
 
 export default ALL_ROUTES;
