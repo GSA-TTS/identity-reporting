@@ -2,6 +2,7 @@ import { VNode } from "preact";
 import { useQuery } from "preact-fetching";
 import { useRef, useState, useContext } from "preact/hooks";
 import * as Plot from "@observablehq/plot";
+import Markdown from "preact-markdown";
 import { ReportFilterContext } from "../contexts/report-filter-context";
 import useResizeListener from "../hooks/resize-listener";
 import {
@@ -15,15 +16,8 @@ import PlotComponent from "./plot";
 import { formatSIDropTrailingZeroes, formatWithCommas, yearMonthDayFormat } from "../formats";
 import Table, { TableData } from "./table";
 import Accordion from "./accordion";
-import Markdown from "preact-markdown";
 
-function plot({
-  data,
-  width,
-}: {
-  data: ProcessedRenderableData[];
-  width?: number;
-}): HTMLElement {
+function plot({ data, width }: { data: ProcessedRenderableData[]; width?: number }): HTMLElement {
   return Plot.plot({
     color: {
       legend: true,
@@ -86,18 +80,20 @@ function DailyRegistrationsReport(): VNode {
 
   const { data } = useQuery(`daily-registrations-${finish.valueOf()}`, () => loadData(finish, env));
 
-  const filteredData = data && toRenderableData(data).filter(({ type }) => {
-    switch (type) {
-      case DataType.TOTAL_USERS:
-      case DataType.FULLY_REGISTERED_USERS:
-        return !cumulative;
-      case DataType.TOTAL_USERS_CUMULATIVE:
-      case DataType.FULLY_REGISTERED_USERS_CUMULATIVE:
-        return !!cumulative;
-      default:
-        throw new Error(`Unknown data type ${type}`);
-    }
-  });
+  const filteredData =
+    data &&
+    toRenderableData(data).filter(({ type }) => {
+      switch (type) {
+        case DataType.TOTAL_USERS:
+        case DataType.FULLY_REGISTERED_USERS:
+          return !cumulative;
+        case DataType.TOTAL_USERS_CUMULATIVE:
+        case DataType.FULLY_REGISTERED_USERS_CUMULATIVE:
+          return !!cumulative;
+        default:
+          throw new Error(`Unknown data type ${type}`);
+      }
+    });
 
   const windowedData = data && data.filter(({ date }) => start <= date && date <= finish);
 
