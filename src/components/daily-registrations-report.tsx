@@ -14,6 +14,8 @@ import {
 import PlotComponent from "./plot";
 import { formatSIDropTrailingZeroes, formatWithCommas, yearMonthDayFormat } from "../formats";
 import Table, { TableData } from "./table";
+import Accordion from "./accordion";
+import Markdown from "preact-markdown";
 
 function plot({
   data,
@@ -101,6 +103,17 @@ function DailyRegistrationsReport(): VNode {
 
   return (
     <div ref={ref}>
+      <Accordion title="How is this measured?">
+        <Markdown
+          markdown={`
+**Timing**: All data is collected, grouped, and displayed in the UTC timezone.
+
+**Definitions**
+- **New Users**: Number of accounts created, only looking at submitting an email address
+- **Fully Registered Users**: Number of accounts created that have verified an email address and
+  added (and confirmed) a second factor`}
+        />
+      </Accordion>
       {filteredData && (
         <PlotComponent
           plotter={() => plot({ data: filteredData, width })}
