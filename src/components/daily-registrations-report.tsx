@@ -20,8 +20,6 @@ function plot({
   width,
 }: {
   data: ProcessedRenderableData[];
-  start: Date;
-  finish: Date;
   width?: number;
 }): HTMLElement {
   return Plot.plot({
@@ -86,7 +84,7 @@ function DailyRegistrationsReport(): VNode {
 
   const { data } = useQuery(`daily-registrations-${finish.valueOf()}`, () => loadData(finish, env));
 
-  const filteredData = toRenderableData(data || []).filter(({ type }) => {
+  const filteredData = data && toRenderableData(data).filter(({ type }) => {
     switch (type) {
       case DataType.TOTAL_USERS:
       case DataType.FULLY_REGISTERED_USERS:
@@ -99,17 +97,17 @@ function DailyRegistrationsReport(): VNode {
     }
   });
 
-  const windowedData = (data || []).filter(({ date }) => start <= date && date <= finish);
+  const windowedData = data && data.filter(({ date }) => start <= date && date <= finish);
 
   return (
     <div ref={ref}>
-      {data && (
+      {filteredData && (
         <PlotComponent
-          plotter={() => plot({ data: filteredData, start, finish, width })}
-          inputs={[data, start.valueOf(), finish.valueOf(), width, cumulative]}
+          plotter={() => plot({ data: filteredData, width })}
+          inputs={[data, width, cumulative]}
         />
       )}
-      {data && <Table numberFormatter={formatWithCommas} data={tabulate(windowedData)} />}
+      {windowedData && <Table numberFormatter={formatWithCommas} data={tabulate(windowedData)} />}
     </div>
   );
 }
