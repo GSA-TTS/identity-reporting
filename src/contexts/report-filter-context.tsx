@@ -39,6 +39,7 @@ interface ReportFilterContextValues {
   byAgency: boolean;
   extra: boolean;
   timeBucket?: TimeBucket
+  cumulative?: boolean
   setParameters: (params: Record<string, string>) => void;
 }
 
@@ -69,6 +70,7 @@ const ReportFilterContext = createContext({
   byAgency: false,
   extra: false,
   timeBucket: DEFAULT_TIME_BUCKET,
+  cumulative: true,
 } as ReportFilterContextValues);
 
 type ReportFilterContextProviderProps = Omit<ReportFilterContextValues, "setParameters">;

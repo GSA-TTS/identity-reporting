@@ -44,6 +44,12 @@ interface ReportRouteProps {
    * Whether or not to show extra controls
    */
   extra?: string;
+
+  /**
+   * When "on" the report should show cumulative data
+   * When "off" it should show daily data
+   */
+  cumulative?: "on" | "off";
 }
 
 function createReportRoute(
@@ -70,6 +76,7 @@ function createReportRoute(
     byAgency: byAgencyParam,
     extra: extraParam,
     timeBucket,
+    cumulative: cumulativeParam,
   }: ReportRouteProps): VNode => {
     const endOfPreviousWeek = utcDay.offset(utcWeek.floor(new Date()), -1);
     const startOfPreviousWeek = utcWeek.offset(
@@ -85,6 +92,7 @@ function createReportRoute(
     const scale = scaleParam || defaultScale || DEFAULT_SCALE;
     const extra = extraParam === "true";
     const byAgency = byAgencyParam ? byAgencyParam === "on" : extra;
+    const cumulative = cumulativeParam ? cumulativeParam === "on" : true;
 
     const reportControls = controls || [];
     if (extra) {
@@ -108,6 +116,7 @@ function createReportRoute(
             byAgency={byAgency}
             extra={extra}
             timeBucket={timeBucket}
+            cumulative={cumulative}
           >
             <ReportFilterControls controls={reportControls} />
             <Report />

@@ -3,6 +3,7 @@ import { Control } from "../components/report-filter-controls";
 import DailyAuthsReport from "../components/daily-auths-report";
 import DailyDropffsReport from "../components/daily-dropoffs-report";
 import ProofingOverTimeReport from "../components/proofing-over-time-report";
+import DailyRegistrationsReport from "../components/daily-registrations-report";
 import { Router } from "../router";
 import HomeRoute from "./home-route";
 import createReportRoute, { ReportRoute } from "./report-route";
@@ -27,6 +28,9 @@ const reportRoutes: ReportRoutes = {
     defaultScale: Scale.PERCENT,
   }),
   "/": HomeRoute,
+  "/daily-registrations-report/": createReportRoute(DailyRegistrationsReport, {
+    controls: [Control.CUMULATIVE],
+  }),
 };
 
 export function Routes(): VNode {
