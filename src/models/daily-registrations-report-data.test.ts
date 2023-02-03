@@ -11,8 +11,8 @@ describe("DailyRegistrationsReportData", () => {
         .get("/local/daily-registrations-report/2021/2021-01-02.daily-registrations-report.json", {
           finish: "2020-01-03",
           results: [
-            { date: "2020-01-01", total_users: 2, fully_registered_users: 1 },
-            { date: "2020-01-02", total_users: 20, fully_registered_users: 10 },
+            { date: "2020-01-01", total_users: 2, fully_registered_users: 1, deleted_users: 1 },
+            { date: "2020-01-02", total_users: 20, fully_registered_users: 10, deleted_users: 1 },
           ],
         });
 
@@ -26,6 +26,8 @@ describe("DailyRegistrationsReportData", () => {
               fullyRegisteredUsers: 1,
               totalUsersCumulative: 2,
               fullyRegisteredUsersCumulative: 1,
+              deletedUsers: 1,
+              deletedUsersCumulative: 1,
             },
             {
               date: yearMonthDayParse("2020-01-02"),
@@ -33,6 +35,8 @@ describe("DailyRegistrationsReportData", () => {
               fullyRegisteredUsers: 10,
               totalUsersCumulative: 22,
               fullyRegisteredUsersCumulative: 11,
+              deletedUsers: 1,
+              deletedUsersCumulative: 2,
             },
           ]);
         }
@@ -49,6 +53,8 @@ describe("DailyRegistrationsReportData", () => {
           fullyRegisteredUsers: 2,
           totalUsersCumulative: 3,
           fullyRegisteredUsersCumulative: 4,
+          deletedUsers: 5,
+          deletedUsersCumulative: 6,
         },
       ]);
 
@@ -72,6 +78,16 @@ describe("DailyRegistrationsReportData", () => {
           date: yearMonthDayParse("2020-01-01"),
           type: DataType.FULLY_REGISTERED_USERS_CUMULATIVE,
           value: 4,
+        },
+        {
+          date: yearMonthDayParse("2020-01-01"),
+          type: DataType.DELETED_USERS,
+          value: 5,
+        },
+        {
+          date: yearMonthDayParse("2020-01-01"),
+          type: DataType.DELETED_USERS_CUMULATIVE,
+          value: 6,
         },
       ]);
     });

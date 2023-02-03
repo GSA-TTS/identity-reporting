@@ -67,12 +67,12 @@ function tabulate(results: ProcessedResult[]): TableData {
         "New Fully Registered Users",
         ...results.map(({ fullyRegisteredUsers }) => fullyRegisteredUsers),
       ],
+      ["Deleted Users", ...results.map(({ deletedUsers }) => deletedUsers)],
       ["Cumulative Users", ...results.map(({ totalUsersCumulative }) => totalUsersCumulative)],
       [
         "Cumulative Fully Registered Users",
         ...results.map(({ fullyRegisteredUsersCumulative }) => fullyRegisteredUsersCumulative),
       ],
-      ["Deleted Users", ...results.map(({ deletedUsers }) => deletedUsers)],
       [
         "Cumulative Deleted Users",
         ...results.map(({ deletedUsersCumulative }) => deletedUsersCumulative),

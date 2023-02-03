@@ -37,7 +37,7 @@ describe("DailyRegistrationsReport", () => {
           ["Deleted Users", 3, 4],
           ["Cumulative Users", 10, 17],
           ["Cumulative Fully Registered Users", 2, 4],
-          ["Deleted Users Cumulative", 5, 9],
+          ["Cumulative Deleted Users", 5, 9],
         ],
       });
     });
