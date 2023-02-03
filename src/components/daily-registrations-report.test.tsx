@@ -13,6 +13,8 @@ describe("DailyRegistrationsReport", () => {
           fullyRegisteredUsers: 1,
           totalUsersCumulative: 10,
           fullyRegisteredUsersCumulative: 2,
+          deletedUsers: 3,
+          deletedUsersCumulative: 5,
         },
         {
           date: yearMonthDayParse("2020-01-02"),
@@ -20,6 +22,8 @@ describe("DailyRegistrationsReport", () => {
           fullyRegisteredUsers: 2,
           totalUsersCumulative: 17,
           fullyRegisteredUsersCumulative: 4,
+          deletedUsers: 4,
+          deletedUsersCumulative: 9,
         },
       ];
 
@@ -30,8 +34,10 @@ describe("DailyRegistrationsReport", () => {
         body: [
           ["New Users", 5, 6],
           ["New Fully Registered Users", 1, 2],
+          ["Deleted Users", 3, 4],
           ["Cumulative Users", 10, 17],
           ["Cumulative Fully Registered Users", 2, 4],
+          ["Deleted Users Cumulative", 5, 9],
         ],
       });
     });
