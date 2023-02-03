@@ -30,7 +30,7 @@ function plot({ data, width }: { data: ProcessedRenderableData[]; width?: number
             return "Total Users";
           case DataType.FULLY_REGISTERED_USERS:
           case DataType.FULLY_REGISTERED_USERS_CUMULATIVE:
-            return "Full Registered Users";
+            return "Fully Registered Users";
           case DataType.DELETED_USERS:
           case DataType.DELETED_USERS_CUMULATIVE:
             return "Deleted Users";
