@@ -22,7 +22,7 @@ function plot({ data, width }: { data: ProcessedRenderableData[]; width?: number
     color: {
       legend: true,
       type: "ordinal",
-      scheme: "category10",
+      scheme: "Tableau10",
       tickFormat: (type: DataType): string => {
         switch (type) {
           case DataType.TOTAL_USERS:
