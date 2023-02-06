@@ -3,6 +3,7 @@ import { useQuery } from "preact-fetching";
 import { useRef, useState, useContext } from "preact/hooks";
 import * as Plot from "@observablehq/plot";
 import Markdown from "preact-markdown";
+import { descending } from "d3-array";
 import { ReportFilterContext } from "../contexts/report-filter-context";
 import useResizeListener from "../hooks/resize-listener";
 import {
@@ -60,24 +61,36 @@ function plot({ data, width }: { data: ProcessedRenderableData[]; width?: number
  */
 function tabulate(results: ProcessedResult[]): TableData {
   return {
-    header: ["", ...results.map(({ date }) => yearMonthDayFormat(date))],
-    body: [
-      ["New Users", ...results.map(({ totalUsers }) => totalUsers)],
-      [
-        "New Fully Registered Users",
-        ...results.map(({ fullyRegisteredUsers }) => fullyRegisteredUsers),
-      ],
-      ["Deleted Users", ...results.map(({ deletedUsers }) => deletedUsers)],
-      ["Cumulative Users", ...results.map(({ totalUsersCumulative }) => totalUsersCumulative)],
-      [
-        "Cumulative Fully Registered Users",
-        ...results.map(({ fullyRegisteredUsersCumulative }) => fullyRegisteredUsersCumulative),
-      ],
-      [
-        "Cumulative Deleted Users",
-        ...results.map(({ deletedUsersCumulative }) => deletedUsersCumulative),
-      ],
+    header: [
+      "Date",
+      "New Users",
+      "New Fully Registered Users",
+      "Deleted Users",
+      "Cumulative Users",
+      "Cumulative Fully Registered Users",
+      "Cumulative Deleted Users",
     ],
+    body: results
+      .sort(({ date: aDate }, { date: bDate }) => descending(aDate, bDate))
+      .map(
+        ({
+          date,
+          totalUsers,
+          fullyRegisteredUsers,
+          deletedUsers,
+          totalUsersCumulative,
+          fullyRegisteredUsersCumulative,
+          deletedUsersCumulative,
+        }) => [
+          yearMonthDayFormat(date),
+          totalUsers,
+          fullyRegisteredUsers,
+          deletedUsers,
+          totalUsersCumulative,
+          fullyRegisteredUsersCumulative,
+          deletedUsersCumulative,
+        ]
+      ),
   };
 }
 
