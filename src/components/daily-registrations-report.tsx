@@ -22,6 +22,7 @@ function plot({ data, width }: { data: ProcessedRenderableData[]; width?: number
     color: {
       legend: true,
       type: "ordinal",
+      scheme: "Tableau10",
       tickFormat: (type: DataType): string => {
         switch (type) {
           case DataType.TOTAL_USERS:
@@ -29,7 +30,10 @@ function plot({ data, width }: { data: ProcessedRenderableData[]; width?: number
             return "Total Users";
           case DataType.FULLY_REGISTERED_USERS:
           case DataType.FULLY_REGISTERED_USERS_CUMULATIVE:
-            return "Full Registered Users";
+            return "Fully Registered Users";
+          case DataType.DELETED_USERS:
+          case DataType.DELETED_USERS_CUMULATIVE:
+            return "Deleted Users";
           default:
             throw new Error(`Unknown type ${type}`);
         }
@@ -63,10 +67,15 @@ function tabulate(results: ProcessedResult[]): TableData {
         "New Fully Registered Users",
         ...results.map(({ fullyRegisteredUsers }) => fullyRegisteredUsers),
       ],
+      ["Deleted Users", ...results.map(({ deletedUsers }) => deletedUsers)],
       ["Cumulative Users", ...results.map(({ totalUsersCumulative }) => totalUsersCumulative)],
       [
         "Cumulative Fully Registered Users",
         ...results.map(({ fullyRegisteredUsersCumulative }) => fullyRegisteredUsersCumulative),
+      ],
+      [
+        "Cumulative Deleted Users",
+        ...results.map(({ deletedUsersCumulative }) => deletedUsersCumulative),
       ],
     ],
   };
@@ -86,9 +95,11 @@ function DailyRegistrationsReport(): VNode {
       switch (type) {
         case DataType.TOTAL_USERS:
         case DataType.FULLY_REGISTERED_USERS:
+        case DataType.DELETED_USERS:
           return !cumulative;
         case DataType.TOTAL_USERS_CUMULATIVE:
         case DataType.FULLY_REGISTERED_USERS_CUMULATIVE:
+        case DataType.DELETED_USERS_CUMULATIVE:
           return !!cumulative;
         default:
           throw new Error(`Unknown data type ${type}`);

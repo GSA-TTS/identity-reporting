@@ -1,4 +1,5 @@
 import { ascending } from "d3-array";
+import { yearMonthDayParse } from "../formats";
 import { path as reportPath } from "./api-path";
 
 interface Result {
@@ -8,6 +9,7 @@ interface Result {
   date: string;
   total_users: number;
   fully_registered_users: number;
+  deleted_users?: number;
 }
 
 interface ProcessedResult {
@@ -16,6 +18,8 @@ interface ProcessedResult {
   totalUsersCumulative: number;
   fullyRegisteredUsers: number;
   fullyRegisteredUsersCumulative: number;
+  deletedUsers: number;
+  deletedUsersCumulative: number;
 }
 
 enum DataType {
@@ -23,6 +27,8 @@ enum DataType {
   TOTAL_USERS_CUMULATIVE,
   FULLY_REGISTERED_USERS,
   FULLY_REGISTERED_USERS_CUMULATIVE,
+  DELETED_USERS,
+  DELETED_USERS_CUMULATIVE,
 }
 
 interface ProcessedRenderableData {
@@ -43,21 +49,32 @@ interface DailyRegistrationsReportData {
 function process({ results }: DailyRegistrationsReportData): ProcessedResult[] {
   let totalUsersCumulative = 0;
   let fullyRegisteredUsersCumulative = 0;
+  let deletedUsersCumulative = 0;
 
   return results
     .sort(({ date: dateA }, { date: dateB }) => ascending(dateA, dateB))
-    .map(({ date, total_users: totalUsers, fully_registered_users: fullyRegisteredUsers }) => {
-      totalUsersCumulative += totalUsers;
-      fullyRegisteredUsersCumulative += fullyRegisteredUsers;
+    .map(
+      ({
+        date,
+        total_users: totalUsers,
+        fully_registered_users: fullyRegisteredUsers,
+        deleted_users: deletedUsers,
+      }) => {
+        totalUsersCumulative += totalUsers;
+        fullyRegisteredUsersCumulative += fullyRegisteredUsers;
+        deletedUsersCumulative += deletedUsers || 0;
 
-      return {
-        date: new Date(date),
-        totalUsers,
-        totalUsersCumulative,
-        fullyRegisteredUsers,
-        fullyRegisteredUsersCumulative,
-      };
-    });
+        return {
+          date: yearMonthDayParse(date),
+          totalUsers,
+          totalUsersCumulative,
+          fullyRegisteredUsers,
+          fullyRegisteredUsersCumulative,
+          deletedUsers: deletedUsers || 0,
+          deletedUsersCumulative,
+        };
+      }
+    );
 }
 
 function toRenderableData(results: ProcessedResult[]): ProcessedRenderableData[] {
@@ -68,6 +85,8 @@ function toRenderableData(results: ProcessedResult[]): ProcessedRenderableData[]
       totalUsersCumulative,
       fullyRegisteredUsers,
       fullyRegisteredUsersCumulative,
+      deletedUsers,
+      deletedUsersCumulative,
     }) => [
       { date, value: totalUsers, type: DataType.TOTAL_USERS },
       { date, value: totalUsersCumulative, type: DataType.TOTAL_USERS_CUMULATIVE },
@@ -77,6 +96,8 @@ function toRenderableData(results: ProcessedResult[]): ProcessedRenderableData[]
         value: fullyRegisteredUsersCumulative,
         type: DataType.FULLY_REGISTERED_USERS_CUMULATIVE,
       },
+      { date, value: deletedUsers, type: DataType.DELETED_USERS },
+      { date, value: deletedUsersCumulative, type: DataType.DELETED_USERS_CUMULATIVE },
     ]
   );
 }
