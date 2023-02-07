@@ -30,14 +30,18 @@ describe("DailyRegistrationsReport", () => {
       const table = tabulate(results);
 
       expect(table).to.deep.equal({
-        header: ["", "2020-01-01", "2020-01-02"],
+        header: [
+          "Date",
+          "New Users",
+          "New Fully Registered Users",
+          "Deleted Users",
+          "Cumulative Users",
+          "Cumulative Fully Registered Users",
+          "Cumulative Deleted Users",
+        ],
         body: [
-          ["New Users", 5, 6],
-          ["New Fully Registered Users", 1, 2],
-          ["Deleted Users", 3, 4],
-          ["Cumulative Users", 10, 17],
-          ["Cumulative Fully Registered Users", 2, 4],
-          ["Cumulative Deleted Users", 5, 9],
+          ["2020-01-02", 6, 2, 4, 17, 4, 9],
+          ["2020-01-01", 5, 1, 3, 10, 2, 5],
         ],
       });
     });
