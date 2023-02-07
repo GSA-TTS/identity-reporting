@@ -252,6 +252,7 @@ export default function ProofingOverTimeReport(): VNode {
     scale,
     byAgency,
     timeBucket = TimeBucket.WEEK,
+    extra,
   } = useContext(ReportFilterContext);
 
   const { data } = useQuery(`proofing-over-time-${start.valueOf()}-${finish.valueOf()}`, () =>
@@ -300,86 +301,89 @@ The data model table can't accurately capture:
 - Users who attempt proofing at one partner app, and reattempt with a different partner app.`}
         />
       </Accordion>
-      <PlotComponent
-        plotter={() =>
-          Plot.plot({
-            y: {
-              tickFormat,
-              domain: scale === Scale.PERCENT ? [0, 1] : undefined,
-              label: "↑ Verified",
-            },
-            color: {
-              legend: true,
-            },
-            marginRight: 50,
-            width,
-            marks: [
-              Plot.ruleY([0]),
-              Plot.lineY(
-                flatSteps,
-                Plot.binX(
-                  { y: scale === Scale.PERCENT ? "mean" : "sum" },
-                  {
-                    x: "date",
-                    y,
-                    thresholds,
-                    z: lineDeterminer,
-                    stroke,
-                    title: lineDeterminer,
-                    filter,
-                  }
-                )
-              ),
-              showAverages &&
-                Plot.ruleY(
+      {extra && (
+        <PlotComponent
+          plotter={() =>
+            Plot.plot({
+              y: {
+                tickFormat,
+                domain: scale === Scale.PERCENT ? [0, 1] : undefined,
+                label: "↑ Verified",
+              },
+              color: {
+                legend: true,
+              },
+              marginRight: 50,
+              width,
+              marks: [
+                Plot.ruleY([0]),
+                Plot.lineY(
+
                   flatSteps,
-                  Plot.binY(
-                    { y: "mean" },
+                  Plot.binX(
+                    { y: scale === Scale.PERCENT ? "mean" : "sum" },
                     {
+                      x: "date",
+                      y,
+                      thresholds,
                       z: lineDeterminer,
                       stroke,
-                      strokeDasharray: "3,2",
-                      thresholds,
-                      y,
+                      title: lineDeterminer,
                       filter,
                     }
                   )
                 ),
-              showAverages &&
-                Plot.text(
-                  flatSteps,
-                  Plot.binY(
-                    { y: "mean" },
-                    {
-                      y,
-                      text: (bin: StepCountEntry[]) => tickFormat(mean(bin, (d) => d[y]) || 0),
-                      x:
-                        timeBucket === TimeBucket.WEEK
-                          ? mean([thresholds.floor(finish), thresholds.ceil(finish)])
-                          : finish,
-                      dx: timeBucket === TimeBucket.DAY ? 15 : undefined,
-                      z: lineDeterminer,
-                      fill: stroke,
-                      thresholds,
-                      textAnchor: "start",
-                      filter,
-                    }
-                  )
-                ),
-            ].filter(Boolean),
-          })
-        }
-        inputs={[
-          flatSteps,
-          agency,
-          start.valueOf(),
-          finish.valueOf(),
-          width,
-          funnelMode,
-          scale,
-          timeBucket,
-        ]}
-      />
+                showAverages &&
+                  Plot.ruleY(
+                    flatSteps,
+                    Plot.binY(
+                      { y: "mean" },
+                      {
+                        z: lineDeterminer,
+                        stroke,
+                        strokeDasharray: "3,2",
+                        thresholds,
+                        y,
+                        filter,
+                      }
+                    )
+                  ),
+                showAverages &&
+                  Plot.text(
+                    flatSteps,
+                    Plot.binY(
+                      { y: "mean" },
+                      {
+                        y,
+                        text: (bin: StepCountEntry[]) => tickFormat(mean(bin, (d) => d[y]) || 0),
+                        x:
+                          timeBucket === TimeBucket.WEEK
+                            ? mean([thresholds.floor(finish), thresholds.ceil(finish)])
+                            : finish,
+                        dx: timeBucket === TimeBucket.DAY ? 15 : undefined,
+                        z: lineDeterminer,
+                        fill: stroke,
+                        thresholds,
+                        textAnchor: "start",
+                        filter,
+                      }
+                    )
+                  ),
+              ].filter(Boolean),
+            })
+          }
+          inputs={[
+            flatSteps,
+            agency,
+            start.valueOf(),
+            finish.valueOf(),
+            width,
+            funnelMode,
+            scale,
+            timeBucket,
+          ]}
+        />
+      )}
       {!byAgency && (
         <Table
           data={tabulateAll({
@@ -395,17 +399,17 @@ The data model table can't accurately capture:
       {byAgency && !agency && (
         <Table
           data={tabulateByAgency({ data: filteredData, timeBucket, funnelMode, color })}
-          filename={`proofing-over-time-report-agencies-${yearMonthDayFormat(start)}-to-${yearMonthDayFormat(
-            finish
-          )}.csv`}
+          filename={`proofing-over-time-report-agencies-${yearMonthDayFormat(
+            start
+          )}-to-${yearMonthDayFormat(finish)}.csv`}
         />
       )}
       {byAgency && agency && (
         <Table
           data={tabulateByIssuer({ data: filteredData, timeBucket, funnelMode, color })}
-          filename={`proofing-over-time-report-${kebabCase(agency)}-${yearMonthDayFormat(start)}-to-${yearMonthDayFormat(
-            finish
-          )}.csv`}
+          filename={`proofing-over-time-report-${kebabCase(agency)}-${yearMonthDayFormat(
+            start
+          )}-to-${yearMonthDayFormat(finish)}.csv`}
         />
       )}
     </div>
