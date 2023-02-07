@@ -1,23 +1,12 @@
 import { VNode } from "preact";
-import { useContext, useRef, useState } from "preact/hooks";
-import { useQuery } from "preact-fetching";
-import { scaleLinear, scaleOrdinal } from "d3-scale";
-import { schemeCategory10 } from "d3-scale-chromatic";
-import Markdown from "preact-markdown";
+import { scaleLinear } from "d3-scale";
 import { ascending } from "d3-array";
-import { FunnelMode, ReportFilterContext } from "../contexts/report-filter-context";
-import Table, { TableData } from "./table";
-import { useAgencies } from "../contexts/agencies-context";
-import Accordion from "./accordion";
-import useResizeListener from "../hooks/resize-listener";
-import DailyDropoffsLineChart from "./daily-dropoffs-line-chart";
+import { FunnelMode } from "../contexts/report-filter-context";
+import { TableData } from "./table";
 import {
   DailyDropoffsRow,
   funnelSteps,
-  loadData,
   toStepCounts,
-  aggregateAll,
-  aggregate,
 } from "../models/daily-dropoffs-report-data";
 import { formatAsPercent, formatWithCommas, yearMonthDayFormat } from "../formats";
 
@@ -111,56 +100,10 @@ function tabulate({
 }
 
 function DailyDropffsReport(): VNode {
-  const ref = useRef(null as HTMLDivElement | null);
-  const [width, setWidth] = useState(undefined as number | undefined);
-  const { byAgency, start, finish, agency, env, funnelMode, scale } =
-    useContext(ReportFilterContext);
-
-  const { data } = useQuery(`dropoffs/${start.valueOf()}-${finish.valueOf()}`, () =>
-    loadData(start, finish, env)
-  );
-
-  const issuerColor = scaleOrdinal(schemeCategory10);
-
-  useResizeListener(() => setWidth(ref.current?.offsetWidth));
-  useAgencies(data);
-
-  const nonNullData = aggregate(data || []);
-  const filteredData = (byAgency ? nonNullData : aggregateAll(nonNullData)).filter(
-    (d) => !agency || d.agency === agency
-  );
-
   return (
-    <div ref={ref}>
-      <Accordion title="How is this measured?">
-        <Markdown
-          markdown={`
-**Timing**: All data is collected, grouped, and displayed in the UTC timezone.
-
-**Known Limitations**:
-
-The data model table can't accurately capture:
-- Users who become verified on a different day than the day they start proofing (such as verify by mail)
-- Users who attempt proofing at one partner app, and reattempt with a different partner app.
-`}
-        />
-      </Accordion>
-      {undefined && (
-        <DailyDropoffsLineChart
-          data={filteredData}
-          width={width}
-          color={issuerColor}
-          funnelMode={funnelMode}
-          scale={scale}
-        />
-      )}
-      <Table
-        data={tabulate({ rows: filteredData, issuerColor, funnelMode })}
-        numberFormatter={formatWithCommas}
-        filename={`daily-dropoffs-report-${yearMonthDayFormat(start)}-to-${yearMonthDayFormat(
-          finish
-        )}.csv`}
-      />
+    <div class="padding-bottom-5">
+      <h2>This Report is Unavailable Right Now</h2>
+      <p>We're investigating inconsistencies in the underlying data.</p>
     </div>
   );
 }
