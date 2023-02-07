@@ -1,14 +1,11 @@
 import { VNode } from "preact";
 import { scaleLinear } from "d3-scale";
 import { ascending } from "d3-array";
+import Markdown from "preact-markdown";
 import { FunnelMode } from "../contexts/report-filter-context";
 import { TableData } from "./table";
-import {
-  DailyDropoffsRow,
-  funnelSteps,
-  toStepCounts,
-} from "../models/daily-dropoffs-report-data";
-import { formatAsPercent, formatWithCommas, yearMonthDayFormat } from "../formats";
+import { DailyDropoffsRow, funnelSteps, toStepCounts } from "../models/daily-dropoffs-report-data";
+import { formatAsPercent, formatWithCommas } from "../formats";
 
 function tabulate({
   rows: unsortedRows,
@@ -101,9 +98,14 @@ function tabulate({
 
 function DailyDropffsReport(): VNode {
   return (
-    <div class="padding-bottom-5">
-      <h2>This Report is Unavailable Right Now</h2>
-      <p>We're investigating inconsistencies in the underlying data.</p>
+    <div className="padding-bottom-5">
+      <Markdown
+        markdown={`
+## This Report is Unavailable Right Now
+
+We're investigating inconsistencies in the underlying data.
+`}
+      />
     </div>
   );
 }
