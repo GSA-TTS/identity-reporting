@@ -1,5 +1,5 @@
 import { VNode } from "preact";
-import { useContext, useRef } from "preact/hooks";
+import { useContext, useRef, useState } from "preact/hooks";
 import { useQuery } from "preact-fetching";
 import { scaleLinear, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
@@ -9,6 +9,8 @@ import { FunnelMode, ReportFilterContext } from "../contexts/report-filter-conte
 import Table, { TableData } from "./table";
 import { useAgencies } from "../contexts/agencies-context";
 import Accordion from "./accordion";
+import useResizeListener from "../hooks/resize-listener";
+import DailyDropoffsLineChart from "./daily-dropoffs-line-chart";
 import {
   DailyDropoffsRow,
   funnelSteps,
@@ -110,7 +112,9 @@ function tabulate({
 
 function DailyDropffsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
-  const { byAgency, start, finish, agency, env, funnelMode } = useContext(ReportFilterContext);
+  const [width, setWidth] = useState(undefined as number | undefined);
+  const { byAgency, start, finish, agency, env, funnelMode, scale } =
+    useContext(ReportFilterContext);
 
   const { data } = useQuery(`dropoffs/${start.valueOf()}-${finish.valueOf()}`, () =>
     loadData(start, finish, env)
@@ -118,6 +122,7 @@ function DailyDropffsReport(): VNode {
 
   const issuerColor = scaleOrdinal(schemeCategory10);
 
+  useResizeListener(() => setWidth(ref.current?.offsetWidth));
   useAgencies(data);
 
   const nonNullData = aggregate(data || []);
@@ -140,6 +145,15 @@ The data model table can't accurately capture:
 `}
         />
       </Accordion>
+      {undefined && (
+        <DailyDropoffsLineChart
+          data={filteredData}
+          width={width}
+          color={issuerColor}
+          funnelMode={funnelMode}
+          scale={scale}
+        />
+      )}
       <Table
         data={tabulate({ rows: filteredData, issuerColor, funnelMode })}
         numberFormatter={formatWithCommas}
