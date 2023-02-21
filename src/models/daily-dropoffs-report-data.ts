@@ -3,6 +3,7 @@ import { csvParse, autoType } from "d3-dsv";
 import { utcDays, utcDay } from "d3-time";
 import { path as reportPath } from "./api-path";
 import { FunnelMode } from "../contexts/report-filter-context";
+import { yearMonthDayParse } from "../formats";
 
 enum Step {
   WELCOME = "welcome",
@@ -166,6 +167,24 @@ function loadData(
   ).then((reports) => reports.flatMap((r) => process(r)));
 }
 
+const BAD_DATA = {
+  start: yearMonthDayParse("2023-01-26"),
+  finish: yearMonthDayParse("2023-02-16"),
+};
+
+function pointInRange<T>(point: T, min: T, max: T) {
+  return point >= min && point <= max;
+}
+
+function overlapsBadData(start: Date, finish: Date): boolean {
+  return (
+    pointInRange(start, BAD_DATA.start, BAD_DATA.finish) ||
+    pointInRange(finish, BAD_DATA.start, BAD_DATA.finish) ||
+    pointInRange(BAD_DATA.start, start, finish) ||
+    pointInRange(BAD_DATA.finish, start, finish)
+  );
+}
+
 export {
   DailyDropoffsRow,
   Step,
@@ -176,4 +195,6 @@ export {
   aggregateAll,
   funnelSteps,
   toStepCounts,
+  overlapsBadData,
+  BAD_DATA,
 };

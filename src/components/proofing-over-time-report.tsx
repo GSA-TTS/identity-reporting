@@ -17,9 +17,11 @@ import {
   TimeBucket,
 } from "../contexts/report-filter-context";
 import {
+  BAD_DATA,
   DailyDropoffsRow,
   funnelSteps,
   loadData,
+  overlapsBadData,
   Step,
   StepCount,
   toStepCounts,
@@ -28,11 +30,13 @@ import {
   formatAsPercent,
   formatSIDropTrailingZeroes,
   formatWithCommas,
+  formatWithWeekday,
   yearMonthDayFormat,
 } from "../formats";
 import { useAgencies } from "../contexts/agencies-context";
 import Table, { TableData } from "./table";
 import { kebabCase } from "../strings";
+import Alert from "./alert";
 
 interface StepCountEntry extends StepCount {
   date: Date;
@@ -282,8 +286,16 @@ export default function ProofingOverTimeReport(): VNode {
 
   const flatSteps = flatten({ data: filteredData, funnelMode });
 
+  const showAlert = overlapsBadData(start, finish);
+
   return (
     <div ref={ref}>
+      {showAlert && (
+        <Alert level="error" className="margin-y-2" title="Unreliable Data">
+          Due to errors in the underlying data, this report is not accurate between{" "}
+          {formatWithWeekday(BAD_DATA.start)} and {formatWithWeekday(BAD_DATA.finish)}
+        </Alert>
+      )}
       <Accordion title="How is this measured?">
         <Markdown
           markdown={`
@@ -366,6 +378,13 @@ The data model table can't accurately capture:
                     }
                   )
                 ),
+              showAlert &&
+                Plot.rectY([BAD_DATA], {
+                  fill: "rgba(255, 0, 0, 0.5)",
+                  x1: (d: { start: Date }) => d.start,
+                  x2: (d: { finish: Date }) => d.finish,
+                  y: 1,
+                }),
             ].filter(Boolean),
           })
         }
@@ -395,17 +414,17 @@ The data model table can't accurately capture:
       {byAgency && !agency && (
         <Table
           data={tabulateByAgency({ data: filteredData, timeBucket, funnelMode, color })}
-          filename={`proofing-over-time-report-agencies-${yearMonthDayFormat(start)}-to-${yearMonthDayFormat(
-            finish
-          )}.csv`}
+          filename={`proofing-over-time-report-agencies-${yearMonthDayFormat(
+            start
+          )}-to-${yearMonthDayFormat(finish)}.csv`}
         />
       )}
       {byAgency && agency && (
         <Table
           data={tabulateByIssuer({ data: filteredData, timeBucket, funnelMode, color })}
-          filename={`proofing-over-time-report-${kebabCase(agency)}-${yearMonthDayFormat(start)}-to-${yearMonthDayFormat(
-            finish
-          )}.csv`}
+          filename={`proofing-over-time-report-${kebabCase(agency)}-${yearMonthDayFormat(
+            start
+          )}-to-${yearMonthDayFormat(finish)}.csv`}
         />
       )}
     </div>

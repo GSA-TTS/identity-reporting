@@ -18,8 +18,16 @@ import {
   toStepCounts,
   aggregateAll,
   aggregate,
+  overlapsBadData,
+  BAD_DATA,
 } from "../models/daily-dropoffs-report-data";
-import { formatAsPercent, formatWithCommas, yearMonthDayFormat } from "../formats";
+import {
+  formatAsPercent,
+  formatWithCommas,
+  formatWithWeekday,
+  yearMonthDayFormat,
+} from "../formats";
+import Alert from "./alert";
 
 function tabulate({
   rows: unsortedRows,
@@ -130,8 +138,16 @@ function DailyDropffsReport(): VNode {
     (d) => !agency || d.agency === agency
   );
 
+  const showAlert = overlapsBadData(start, finish);
+
   return (
     <div ref={ref}>
+      {showAlert && (
+        <Alert level="error" className="margin-y-2" title="Unreliable Data">
+          Due to errors in the underlying data, this report is not accurate between{" "}
+          {formatWithWeekday(BAD_DATA.start)} and {formatWithWeekday(BAD_DATA.finish)}
+        </Alert>
+      )}
       <Accordion title="How is this measured?">
         <Markdown
           markdown={`

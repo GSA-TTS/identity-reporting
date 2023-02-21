@@ -2,6 +2,7 @@ import { format } from "d3-format";
 import { utcFormat, utcParse } from "d3-time-format";
 
 export const yearMonthDayFormat = utcFormat("%Y-%m-%d");
+export const formatWithWeekday = utcFormat("%B %d, %Y (%a)")
 
 export const formatWithCommas = format(",");
 
