@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import fetchMock from "fetch-mock";
-import { utcParse } from "d3-time-format";
 import {
   DailyDropoffsRow,
   Step,
@@ -164,8 +163,6 @@ describe("DailyDropoffsReportData", () => {
   });
 
   describe("#loadData", () => {
-    const yearMonthDayParse = utcParse("%Y-%m-%d") as (s: string) => Date;
-
     it("concatenates data across separate fetch requests", () => {
       const fetch = fetchMock
         .sandbox()
@@ -325,6 +322,6 @@ issuer1,The App,iaa123,The Agency,2021-01-01T00:00:00+01:00,2021-01-01T23:59:59+
       expect(
         overlapsBadData(yearMonthDayParse("2023-01-01"), yearMonthDayParse("2023-12-31"))
       ).to.eq(true);
-    })
+    });
   });
 });
