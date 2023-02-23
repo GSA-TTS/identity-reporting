@@ -145,7 +145,8 @@ function DailyDropffsReport(): VNode {
       {showAlert && (
         <Alert level="error" className="margin-y-2" title="Unreliable Data">
           Due to errors in the underlying data, this report is not accurate between{" "}
-          {formatWithWeekday(BAD_DATA.start)} and {formatWithWeekday(BAD_DATA.finish)}
+          {formatWithWeekday(BAD_DATA.start)} and {formatWithWeekday(BAD_DATA.finish)},
+          specifically at the Phone, Encrypt and Personal Key steps.
         </Alert>
       )}
       <Accordion title="How is this measured?">
@@ -167,6 +168,8 @@ The data model table can't accurately capture:
         color={issuerColor}
         funnelMode={funnelMode}
         scale={scale}
+        start={start}
+        finish={finish}
       />
       <Table
         data={tabulate({ rows: filteredData, issuerColor, funnelMode })}

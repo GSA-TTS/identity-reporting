@@ -8,6 +8,8 @@ import { formatWithCommas, formatAsPercent } from "../formats";
 import {
   DailyDropoffsRow,
   funnelSteps,
+  overlapsBadData,
+  Step,
   StepCount,
   stepToTitle,
   toStepCounts,
@@ -22,6 +24,8 @@ function DailyDropoffsLineChart({
   color,
   width = 400,
   height = 400,
+  start,
+  finish,
 }: {
   data: DailyDropoffsRow[];
   funnelMode: FunnelMode;
@@ -29,6 +33,8 @@ function DailyDropoffsLineChart({
   color: (issuer: string) => string;
   width?: number;
   height?: number;
+  start: Date;
+  finish: Date;
 }): VNode {
   const [highlightedIssuer, setHighlightedIssuer] = useState(undefined as string | undefined);
   const highlightedRow = data.find(({ issuer }) => issuer === highlightedIssuer);
@@ -62,6 +68,8 @@ function DailyDropoffsLineChart({
     .x(({ step }: StepCount) => x(step))
     .y((d: StepCount) => y(yAccessor(d))) as (s: StepCount[]) => string;
 
+  const showAlert = overlapsBadData(start, finish);
+
   return (
     <svg height={height} width={width} onPointerLeave={() => setHighlightedIssuer(undefined)}>
       <Axis
@@ -84,6 +92,15 @@ function DailyDropoffsLineChart({
         {highlightedRow?.friendly_name}
       </text>
       <g transform={`translate(${margin.left}, ${margin.top})`}>
+        {showAlert && (
+          <rect
+            x={x(Step.PHONE)}
+            width={(x(Step.PERSONAL_KEY) || 0) - (x(Step.PHONE) || 0)}
+            y={0}
+            height={height - margin.top - margin.bottom}
+            fill="rgba(255, 0, 0, 0.5)"
+          />
+        )}
         {(data || []).map((row) => (
           <path
             d={line(toStepCounts(row, funnelMode))}
