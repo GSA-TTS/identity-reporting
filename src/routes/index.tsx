@@ -4,6 +4,7 @@ import DailyAuthsReport from "../components/daily-auths-report";
 import DailyDropffsReport from "../components/daily-dropoffs-report";
 import ProofingOverTimeReport from "../components/proofing-over-time-report";
 import DailyRegistrationsReport from "../components/daily-registrations-report";
+import AccountDeletionsReport from "../components/account-deletions-report";
 import { Router } from "../router";
 import HomeRoute from "./home-route";
 import createReportRoute, { ReportRoute } from "./report-route";
@@ -30,6 +31,9 @@ const reportRoutes: ReportRoutes = {
   "/": HomeRoute,
   "/daily-registrations-report/": createReportRoute(DailyRegistrationsReport, {
     controls: [Control.CUMULATIVE],
+  }),
+  "/account-deletions-report/": createReportRoute(AccountDeletionsReport, {
+    defaultTimeRangeWeekOffset: -3,
   }),
 };
 
