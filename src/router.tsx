@@ -31,7 +31,7 @@ export function Router({ children }: RouterProps): VNode {
 export function Link({
   href,
   ...otherProps
-}: preact.JSX.HTMLAttributes & { activeClassName?: string }): VNode {
+}: preact.JSX.HTMLAttributes & { href?: string }): VNode {
   return <BaseLink href={getFullPath(href)} {...otherProps} />;
 }
 

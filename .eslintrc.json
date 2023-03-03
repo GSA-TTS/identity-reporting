@@ -15,7 +15,7 @@
     "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/*.test.*", "./*"] }],
     "react/no-unknown-property": [
       "error",
-      { "ignore": ["font-size", "stroke-width", "text-anchor"] }
+      { "ignore": ["font-size", "stroke-width", "text-anchor", "onPointerLeave", "onPointerEnter"] }
     ]
   },
   "settings": {
