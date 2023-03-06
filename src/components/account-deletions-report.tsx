@@ -1,11 +1,10 @@
 import { useContext, useRef } from "preact/hooks";
 import { ascending, flatGroup } from "d3-array";
-import { format } from "d3-format";
 import * as Plot from "@observablehq/plot";
 import useRegistrationData from "../hooks/use-registration-data";
 import useElementWidth from "../hooks/use-element-width";
 import { ReportFilterContext } from "../contexts/report-filter-context";
-import { yearMonthDayFormat } from "../formats";
+import { formatAsDecimalPercent, yearMonthDayFormat } from "../formats";
 import PlotComponent from "./plot";
 import Table from "./table";
 import type { ProcessedResult } from "../models/daily-registrations-report-data";
@@ -74,7 +73,7 @@ function AccountDeletionsReport() {
   return (
     <div ref={ref}>
       <PlotComponent plotter={() => plot({ data: formattedData, width })} inputs={[data, width]} />
-      <Table numberFormatter={format(".2%")} data={tabulate(formattedData)} />
+      <Table numberFormatter={formatAsDecimalPercent} data={tabulate(formattedData)} />
     </div>
   );
 }

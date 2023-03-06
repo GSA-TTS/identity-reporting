@@ -11,5 +11,6 @@ export const formatSIDropTrailingZeroes = (d: number): string =>
   d >= 1 ? formatSIPrefix(d).replace(/\.0+/, "") : formatDecimal(d);
 
 export const formatAsPercent = format(".0%");
+export const formatAsDecimalPercent = format(".2%");
 
 export const yearMonthDayParse = utcParse("%Y-%m-%d") as (s: string) => Date;
