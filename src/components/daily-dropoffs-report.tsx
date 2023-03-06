@@ -3,9 +3,9 @@ import { scaleLinear } from "d3-scale";
 import { ascending } from "d3-array";
 import Markdown from "preact-markdown";
 import { FunnelMode } from "../contexts/report-filter-context";
-import { TableData } from "./table";
+import { TableData, Td } from "./table";
 import { DailyDropoffsRow, funnelSteps, toStepCounts } from "../models/daily-dropoffs-report-data";
-import { formatAsPercent, formatWithCommas } from "../formats";
+import { formatWithCommas } from "../formats";
 
 function tabulate({
   rows: unsortedRows,
@@ -53,24 +53,12 @@ function tabulate({
       ...toStepCounts(row, funnelMode).flatMap(({ count, percentOfFirst }, idx) => {
         const backgroundColor = `background-color: ${color(percentOfFirst)};`;
         const cells = [
-          <td
-            data-csv={count}
-            className="table-number text-tabular text-right"
-            style={backgroundColor}
-          >
-            {formatWithCommas(count)}
-          </td>,
+          <Td.NumberWithCommas style={backgroundColor} number={count} />
         ];
 
         if (idx > 0) {
           cells.push(
-            <td
-              data-csv={percentOfFirst}
-              className="table-number text-tabular text-right"
-              style={backgroundColor}
-            >
-              {formatAsPercent(percentOfFirst)}
-            </td>
+            <Td.NumberAsPercent style={backgroundColor} number={percentOfFirst} />
           );
         }
 
