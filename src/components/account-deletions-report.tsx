@@ -1,6 +1,6 @@
 import { useContext, useRef } from "preact/hooks";
 import { ascending, flatGroup, mean } from "d3-array";
-import { utcWeek } from "d3-time";
+import { utcWeek, utcMonday } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import useRegistrationData from "../hooks/use-registration-data";
 import useElementWidth from "../hooks/use-element-width";
@@ -75,16 +75,8 @@ function tabulate(results: ProcessedFormattedData[]): TableData {
   };
 }
 
-function getStartOfWeek(date: Date) {
-  const day = date.getDay();
-  const offset = date.getDate() - day;
-  const startOfWeek = new Date(date);
-  startOfWeek.setDate(offset);
-  return startOfWeek;
-}
-
 function formatData(data: ProcessedResult[]): ProcessedFormattedData[] {
-  return flatGroup(data, (value) => getStartOfWeek(value.date)).flatMap(([week, entries]) => {
+  return flatGroup(data, (value) => utcMonday(value.date)).flatMap(([week, entries]) => {
     const { deletedUsers, fullyRegisteredUsers } = entries.reduce(
       (result, entry) => {
         result.deletedUsers += entry.deletedUsers;
