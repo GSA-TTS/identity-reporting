@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { formatData, tabulate } from "./account-deletions-report";
 import { yearMonthDayParse } from "../formats";
 import type { ProcessedResult } from "../models/daily-registrations-report-data";
+import type { TableRow } from "./table";
 
 describe("AccountDeletionsReport", () => {
   describe("#formatData", () => {
@@ -74,14 +75,29 @@ describe("AccountDeletionsReport", () => {
 
     it("tabulates formatted data", () => {
       const table = tabulate(formattedData);
+      const mapRow = (row: TableRow) =>
+        row.map((child) => (typeof child === "object" ? child.props : child));
 
-      expect(table).to.deep.equal({
-        header: ["Week Start", "Deleted Users", "Fully Registered Users", "Deletion Rate"],
-        body: [
-          ["2023-01-02", "7", "700", "1.00%"],
-          ["2023-01-09", "140", "7,000", "2.00%"],
+      expect(table.header).to.deep.equal([
+        "Week Start",
+        "Deleted Users",
+        "Fully Registered Users",
+        "Deletion Rate",
+      ]);
+      expect(table.body.map(mapRow)).to.deep.equal([
+        [
+          "2023-01-02",
+          { "data-csv": 7, children: "7" },
+          { "data-csv": 700, children: "700" },
+          { "data-csv": 0.01, children: "1.00%" },
         ],
-      });
+        [
+          "2023-01-09",
+          { "data-csv": 140, children: "140" },
+          { "data-csv": 7000, children: "7,000" },
+          { "data-csv": 0.02, children: "2.00%" },
+        ],
+      ]);
     });
   });
 });
