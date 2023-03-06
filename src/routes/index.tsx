@@ -33,7 +33,7 @@ const reportRoutes: ReportRoutes = {
     controls: [Control.CUMULATIVE],
   }),
   "/account-deletions-report/": createReportRoute(AccountDeletionsReport, {
-    defaultTimeRangeWeekOffset: -3,
+    defaultTimeRangeWeekOffset: -16,
   }),
 };
 
