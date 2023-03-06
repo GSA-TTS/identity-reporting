@@ -1,5 +1,6 @@
 import { useContext, useRef } from "preact/hooks";
-import { ascending, flatGroup } from "d3-array";
+import { ascending, flatGroup, mean } from "d3-array";
+import { utcWeek } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import useRegistrationData from "../hooks/use-registration-data";
 import useElementWidth from "../hooks/use-element-width";
@@ -15,13 +16,48 @@ interface ProcessedFormattedData {
   value: number;
 }
 
-function plot({ data, width }: { data: ProcessedFormattedData[]; width?: number }): HTMLElement {
+interface PlotOptions {
+  data: ProcessedFormattedData[];
+  width?: number;
+  finish: Date;
+}
+
+function plot({ data, width, finish }: PlotOptions): HTMLElement {
   return Plot.plot({
     color: {
       type: "ordinal",
       scheme: "Tableau10",
     },
-    marks: [Plot.ruleY([0]), Plot.line(data, { x: "date", y: "value" })],
+    marks: [
+      Plot.ruleY([0]),
+      Plot.line(data, { x: "date", y: "value" }),
+      Plot.ruleY(
+        data,
+        Plot.binY(
+          { y: "mean" },
+          {
+            strokeDasharray: "3,2",
+            thresholds: utcWeek,
+            y: "value",
+          }
+        )
+      ),
+      Plot.text(
+        data,
+        Plot.binY(
+          { y: "mean" },
+          {
+            y: "value",
+            text: (bin: ProcessedFormattedData[]) =>
+              formatAsDecimalPercent(mean(bin, (d) => d.value) || 0),
+            x: finish,
+            thresholds: utcWeek,
+            textAnchor: "end",
+            lineAnchor: "bottom",
+          }
+        )
+      ),
+    ],
     width,
     y: {
       domain: [0, 0.1],
@@ -73,7 +109,10 @@ function AccountDeletionsReport() {
 
   return (
     <div ref={ref}>
-      <PlotComponent plotter={() => plot({ data: formattedData, width })} inputs={[data, width]} />
+      <PlotComponent
+        plotter={() => plot({ data: formattedData, width, finish })}
+        inputs={[data, width, finish]}
+      />
       <Table numberFormatter={formatAsDecimalPercent} data={tabulate(formattedData)} />
     </div>
   );
