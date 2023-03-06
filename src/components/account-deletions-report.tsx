@@ -80,9 +80,15 @@ export function tabulate(results: ProcessedFormattedData[]): TableData {
       .sort(({ date: aDate }, { date: bDate }) => ascending(aDate, bDate))
       .map(({ date, deletedUsers, fullyRegisteredUsers, rate }) => [
         yearMonthDayFormat(date),
-        <td data-csv={deletedUsers}>{formatWithCommas(deletedUsers)}</td>,
-        <td data-csv={fullyRegisteredUsers}>{formatWithCommas(fullyRegisteredUsers)}</td>,
-        <td data-csv={rate}>{formatAsDecimalPercent(rate)}</td>,
+        <td data-csv={deletedUsers} className="table-number text-tabular text-right">
+          {formatWithCommas(deletedUsers)}
+        </td>,
+        <td data-csv={fullyRegisteredUsers} className="table-number text-tabular text-right">
+          {formatWithCommas(fullyRegisteredUsers)}
+        </td>,
+        <td data-csv={rate} className="table-number text-tabular text-right">
+          {formatAsDecimalPercent(rate)}
+        </td>,
       ]),
   };
 }
