@@ -7,11 +7,10 @@
   "scripts": {
     "build": "vite build",
     "postbuild": "npm run generate-routes && cp robots.txt _site/",
-    "dev": "vite --port ${PORT:-3000}",
     "generate-routes": "node -r esbuild-register bin/generate-routes.js",
     "pages": "npm run build -- --base=${BASEURL:-/}",
     "prettier:fix": "npm run test:lint -- --fix",
-    "serve": "vite preview --port ${PORT:-3000}",
+    "start": "vite --port ${PORT:-3000}",
     "test:lint": "eslint . --ext .js,.ts,.tsx",
     "test:typecheck": "tsc",
     "test:unit": "mocha -r esbuild-register -r global-jsdom/register -r ./mocha-setup.ts 'src/**/*.test.{js,ts,tsx}'",
