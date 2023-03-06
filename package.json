@@ -14,7 +14,7 @@
     "serve": "vite preview",
     "test:lint": "eslint . --ext .js,.ts,.tsx",
     "test:typecheck": "tsc",
-    "test:unit": "mocha -r esbuild-register -r global-jsdom/register -r ./mocha-setup.ts 'src/**/*.test.{js,ts,tsx}'",
+    "test:unit": "mocha 'src/**/*.test.{js,ts,tsx}'",
     "test": "run-p test:*"
   },
   "dependencies": {
