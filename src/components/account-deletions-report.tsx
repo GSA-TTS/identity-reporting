@@ -68,7 +68,7 @@ function plot({ data, width, finish }: PlotOptions): HTMLElement {
 
 function tabulate(results: ProcessedFormattedData[]): TableData {
   return {
-    header: ["Date", "Percent"],
+    header: ["Week Start", "Percent"],
     body: results
       .sort(({ date: aDate }, { date: bDate }) => ascending(aDate, bDate))
       .map(({ date, value }) => [yearMonthDayFormat(date), value]),
