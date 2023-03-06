@@ -98,7 +98,7 @@ function DailyRegistrationsReport(): VNode {
   const [width, setWidth] = useState(undefined as number | undefined);
   useResizeListener(() => setWidth(ref.current?.offsetWidth));
   const { start, finish, cumulative } = useContext(ReportFilterContext);
-  const data = useRegistrationData({ start, finish });
+  const data = useRegistrationData({ finish });
 
   const filteredData =
     data &&
