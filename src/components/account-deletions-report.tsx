@@ -66,7 +66,7 @@ function plot({ data, width, finish }: PlotOptions): HTMLElement {
   });
 }
 
-function tabulate(results: ProcessedFormattedData[]): TableData {
+export function tabulate(results: ProcessedFormattedData[]): TableData {
   return {
     header: ["Week Start", "Percent"],
     body: results
@@ -75,7 +75,7 @@ function tabulate(results: ProcessedFormattedData[]): TableData {
   };
 }
 
-function formatData(data: ProcessedResult[]): ProcessedFormattedData[] {
+export function formatData(data: ProcessedResult[]): ProcessedFormattedData[] {
   return flatGroup(data, (value) => utcMonday(value.date)).flatMap(([week, entries]) => {
     const { deletedUsers, fullyRegisteredUsers } = entries.reduce(
       (result, entry) => {

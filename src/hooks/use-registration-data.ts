@@ -1,14 +1,19 @@
 import { useQuery } from "preact-fetching";
 import { useContext } from "preact/hooks";
 import { ReportFilterContext } from "../contexts/report-filter-context";
-import { loadData } from "../models/daily-registrations-report-data";
+import { loadData as defaultLoadData } from "../models/daily-registrations-report-data";
 
-interface RegistrationDataOptions {
+export interface RegistrationDataOptions {
   start?: Date;
   finish: Date;
+  loadData?: typeof defaultLoadData;
 }
 
-function useRegistrationData({ start, finish }: RegistrationDataOptions) {
+function useRegistrationData({
+  start,
+  finish,
+  loadData = defaultLoadData,
+}: RegistrationDataOptions) {
   const { env } = useContext(ReportFilterContext);
   const { data } = useQuery(`daily-registrations-${finish.valueOf()}`, () => loadData(finish, env));
 
