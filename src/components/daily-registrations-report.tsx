@@ -1,11 +1,11 @@
 import { VNode } from "preact";
-import { useRef, useState, useContext } from "preact/hooks";
+import { useRef, useContext } from "preact/hooks";
 import * as Plot from "@observablehq/plot";
 import Markdown from "preact-markdown";
 import { descending } from "d3-array";
 import { ReportFilterContext } from "../contexts/report-filter-context";
 import useRegistrationData from "../hooks/use-registration-data";
-import useResizeListener from "../hooks/resize-listener";
+import useElementWidth from "../hooks/use-element-width";
 import {
   DataType,
   ProcessedResult,
@@ -95,8 +95,7 @@ function tabulate(results: ProcessedResult[]): TableData {
 
 function DailyRegistrationsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
-  const [width, setWidth] = useState(undefined as number | undefined);
-  useResizeListener(() => setWidth(ref.current?.offsetWidth));
+  const width = useElementWidth(ref);
   const { start, finish, cumulative } = useContext(ReportFilterContext);
   const data = useRegistrationData({ finish });
 
