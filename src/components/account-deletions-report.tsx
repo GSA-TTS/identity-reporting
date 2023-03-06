@@ -1,15 +1,15 @@
 import { useContext, useRef } from "preact/hooks";
-import { ascending, descending, flatGroup } from "d3-array";
+import { ascending, flatGroup } from "d3-array";
+import { format } from "d3-format";
 import * as Plot from "@observablehq/plot";
 import useRegistrationData from "../hooks/use-registration-data";
 import useElementWidth from "../hooks/use-element-width";
 import { ReportFilterContext } from "../contexts/report-filter-context";
-import { formatAsPercent, yearMonthDayFormat } from "../formats";
+import { yearMonthDayFormat } from "../formats";
 import PlotComponent from "./plot";
 import Table from "./table";
 import type { ProcessedResult } from "../models/daily-registrations-report-data";
 import type { TableData } from "./table";
-import { format } from "d3-format";
 
 interface ProcessedFormattedData {
   date: Date;
@@ -70,8 +70,6 @@ function AccountDeletionsReport() {
   const width = useElementWidth(ref);
 
   const formattedData = formatData(data || []);
-
-  console.log(formattedData);
 
   return (
     <div ref={ref}>
