@@ -22,15 +22,15 @@ describe("AccountDeletionsReport", () => {
       ),
       {
         date: yearMonthDayParse("2023-01-09"),
-        fullyRegisteredUsers: 100,
-        deletedUsers: 14,
+        fullyRegisteredUsers: 1000,
+        deletedUsers: 140,
       } as ProcessedResult,
       ...Array.from(
         Array(6),
         (_value, index) =>
           ({
             date: yearMonthDayParse(`2023-01-1${index}`),
-            fullyRegisteredUsers: 100,
+            fullyRegisteredUsers: 1000,
             deletedUsers: 0,
           } as ProcessedResult)
       ),
@@ -42,11 +42,15 @@ describe("AccountDeletionsReport", () => {
       expect(formattedData).to.deep.equal([
         {
           date: yearMonthDayParse("2023-01-02"),
-          value: 0.01,
+          deletedUsers: 7,
+          fullyRegisteredUsers: 700,
+          rate: 0.01,
         },
         {
           date: yearMonthDayParse("2023-01-09"),
-          value: 0.02,
+          deletedUsers: 140,
+          fullyRegisteredUsers: 7000,
+          rate: 0.02,
         },
       ]);
     });
@@ -56,11 +60,15 @@ describe("AccountDeletionsReport", () => {
     const formattedData = [
       {
         date: yearMonthDayParse("2023-01-02"),
-        value: 0.01,
+        deletedUsers: 7,
+        fullyRegisteredUsers: 700,
+        rate: 0.01,
       },
       {
         date: yearMonthDayParse("2023-01-09"),
-        value: 0.02,
+        deletedUsers: 140,
+        fullyRegisteredUsers: 7000,
+        rate: 0.02,
       },
     ];
 
@@ -68,10 +76,10 @@ describe("AccountDeletionsReport", () => {
       const table = tabulate(formattedData);
 
       expect(table).to.deep.equal({
-        header: ["Week Start", "Percent"],
+        header: ["Week Start", "Deleted Users", "Fully Registered Users", "Deletion Rate"],
         body: [
-          ["2023-01-02", 0.01],
-          ["2023-01-09", 0.02],
+          ["2023-01-02", "7", "700", "1.00%"],
+          ["2023-01-09", "140", "7,000", "2.00%"],
         ],
       });
     });

@@ -5,7 +5,12 @@ import * as Plot from "@observablehq/plot";
 import useRegistrationData from "../hooks/use-registration-data";
 import useElementWidth from "../hooks/use-element-width";
 import { ReportFilterContext } from "../contexts/report-filter-context";
-import { formatAsDecimalPercent, formatAsPercent, yearMonthDayFormat } from "../formats";
+import {
+  formatAsDecimalPercent,
+  formatWithCommas,
+  formatAsPercent,
+  yearMonthDayFormat,
+} from "../formats";
 import PlotComponent from "./plot";
 import Table from "./table";
 import type { ProcessedResult } from "../models/daily-registrations-report-data";
@@ -13,7 +18,9 @@ import type { TableData } from "./table";
 
 interface ProcessedFormattedData {
   date: Date;
-  value: number;
+  deletedUsers: number;
+  fullyRegisteredUsers: number;
+  rate: number;
 }
 
 interface PlotOptions {
@@ -30,7 +37,7 @@ function plot({ data, width, finish }: PlotOptions): HTMLElement {
     },
     marks: [
       Plot.ruleY([0]),
-      Plot.line(data, { x: "date", y: "value" }),
+      Plot.line(data, { x: "date", y: "rate" }),
       Plot.ruleY(
         data,
         Plot.binY(
@@ -38,7 +45,7 @@ function plot({ data, width, finish }: PlotOptions): HTMLElement {
           {
             strokeDasharray: "3,2",
             thresholds: utcWeek,
-            y: "value",
+            y: "rate",
           }
         )
       ),
@@ -47,9 +54,9 @@ function plot({ data, width, finish }: PlotOptions): HTMLElement {
         Plot.binY(
           { y: "mean" },
           {
-            y: "value",
+            y: "rate",
             text: (bin: ProcessedFormattedData[]) =>
-              formatAsDecimalPercent(mean(bin, (d) => d.value) || 0),
+              formatAsDecimalPercent(mean(bin, (d) => d.rate) || 0),
             x: finish,
             thresholds: utcWeek,
             textAnchor: "end",
@@ -68,26 +75,30 @@ function plot({ data, width, finish }: PlotOptions): HTMLElement {
 
 export function tabulate(results: ProcessedFormattedData[]): TableData {
   return {
-    header: ["Week Start", "Percent"],
+    header: ["Week Start", "Deleted Users", "Fully Registered Users", "Deletion Rate"],
     body: results
       .sort(({ date: aDate }, { date: bDate }) => ascending(aDate, bDate))
-      .map(({ date, value }) => [yearMonthDayFormat(date), value]),
+      .map(({ date, deletedUsers, fullyRegisteredUsers, rate }) => [
+        yearMonthDayFormat(date),
+        formatWithCommas(deletedUsers),
+        formatWithCommas(fullyRegisteredUsers),
+        formatAsDecimalPercent(rate),
+      ]),
   };
 }
 
 export function formatData(data: ProcessedResult[]): ProcessedFormattedData[] {
   return flatGroup(data, (value) => utcMonday(value.date)).flatMap(([week, entries]) => {
     const { deletedUsers, fullyRegisteredUsers } = entries.reduce(
-      (result, entry) => {
-        result.deletedUsers += entry.deletedUsers;
-        result.fullyRegisteredUsers += entry.fullyRegisteredUsers;
-        return result;
-      },
+      (result, entry) => ({
+        deletedUsers: result.deletedUsers + entry.deletedUsers,
+        fullyRegisteredUsers: result.fullyRegisteredUsers + entry.fullyRegisteredUsers,
+      }),
       { deletedUsers: 0, fullyRegisteredUsers: 0 }
     );
-    const value = deletedUsers / fullyRegisteredUsers;
+    const rate = deletedUsers / fullyRegisteredUsers;
 
-    return { date: week, value };
+    return { date: week, deletedUsers, fullyRegisteredUsers, rate };
   });
 }
 
@@ -105,7 +116,7 @@ function AccountDeletionsReport() {
         plotter={() => plot({ data: formattedData, width, finish })}
         inputs={[data, width, finish]}
       />
-      <Table numberFormatter={formatAsDecimalPercent} data={tabulate(formattedData)} />
+      <Table data={tabulate(formattedData)} />
     </div>
   );
 }
