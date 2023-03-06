@@ -4,7 +4,7 @@ import * as Plot from "@observablehq/plot";
 import useRegistrationData from "../hooks/use-registration-data";
 import useElementWidth from "../hooks/use-element-width";
 import { ReportFilterContext } from "../contexts/report-filter-context";
-import { formatAsDecimalPercent, yearMonthDayFormat } from "../formats";
+import { formatAsDecimalPercent, formatAsPercent, yearMonthDayFormat } from "../formats";
 import PlotComponent from "./plot";
 import Table from "./table";
 import type { ProcessedResult } from "../models/daily-registrations-report-data";
@@ -25,6 +25,7 @@ function plot({ data, width }: { data: ProcessedFormattedData[]; width?: number 
     width,
     y: {
       domain: [0, 0.1],
+      tickFormat: formatAsPercent,
     },
   });
 }
