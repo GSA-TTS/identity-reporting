@@ -27,31 +27,32 @@ interface NumericTdProps { number: number, style?: string }
 
 export const Td = {
   NumberWithCommas: ({ number, style }: NumericTdProps): VNode => (
-      <td
-        data-csv={number}
-        className="table-number text-tabular text-right"
-        style={style}
-      >
-        {formatWithCommas(number)}
-      </td>),
+    <td
+      data-csv={number}
+      className="table-number text-tabular text-right"
+      style={style}
+    >
+      {formatWithCommas(number)}
+    </td>
+  ),
   NumberAsPercent: ({ number, style }: NumericTdProps): VNode => (
-      <td
-        data-csv={number}
-        className="table-number text-tabular text-right"
-        style={style}
-      >
-        {formatAsPercent(number)}
-      </td>
-    ),
+    <td
+      data-csv={number}
+      className="table-number text-tabular text-right"
+      style={style}
+    >
+      {formatAsPercent(number)}
+    </td>
+  ),
   NumberAsDecimalPercent: ({ number, style }: NumericTdProps): VNode => (
-      <td
-        data-csv={number}
-        className="table-number text-tabular text-right"
-        style={style}
-      >
-        {formatAsDecimalPercent(number)}
-      </td>
-    )
+    <td
+      data-csv={number}
+      className="table-number text-tabular text-right"
+      style={style}
+    >
+      {formatAsDecimalPercent(number)}
+    </td>
+  )
 };
 
 function Row({
