@@ -1,5 +1,6 @@
 import { VNode, render } from "preact";
 import { csvFormatValue } from "d3-dsv";
+import { formatAsDecimalPercent, formatAsPercent, formatWithCommas } from "../formats";
 import Icon from "./icon";
 
 export type TableCell = string | number | VNode<any>;
@@ -22,6 +23,38 @@ interface TableProps {
   filename?: string;
 }
 
+interface NumericTdProps { number: number, style?: string }
+
+export const Td = {
+  NumberWithCommas: ({ number, style }: NumericTdProps): VNode => (
+    <td
+      data-csv={number}
+      className="table-number text-tabular text-right"
+      style={style}
+    >
+      {formatWithCommas(number)}
+    </td>
+  ),
+  NumberAsPercent: ({ number, style }: NumericTdProps): VNode => (
+    <td
+      data-csv={number}
+      className="table-number text-tabular text-right"
+      style={style}
+    >
+      {formatAsPercent(number)}
+    </td>
+  ),
+  NumberAsDecimalPercent: ({ number, style }: NumericTdProps): VNode => (
+    <td
+      data-csv={number}
+      className="table-number text-tabular text-right"
+      style={style}
+    >
+      {formatAsDecimalPercent(number)}
+    </td>
+  )
+};
+
 function Row({
   row,
   numberFormatter = String,
@@ -32,7 +65,7 @@ function Row({
   return (
     <tr>
       {row.map((d) => {
-        if (typeof d === "object" && d.type === "td") {
+        if (typeof d === "object" && (d.type === "td" || Object.values(Td).includes(d.type as any))) {
           return d;
         }
         if (typeof d === "number") {

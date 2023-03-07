@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { render } from "@testing-library/preact";
 import { csvParse } from "d3-dsv";
-import Table, { TableData } from "./table";
+import Table, { TableData, Td } from "./table";
 
 describe("Table", () => {
   it("wraps header elements in <th> and body elements in <td>", () => {
@@ -90,6 +90,25 @@ describe("Table", () => {
     const td = tds[0];
     expect(td.getAttribute("colspan")).to.eq("2");
     expect(td.getAttribute("data-something")).to.equal("hello");
+  });
+
+  it("passes through custom <Td> components the body", () => {
+    const data: TableData = {
+      header: [],
+      body: [
+        [
+          <Td.NumberWithCommas number={1000} />
+        ]
+      ],
+    };
+
+    const { container } = render(<Table data={data} />);
+
+    const tds = container.querySelectorAll("table tbody td");
+    expect(tds.length).to.eq(1);
+    const td = tds[0];
+    expect(td.getAttribute("data-csv")).to.equal("1000");
+    expect(td.textContent).to.equal("1,000");
   });
 
   it("includes a link to download as CSV", () => {

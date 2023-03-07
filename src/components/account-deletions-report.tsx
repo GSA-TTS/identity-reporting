@@ -7,12 +7,11 @@ import useElementWidth from "../hooks/use-element-width";
 import { ReportFilterContext } from "../contexts/report-filter-context";
 import {
   formatAsDecimalPercent,
-  formatWithCommas,
   formatAsPercent,
   yearMonthDayFormat,
 } from "../formats";
 import PlotComponent from "./plot";
-import Table from "./table";
+import Table, { Td } from "./table";
 import type { ProcessedResult } from "../models/daily-registrations-report-data";
 import type { TableData } from "./table";
 
@@ -80,15 +79,9 @@ export function tabulate(results: ProcessedFormattedData[]): TableData {
       .sort(({ date: aDate }, { date: bDate }) => ascending(aDate, bDate))
       .map(({ date, deletedUsers, fullyRegisteredUsers, rate }) => [
         yearMonthDayFormat(date),
-        <td data-csv={deletedUsers} className="table-number text-tabular text-right">
-          {formatWithCommas(deletedUsers)}
-        </td>,
-        <td data-csv={fullyRegisteredUsers} className="table-number text-tabular text-right">
-          {formatWithCommas(fullyRegisteredUsers)}
-        </td>,
-        <td data-csv={rate} className="table-number text-tabular text-right">
-          {formatAsDecimalPercent(rate)}
-        </td>,
+        <Td.NumberWithCommas number={deletedUsers} />,
+        <Td.NumberWithCommas number={fullyRegisteredUsers} />,
+        <Td.NumberAsDecimalPercent number={rate} />,
       ]),
   };
 }

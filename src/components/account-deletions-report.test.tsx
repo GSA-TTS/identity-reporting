@@ -87,27 +87,15 @@ describe("AccountDeletionsReport", () => {
       expect(table.body.map(mapRow)).to.deep.equal([
         [
           "2023-01-02",
-          { "data-csv": 7, children: "7", className: "table-number text-tabular text-right" },
-          { "data-csv": 700, children: "700", className: "table-number text-tabular text-right" },
-          {
-            "data-csv": 0.01,
-            children: "1.00%",
-            className: "table-number text-tabular text-right",
-          },
+          { number: 7 },
+          { number: 700 },
+          { number: 0.01 },
         ],
         [
           "2023-01-09",
-          { "data-csv": 140, children: "140", className: "table-number text-tabular text-right" },
-          {
-            "data-csv": 7000,
-            children: "7,000",
-            className: "table-number text-tabular text-right",
-          },
-          {
-            "data-csv": 0.02,
-            children: "2.00%",
-            className: "table-number text-tabular text-right",
-          },
+          { number: 140 },
+          { number: 7000 },
+          { number: 0.02 },
         ],
       ]);
     });
