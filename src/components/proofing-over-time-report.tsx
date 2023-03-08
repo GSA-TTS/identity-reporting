@@ -1,16 +1,38 @@
 import { VNode } from "preact";
 import Markdown from "preact-markdown";
+import { useContext, useRef, useState } from "preact/hooks";
+import * as Plot from "@observablehq/plot";
+import { useQuery } from "preact-fetching";
 import { utcWeek, utcDay, CountableTimeInterval } from "d3-time";
-import { ascending, rollup } from "d3-array";
-import { FunnelMode, TimeBucket } from "../contexts/report-filter-context";
+import { ascending, mean, rollup } from "d3-array";
+import { scaleOrdinal } from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
+import useResizeListener from "../hooks/resize-listener";
+import Accordion from "./accordion";
+import PlotComponent from "./plot";
+import {
+  FunnelMode,
+  ReportFilterContext,
+  Scale,
+  TimeBucket,
+} from "../contexts/report-filter-context";
 import {
   DailyDropoffsRow,
   funnelSteps,
+  loadData,
+  Step,
   StepCount,
   toStepCounts,
 } from "../models/daily-dropoffs-report-data";
-import { formatAsPercent, formatWithCommas, yearMonthDayFormat } from "../formats";
-import { TableData } from "./table";
+import {
+  formatAsPercent,
+  formatSIDropTrailingZeroes,
+  formatWithCommas,
+  yearMonthDayFormat,
+} from "../formats";
+import { useAgencies } from "../contexts/agencies-context";
+import Table, { TableData } from "./table";
+import { kebabCase } from "../strings";
 
 interface StepCountEntry extends StepCount {
   date: Date;
@@ -219,17 +241,179 @@ function tabulateByIssuer({
 }
 
 export default function ProofingOverTimeReport(): VNode {
-  return (
-    <div className="padding-bottom-5">
-      <Markdown
-        markdown={`
-## This Report is Unavailable Right Now
+  const ref = useRef(null as HTMLDivElement | null);
+  const [width, setWidth] = useState(undefined as number | undefined);
+  const {
+    start,
+    finish,
+    agency,
+    env,
+    funnelMode,
+    scale,
+    byAgency,
+    timeBucket = TimeBucket.WEEK,
+    extra,
+  } = useContext(ReportFilterContext);
 
-We're investigating inconsistencies in the underlying data.
-`}
-      />
+  const { data } = useQuery(`proofing-over-time-${start.valueOf()}-${finish.valueOf()}`, () =>
+    loadData(start, finish, env)
+  );
+
+  useResizeListener(() => setWidth(ref.current?.offsetWidth));
+  useAgencies(data);
+
+  const lineDeterminer = (() => {
+    if (byAgency) {
+      if (agency) {
+        return "friendlyName";
+      }
+      return "agency";
+    }
+  })();
+  const color = scaleOrdinal(schemeCategory10);
+  const stroke = lineDeterminer ? (d: StepCountEntry) => color(d[lineDeterminer]) : undefined;
+
+  const filter = (d: StepCountEntry) => d.step === Step.VERIFIED;
+  const thresholds = timeBucket === TimeBucket.DAY ? utcDay : utcWeek;
+  const y = scale === Scale.PERCENT ? "percentOfFirst" : "count";
+  const tickFormat = scale === Scale.PERCENT ? formatAsPercent : formatSIDropTrailingZeroes;
+  const showAverages = (!byAgency || agency) && scale === Scale.PERCENT;
+
+  const filteredData = (data || []).filter((row) => !agency || row.agency === agency);
+
+  const flatSteps = flatten({ data: filteredData, funnelMode });
+
+  return (
+    <div ref={ref}>
+      <Accordion title="How is this measured?">
+        <Markdown
+          markdown={`
+**Measurement**: This report shows unique users who started proofing who reached the "verified"
+step, meaning they completed proofing. As a percent, the value is the percent of users, starting
+at either the "welcome" or "image submit" step (depending on the Funnel Mode setting).
+
+**Timing**: All data is collected, grouped, and displayed in the UTC timezone.
+
+**Known Limitations**:
+
+The data model table can't accurately capture:
+- Users who become verified on a different day than the day they start proofing (such as verify by mail)
+- Users who attempt proofing at one partner app, and reattempt with a different partner app.`}
+        />
+      </Accordion>
+      {extra && (
+        <PlotComponent
+          plotter={() =>
+            Plot.plot({
+              y: {
+                tickFormat,
+                domain: scale === Scale.PERCENT ? [0, 1] : undefined,
+                label: "↑ Verified",
+              },
+              color: {
+                legend: true,
+              },
+              marginRight: 50,
+              width,
+              marks: [
+                Plot.ruleY([0]),
+                Plot.lineY(
+
+                  flatSteps,
+                  Plot.binX(
+                    { y: scale === Scale.PERCENT ? "mean" : "sum" },
+                    {
+                      x: "date",
+                      y,
+                      thresholds,
+                      z: lineDeterminer,
+                      stroke,
+                      title: lineDeterminer,
+                      filter,
+                    }
+                  )
+                ),
+                showAverages &&
+                  Plot.ruleY(
+                    flatSteps,
+                    Plot.binY(
+                      { y: "mean" },
+                      {
+                        z: lineDeterminer,
+                        stroke,
+                        strokeDasharray: "3,2",
+                        thresholds,
+                        y,
+                        filter,
+                      }
+                    )
+                  ),
+                showAverages &&
+                  Plot.text(
+                    flatSteps,
+                    Plot.binY(
+                      { y: "mean" },
+                      {
+                        y,
+                        text: (bin: StepCountEntry[]) => tickFormat(mean(bin, (d) => d[y]) || 0),
+                        x:
+                          timeBucket === TimeBucket.WEEK
+                            ? mean([thresholds.floor(finish), thresholds.ceil(finish)])
+                            : finish,
+                        dx: timeBucket === TimeBucket.DAY ? 15 : undefined,
+                        z: lineDeterminer,
+                        fill: stroke,
+                        thresholds,
+                        textAnchor: "start",
+                        filter,
+                      }
+                    )
+                  ),
+              ].filter(Boolean),
+            })
+          }
+          inputs={[
+            flatSteps,
+            agency,
+            start.valueOf(),
+            finish.valueOf(),
+            width,
+            funnelMode,
+            scale,
+            timeBucket,
+          ]}
+        />
+      )}
+      {!byAgency && (
+        <Table
+          data={tabulateAll({
+            data: filteredData,
+            timeBucket,
+            funnelMode,
+          })}
+          filename={`proofing-over-time-report-${yearMonthDayFormat(start)}-to-${yearMonthDayFormat(
+            finish
+          )}.csv`}
+        />
+      )}
+      {byAgency && !agency && (
+        <Table
+          data={tabulateByAgency({ data: filteredData, timeBucket, funnelMode, color })}
+          filename={`proofing-over-time-report-agencies-${yearMonthDayFormat(
+            start
+          )}-to-${yearMonthDayFormat(finish)}.csv`}
+        />
+      )}
+      {byAgency && agency && (
+        <Table
+          data={tabulateByIssuer({ data: filteredData, timeBucket, funnelMode, color })}
+          filename={`proofing-over-time-report-${kebabCase(agency)}-${yearMonthDayFormat(
+            start
+          )}-to-${yearMonthDayFormat(finish)}.csv`}
+        />
+      )}
     </div>
   );
 }
 
-export { flatten, tabulateAll, tabulateByAgency, tabulateByIssuer };
+export { tabulateAll, tabulateByAgency, tabulateByIssuer };

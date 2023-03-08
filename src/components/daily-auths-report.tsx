@@ -1,19 +1,11 @@
 import { VNode } from "preact";
-import { useContext, useRef, useState } from "preact/hooks";
 import { utcDay } from "d3-time";
 import * as Plot from "@observablehq/plot";
-import { useQuery } from "preact-fetching";
 import Markdown from "preact-markdown";
 import { ascending, group, rollup } from "d3-array";
-import { ReportFilterContext } from "../contexts/report-filter-context";
-import Table, { TableData } from "./table";
-import PlotComponent from "./plot";
-import { useAgencies } from "../contexts/agencies-context";
-import Accordion from "./accordion";
-import useResizeListener from "../hooks/resize-listener";
-import { ProcessedResult, loadData } from "../models/daily-auths-report-data";
+import { TableData } from "./table";
+import { ProcessedResult } from "../models/daily-auths-report-data";
 import { formatSIDropTrailingZeroes, formatWithCommas, yearMonthDayFormat } from "../formats";
-import { kebabCase } from "../strings";
 
 function plot({
   start,
@@ -225,76 +217,18 @@ function tabulateSum({ results }: { results: ProcessedResult[] }): TableData {
 }
 
 function DailyAuthsReport(): VNode {
-  const ref = useRef(null as HTMLDivElement | null);
-  const [width, setWidth] = useState(undefined as number | undefined);
-  const { byAgency, start, finish, agency, ial, env, setParameters } =
-    useContext(ReportFilterContext);
-
-  const { data } = useQuery(`${start.valueOf()}-${finish.valueOf()}`, () =>
-    loadData(start, finish, env)
-  );
-
-  useAgencies(data);
-  useResizeListener(() => setWidth(ref.current?.offsetWidth));
-
-  const filteredData = (data || []).filter(
-    (d) => (!ial || d.ial === ial) && (!agency || d.agency === agency)
-  );
-
   return (
-    <div ref={ref}>
-      <Accordion title="How is this measured?">
-        <Markdown
-          markdown={`
-**Timing**: All data is collected, grouped, and displayed in the UTC timezone.
+    <div className="padding-bottom-5">
+      <Markdown
+        markdown={`
+## This Report is Unavailable Right Now
 
-**Counting**: This report displays the total number of authentications, so one user authenticating
-twice will count twice. It does not de-duplicate users or provide unique auths.`}
-        />
-      </Accordion>
-      <PlotComponent
-        plotter={() => plot({ data: filteredData, ial, agency, start, finish, width })}
-        inputs={[data, ial, agency, start.valueOf(), finish.valueOf(), width]}
+We're investigating inconsistencies in the underlying data.
+`}
       />
-      {byAgency && agency && (
-        <Table
-          data={tabulate({ results: filteredData })}
-          numberFormatter={formatWithCommas}
-          filename={`daily-dropoffs-report-${kebabCase(agency)}-${yearMonthDayFormat(
-            start
-          )}-to-${yearMonthDayFormat(finish)}.csv`}
-        />
-      )}
-      {byAgency && !agency && (
-        <>
-          <PlotComponent
-            plotter={() =>
-              plot({ data: filteredData, ial, start, finish, width, facetAgency: true })
-            }
-            inputs={[data, ial, start.valueOf(), finish.valueOf(), width]}
-          />
-
-          <Table
-            data={tabulateSumByAgency({ results: filteredData, setParameters })}
-            numberFormatter={formatWithCommas}
-            filename={`daily-auths-report-agencies-${yearMonthDayFormat(
-              start
-            )}-to-${yearMonthDayFormat(finish)}.csv`}
-          />
-        </>
-      )}
-      {!byAgency && (
-        <Table
-          data={tabulateSum({ results: filteredData })}
-          numberFormatter={formatWithCommas}
-          filename={`daily-dropoffs-report-${yearMonthDayFormat(start)}-to-${yearMonthDayFormat(
-            finish
-          )}.csv`}
-        />
-      )}
     </div>
   );
 }
 
 export default DailyAuthsReport;
-export { tabulate, tabulateSum, tabulateSumByAgency };
+export { plot, tabulate, tabulateSum, tabulateSumByAgency };
