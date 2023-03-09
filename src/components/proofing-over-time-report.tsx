@@ -321,6 +321,9 @@ The data model table can't accurately capture:
               domain: scale === Scale.PERCENT ? [0, 1] : undefined,
               label: "↑ Verified",
             },
+            x: {
+              domain: [start, finish],
+            },
             color: {
               legend: true,
             },
