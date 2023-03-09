@@ -4,7 +4,7 @@ import { useQuery } from "preact-fetching";
 import { scaleLinear, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import Markdown from "preact-markdown";
-import { ascending } from "d3-array";
+import { ascending, max, min } from "d3-array";
 import { FunnelMode, ReportFilterContext } from "../contexts/report-filter-context";
 import Table, { TableData } from "./table";
 import { useAgencies } from "../contexts/agencies-context";
@@ -18,8 +18,8 @@ import {
   toStepCounts,
   aggregateAll,
   aggregate,
-  overlapsBadData,
-  BAD_DATA,
+  overlappingBadData,
+  stepToTitle,
 } from "../models/daily-dropoffs-report-data";
 import {
   formatAsPercent,
@@ -138,15 +138,22 @@ function DailyDropffsReport(): VNode {
     (d) => !agency || d.agency === agency
   );
 
-  const showAlert = overlapsBadData(start, finish);
+  const badData = overlappingBadData(start, finish);
+  const showAlert = badData.length > 0;
+  const badSteps = Array.from(new Set(badData.flatMap(({ steps }) => steps)));
 
   return (
     <div ref={ref}>
       {showAlert && (
         <Alert level="error" className="margin-y-2" title="Unreliable Data">
           Due to errors in the underlying data, this report is not accurate between{" "}
-          {formatWithWeekday(BAD_DATA.start)} and {formatWithWeekday(BAD_DATA.finish)},
-          specifically at the Phone, Encrypt and Personal Key steps.
+          {formatWithWeekday(min(badData, (d) => d.start) as Date)} and{" "}
+          {formatWithWeekday(max(badData, (d) => d.finish) as Date)}, specifically at these steps:
+          <ul>
+            {badSteps.map((s) => (
+              <li>{stepToTitle(s)}</li>
+            ))}
+          </ul>
         </Alert>
       )}
       <Accordion title="How is this measured?">
@@ -168,8 +175,7 @@ The data model table can't accurately capture:
         color={issuerColor}
         funnelMode={funnelMode}
         scale={scale}
-        start={start}
-        finish={finish}
+        badSteps={badSteps}
       />
       <Table
         data={tabulate({ rows: filteredData, issuerColor, funnelMode })}

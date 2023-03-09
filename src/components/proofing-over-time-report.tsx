@@ -4,7 +4,7 @@ import { useContext, useRef, useState } from "preact/hooks";
 import * as Plot from "@observablehq/plot";
 import { useQuery } from "preact-fetching";
 import { utcWeek, utcDay, CountableTimeInterval } from "d3-time";
-import { ascending, mean, rollup } from "d3-array";
+import { ascending, max, mean, min, rollup } from "d3-array";
 import { scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import useResizeListener from "../hooks/resize-listener";
@@ -17,11 +17,10 @@ import {
   TimeBucket,
 } from "../contexts/report-filter-context";
 import {
-  BAD_DATA,
   DailyDropoffsRow,
   funnelSteps,
   loadData,
-  overlapsBadData,
+  overlappingBadData,
   Step,
   StepCount,
   toStepCounts,
@@ -286,14 +285,16 @@ export default function ProofingOverTimeReport(): VNode {
 
   const flatSteps = flatten({ data: filteredData, funnelMode });
 
-  const showAlert = overlapsBadData(start, finish);
+  const badData = overlappingBadData(start, finish);
+  const showAlert = badData.length > 0;
 
   return (
     <div ref={ref}>
       {showAlert && (
         <Alert level="error" className="margin-y-2" title="Unreliable Data">
           Due to errors in the underlying data, this report is not accurate between{" "}
-          {formatWithWeekday(BAD_DATA.start)} and {formatWithWeekday(BAD_DATA.finish)}
+          {formatWithWeekday(min(badData, (d) => d.start) as Date)} and{" "}
+          {formatWithWeekday(max(badData, (d) => d.finish) as Date)}
         </Alert>
       )}
       <Accordion title="How is this measured?">
@@ -379,7 +380,7 @@ The data model table can't accurately capture:
                   )
                 ),
               showAlert &&
-                Plot.rectY([BAD_DATA], {
+                Plot.rectY(badData, {
                   fill: "rgba(255, 0, 0, 0.5)",
                   x1: (d: { start: Date }) => d.start,
                   x2: (d: { finish: Date }) => d.finish,

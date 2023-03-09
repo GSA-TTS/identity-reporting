@@ -288,39 +288,45 @@ issuer1,The App,iaa123,The Agency,2021-01-01T00:00:00+01:00,2021-01-01T23:59:59+
   });
 
   describe("#overlapsBadData", () => {
+    const badDataRange = {
+      start: yearMonthDayParse("2023-01-26"),
+      finish: yearMonthDayParse("2023-02-16"),
+      steps: [Step.PHONE, Step.ENCRYPT, Step.PERSONAL_KEY]
+    };
+
     it("is false for a range that starts and ends before the bad data", () => {
       expect(
-        overlapsBadData(yearMonthDayParse("2020-01-01"), yearMonthDayParse("2020-01-02"))
+        overlapsBadData(yearMonthDayParse("2020-01-01"), yearMonthDayParse("2020-01-02"), badDataRange)
       ).to.eq(false);
     });
 
     it("is false for a range that starts and ends after the bad data", () => {
       expect(
-        overlapsBadData(yearMonthDayParse("2025-01-01"), yearMonthDayParse("2025-01-02"))
+        overlapsBadData(yearMonthDayParse("2025-01-01"), yearMonthDayParse("2025-01-02"), badDataRange)
       ).to.eq(false);
     });
 
     it("is true for a range entirely inside the bad data", () => {
       expect(
-        overlapsBadData(yearMonthDayParse("2023-02-01"), yearMonthDayParse("2023-02-02"))
+        overlapsBadData(yearMonthDayParse("2023-02-01"), yearMonthDayParse("2023-02-02"), badDataRange)
       ).to.eq(true);
     });
 
     it("is true for a range that ends inside the bad data", () => {
       expect(
-        overlapsBadData(yearMonthDayParse("2020-01-01"), yearMonthDayParse("2023-02-01"))
+        overlapsBadData(yearMonthDayParse("2020-01-01"), yearMonthDayParse("2023-02-01"), badDataRange)
       ).to.eq(true);
     });
 
     it("is true for a range that starts inside the bad data", () => {
       expect(
-        overlapsBadData(yearMonthDayParse("2023-02-01"), yearMonthDayParse("2020-03-01"))
+        overlapsBadData(yearMonthDayParse("2023-02-01"), yearMonthDayParse("2020-03-01"), badDataRange)
       ).to.eq(true);
     });
 
     it("is true for a range that entirely covers the bad data", () => {
       expect(
-        overlapsBadData(yearMonthDayParse("2023-01-01"), yearMonthDayParse("2023-12-31"))
+        overlapsBadData(yearMonthDayParse("2023-01-01"), yearMonthDayParse("2023-12-31"), badDataRange)
       ).to.eq(true);
     });
   });

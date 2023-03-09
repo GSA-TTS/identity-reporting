@@ -167,22 +167,41 @@ function loadData(
   ).then((reports) => reports.flatMap((r) => process(r)));
 }
 
-const BAD_DATA = {
-  start: yearMonthDayParse("2023-01-26"),
-  finish: yearMonthDayParse("2023-02-16"),
-};
+/**
+ * Marks a range of time with known bad data, and what steps were affected
+ */
+interface BadDataRange {
+  start: Date;
+  finish: Date;
+  steps: Step[];
+}
+
+const BAD_DATA: BadDataRange[] = [
+  {
+    start: yearMonthDayParse("2023-01-26"),
+    finish: yearMonthDayParse("2023-02-16"),
+    steps: [Step.PHONE, Step.ENCRYPT, Step.PERSONAL_KEY]
+  },
+  {
+    start: yearMonthDayParse("2023-02-27"),
+    finish: yearMonthDayParse("2023-3-10"),
+    steps: [Step.SSN],
+  }
+];
 
 function pointInRange<T>(point: T, min: T, max: T) {
   return point >= min && point <= max;
 }
 
-function overlapsBadData(start: Date, finish: Date): boolean {
-  return (
-    pointInRange(start, BAD_DATA.start, BAD_DATA.finish) ||
-    pointInRange(finish, BAD_DATA.start, BAD_DATA.finish) ||
-    pointInRange(BAD_DATA.start, start, finish) ||
-    pointInRange(BAD_DATA.finish, start, finish)
-  );
+function overlapsBadData(start: Date, finish: Date, range: BadDataRange): boolean {
+  return pointInRange(start, range.start, range.finish) ||
+    pointInRange(finish, range.start, range.finish) ||
+    pointInRange(range.start, start, finish) ||
+    pointInRange(range.finish, start, finish);
+}
+
+function overlappingBadData(start: Date, finish: Date): BadDataRange[] {
+  return BAD_DATA.filter((range) => overlapsBadData(start, finish, range));
 }
 
 export {
@@ -196,5 +215,5 @@ export {
   funnelSteps,
   toStepCounts,
   overlapsBadData,
-  BAD_DATA,
+  overlappingBadData,
 };
