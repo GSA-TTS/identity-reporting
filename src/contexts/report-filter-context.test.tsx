@@ -1,13 +1,18 @@
 import { expect } from "chai";
 import { useContext } from "preact/hooks";
-import { renderHook } from "@testing-library/preact-hooks";
+import { render } from "@testing-library/preact";
 import { DEFAULT_ENV, DEFAULT_IAL, ReportFilterContext } from "./report-filter-context";
 
 describe("ReportFilterContext", () => {
-  it("has expected default properties", () => {
-    const { result } = renderHook(() => useContext(ReportFilterContext));
+  function TestComponent() {
+    return <>{JSON.stringify(useContext(ReportFilterContext))}</>;
+  }
 
-    expect(result.current?.ial).to.eq(DEFAULT_IAL);
-    expect(result.current?.env).to.eq(DEFAULT_ENV);
+  it("has expected default properties", () => {
+    const html = render(<TestComponent />).container.innerHTML;
+    const result = JSON.parse(html);
+
+    expect(result.ial).to.eq(DEFAULT_IAL);
+    expect(result.env).to.eq(DEFAULT_ENV);
   });
 });

@@ -13,7 +13,7 @@ interface RouterProps {
 const { BASE_URL = "" } = import.meta.env ?? {};
 
 export const getFullPath = (path = "", basePath = BASE_URL): string =>
-  path.startsWith(basePath) ? path : basePath + path.replace(/^\//, "");
+  path.startsWith(basePath) ? path : basePath + path;
 
 export function Router({ children }: RouterProps): VNode {
   const childrenAsArray = toChildArray(children) as VNode<RoutableProps>[];
@@ -31,7 +31,7 @@ export function Router({ children }: RouterProps): VNode {
 export function Link({
   href,
   ...otherProps
-}: preact.JSX.HTMLAttributes & { activeClassName?: string }): VNode {
+}: preact.JSX.HTMLAttributes & { href?: string }): VNode {
   return <BaseLink href={getFullPath(href)} {...otherProps} />;
 }
 

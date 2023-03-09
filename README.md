@@ -8,7 +8,7 @@ Summary reports of login.gov activity
 
 ```bash
 npm install
-npm run dev
+npm start
 ```
 
 View the application at http://localhost:3000/
