@@ -1,14 +1,13 @@
 import { VNode } from "preact";
-import { useQuery } from "preact-fetching";
-import { useRef, useState, useContext } from "preact/hooks";
+import { useRef, useContext } from "preact/hooks";
 import * as Plot from "@observablehq/plot";
 import Markdown from "preact-markdown";
 import { descending } from "d3-array";
 import { ReportFilterContext } from "../contexts/report-filter-context";
-import useResizeListener from "../hooks/resize-listener";
+import useRegistrationData from "../hooks/use-registration-data";
+import useElementWidth from "../hooks/use-element-width";
 import {
   DataType,
-  loadData,
   ProcessedResult,
   ProcessedRenderableData,
   toRenderableData,
@@ -96,11 +95,9 @@ function tabulate(results: ProcessedResult[]): TableData {
 
 function DailyRegistrationsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
-  const [width, setWidth] = useState(undefined as number | undefined);
-  useResizeListener(() => setWidth(ref.current?.offsetWidth));
-  const { start, finish, env, cumulative } = useContext(ReportFilterContext);
-
-  const { data } = useQuery(`daily-registrations-${finish.valueOf()}`, () => loadData(finish, env));
+  const width = useElementWidth(ref);
+  const { start, finish, cumulative } = useContext(ReportFilterContext);
+  const data = useRegistrationData({ finish });
 
   const filteredData =
     data &&

@@ -1,5 +1,5 @@
 import { VNode } from "preact";
-import { useContext, useRef, useState } from "preact/hooks";
+import { useContext, useRef } from "preact/hooks";
 import { utcDay } from "d3-time";
 import * as Plot from "@observablehq/plot";
 import { useQuery } from "preact-fetching";
@@ -10,7 +10,7 @@ import Table, { TableData } from "./table";
 import PlotComponent from "./plot";
 import { useAgencies } from "../contexts/agencies-context";
 import Accordion from "./accordion";
-import useResizeListener from "../hooks/resize-listener";
+import useElementWidth from "../hooks/use-element-width";
 import { ProcessedResult, loadData } from "../models/daily-auths-report-data";
 import { formatSIDropTrailingZeroes, formatWithCommas, yearMonthDayFormat } from "../formats";
 import { kebabCase } from "../strings";
@@ -226,7 +226,7 @@ function tabulateSum({ results }: { results: ProcessedResult[] }): TableData {
 
 function DailyAuthsReport(): VNode {
   const ref = useRef(null as HTMLDivElement | null);
-  const [width, setWidth] = useState(undefined as number | undefined);
+  const width = useElementWidth(ref);
   const { byAgency, start, finish, agency, ial, env, setParameters } =
     useContext(ReportFilterContext);
 
@@ -235,7 +235,6 @@ function DailyAuthsReport(): VNode {
   );
 
   useAgencies(data);
-  useResizeListener(() => setWidth(ref.current?.offsetWidth));
 
   const filteredData = (data || []).filter(
     (d) => (!ial || d.ial === ial) && (!agency || d.agency === agency)
