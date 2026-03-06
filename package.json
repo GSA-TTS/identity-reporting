@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@observablehq/plot": "^0.6.4",
-    "@preact/preset-vite": "^2.5.0",
+    "@preact/preset-vite": "^2.10.3",
     "autoprefixer": "^10.4.13",
     "d3-array": "^3.2.2",
     "d3-axis": "^3.0.0",
