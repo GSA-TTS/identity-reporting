@@ -19,7 +19,7 @@
   "dependencies": {
     "@observablehq/plot": "^0.6.4",
     "@preact/preset-vite": "^2.5.0",
-    "autoprefixer": "^10.4.13",
+    "autoprefixer": "^10.4.24",
     "d3-array": "^3.2.2",
     "d3-axis": "^3.0.0",
     "d3-dsv": "^3.0.1",
